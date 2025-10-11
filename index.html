@@ -14,7 +14,6 @@
 <div id="container">
 <div id="shelter-list"></div>
 <div id="map"></div>
-<div id="current-location-btn">📍</div>
 </div>
 
 <!-- コピーライト -->
@@ -24,7 +23,7 @@
 <script>
     const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap_all`;
     script.defer = true;
     script.async = true;
     document.head.appendChild(script);
@@ -35,6 +34,5 @@
 <script src="js/shelters.js"></script>
 <script src="js/map.js"></script>
 <script src="js/navigation.js"></script>
-<script src="js/current_location.js"></script>
 </body>
 </html>
