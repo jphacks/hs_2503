@@ -1,4 +1,4 @@
-# hinavi
+# hinavi 　〜避難をナビする防災コミュニティ〜
 <img width="892" height="496" alt="Image" src="https://github.com/user-attachments/assets/b02c6915-1bee-45ee-a8c5-c1cc79f80681" />
   
 ## 製品概要
