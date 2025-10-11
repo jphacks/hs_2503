@@ -95,7 +95,7 @@ async function initShelterCards(map, onClickCallback) {
             });
 
             // 近い順にソートして5件だけ取得
-            const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
+            const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 6);
 
             // カード表示
             createShelterCards(nearest, onClickCallback);
