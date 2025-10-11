@@ -4,15 +4,13 @@ let directionsRenderer;
 let userMarker = null;
 let userCircle = null;
 let userPosition = null;
-let watchId = null; // ← 位置追跡のIDを保持
+let watchId = null;
+let isFollowing = true; // ← 現在地追従フラグ
 
 async function initMap() {
     console.log("initMap() 実行");
 
-    // 仮の初期位置（広島市）
-    const defaultPos = { lat: 34.3853, lng: 132.4553 };
-
-    // 地図を初期化
+    const defaultPos = { lat: 34.3853, lng: 132.4553 }; // 広島市
     map = new google.maps.Map(document.getElementById("map"), {
         center: defaultPos,
         zoom: 15,
@@ -21,11 +19,16 @@ async function initMap() {
         fullscreenControl: true,
     });
 
-    // 経路描画用
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
-    // 現在地を追跡
+    // 地図をドラッグしたら追従を一時停止
+    map.addListener("dragstart", () => {
+        isFollowing = false;
+        console.log("地図ドラッグ検知 → 追従停止");
+    });
+
+    // 現在地追跡開始
     if (!navigator.geolocation) {
         alert("このブラウザは位置情報を取得できません。");
         return;
@@ -38,11 +41,8 @@ async function initMap() {
             const accuracy = pos.coords.accuracy;
             userPosition = { lat, lng };
 
-            // 初回のみ地図を中心へ移動
             if (!userMarker) {
-                map.setCenter(userPosition);
-                map.setZoom(16);
-
+                // 初回：マーカーと円を作成
                 userMarker = new google.maps.Marker({
                     position: userPosition,
                     map,
@@ -68,15 +68,23 @@ async function initMap() {
                     strokeWeight: 1,
                 });
 
-                // --- shelters の初期化 ---
+                map.setCenter(userPosition);
+                map.setZoom(16);
+
+                // 避難所カードの初期化
                 if (typeof initShelterCards === "function") {
                     await initShelterCards(map, lat, lng, showRouteToShelter);
                 }
             } else {
-                // すでにマーカーがある場合は位置を更新
+                // 位置を更新
                 userMarker.setPosition(userPosition);
                 userCircle.setCenter(userPosition);
                 userCircle.setRadius(accuracy / 16);
+            }
+
+            // 追従ONのときは中心を更新
+            if (isFollowing) {
+                map.panTo(userPosition);
             }
         },
         (err) => {
@@ -84,7 +92,7 @@ async function initMap() {
             alert("現在地の取得に失敗しました: " + err.message);
         },
         {
-            enableHighAccuracy: true, // 高精度
+            enableHighAccuracy: true,
             timeout: 10000,
             maximumAge: 0,
         }
@@ -113,10 +121,19 @@ function showRouteToShelter(shelter) {
     });
 }
 
-// 追跡停止（必要なら）
+// 追跡停止
 function stopTracking() {
     if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
         console.log("位置追跡を停止しました");
+    }
+}
+
+// 手動で追従を再開
+function recenterMap() {
+    if (userPosition && map) {
+        map.panTo(userPosition);
+        isFollowing = true;
+        console.log("現在地追従を再開");
     }
 }
