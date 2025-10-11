@@ -36,8 +36,10 @@ function createShelterCards(shelters, onClickCallback) {
         card.className = 'shelter-card';
         card.innerHTML = `
             <strong>${shelter.name}</strong><br>
+            <small>
             ${shelter.address}<br>
-            <small>直線距離: ${shelter.distance.toFixed(2)} km</small>
+            直線距離: ${shelter.distance.toFixed(2)} km<br>
+            </small>
         `;
 
         card.onclick = () => {
@@ -59,7 +61,7 @@ function addShelterMarkers(map, shelters, onClickCallback) {
                 url: 'img/pin1.png',       // アイコン画像のURL
                 scaledSize: new google.maps.Size(80, 80), // 幅40px × 高さ40pxにリサイズ
                 origin: new google.maps.Point(0, 0),      // 画像の起点
-                anchor: new google.maps.Point(20, 40)     // アイコンの先端位置をマーカー位置に合わせる
+                anchor: new google.maps.Point(40, 80)     // アイコンの先端位置をマーカー位置に合わせる
             }
         });
 
@@ -96,9 +98,12 @@ function expandCard(card, shelter) {
     card.classList.add('expanded');
     card.innerHTML = `
         <strong>${shelter.name}</strong><br>
+        <small>
         ${shelter.address}<br>
-        <small>直線距離: ${shelter.distance.toFixed(2)} km</small><br>
-        <p>詳細情報（ここに必要な情報を追加）</p>
+        直線距離: ${shelter.distance.toFixed(2)} km<br>
+        標高: <br>
+        対象となる災害種別: <br>
+        </small>
     `;
 }
 
@@ -107,8 +112,10 @@ function collapseCard(card, shelter) {
     card.classList.remove('expanded');
     card.innerHTML = `
         <strong>${shelter.name}</strong><br>
+        <small>
         ${shelter.address}<br>
-        <small>直線距離: ${shelter.distance.toFixed(2)} km</small>
+        直線距離: ${shelter.distance.toFixed(2)} km<br>
+        </small>
     `;
 }
 
