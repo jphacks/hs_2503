@@ -25,6 +25,26 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+/* === 現在地に戻るボタン === */
+#recenter-btn {
+  margin-left: auto;            /* ✅ 右端へ移動 */
+  margin-right: 20px;
+  background: white;
+  color: #07ae6e;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#recenter-btn:hover {
+  background: #eafff4;
+}
+
+
 /* コンテナ */
 #container {
     display: flex;
