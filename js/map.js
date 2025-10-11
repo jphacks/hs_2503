@@ -1,3 +1,6 @@
+// ============================
+// 🌏 グローバル変数
+// ============================
 let map;
 let directionsService;
 let directionsRenderer;
@@ -6,10 +9,21 @@ let userCircle = null;
 let userPosition = null;
 let watchId = null;
 
-async function initMap() {
-    console.log("initMap() 実行");
+// ✅ 外部（HTML側）から呼べるように公開
+window.initMap = initMap;
+window.stopTracking = stopTracking;
 
-    const defaultPos = { lat: 34.3853, lng: 132.4553 }; // 広島市
+// ============================
+// 🗺️ 初期化
+// ============================
+async function initMap() {
+    console.log("🗺️ initMap() 実行");
+
+    // ✅ 最新の位置情報があれば利用
+    const latest = window.getLatestPosition ? window.getLatestPosition() : null;
+    const defaultPos = latest || { lat: 34.3853, lng: 132.4553 }; // 広島市
+
+    // 新しい地図を生成
     map = new google.maps.Map(document.getElementById("map"), {
         center: defaultPos,
         zoom: 15,
@@ -21,12 +35,68 @@ async function initMap() {
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
+    // 💬 言語切替直後にも現在地と仮の円を描画
+    if (latest) {
+        console.log("🟦 最新位置から仮マーカーと円を描画");
+        userPosition = latest;
+
+        // マーカー再生成
+        userMarker = new google.maps.Marker({
+            position: userPosition,
+            map,
+            title: "あなたの現在地",
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#4285F4",
+                fillOpacity: 1,
+                strokeColor: "white",
+                strokeWeight: 2,
+            },
+        });
+
+        // 💬 既に userCircle があっても map を再設定して描画復活
+        userCircle = new google.maps.Circle({
+            map,
+            center: userPosition,
+            radius: 50, // 仮の半径（accuracy未取得時）
+            fillColor: "#4285F4",
+            fillOpacity: 0.2,
+            strokeColor: "#4285F4",
+            strokeOpacity: 0.5,
+            strokeWeight: 1,
+        });
+    }
+
+    // ✅ 現在地追跡を開始
+    startTracking();
+
+    // ✅ DBに保存された報告データをロードして地図にマーカー表示
+    loadReports();
+
+    // ✅ 地図クリックで報告ダイアログを開く
+    map.addListener("click", (e) => {
+        openReportDialog(e.latLng);
+    });
+}
+
+// ============================
+// 📡 現在地追跡（watchPosition）
+// ============================
+function startTracking() {
+    console.log("📍 startTracking() 実行");
+
     if (!navigator.geolocation) {
         alert("このブラウザは位置情報を取得できません。");
         return;
     }
 
-    // 現在地追跡
+    // 🔴 古いwatchが残っていれば一度止める
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+    }
+
     watchId = navigator.geolocation.watchPosition(
         async (pos) => {
             const lat = pos.coords.latitude;
@@ -34,7 +104,12 @@ async function initMap() {
             const accuracy = pos.coords.accuracy;
             userPosition = { lat, lng };
 
-            // === 初回のみ ===
+            // ✅ 最新位置を保存（HTML側でも参照可能）
+            if (window.setLatestPosition) {
+                window.setLatestPosition(userPosition);
+            }
+
+            // マーカーがなければ作成
             if (!userMarker) {
                 userMarker = new google.maps.Marker({
                     position: userPosition,
@@ -49,7 +124,12 @@ async function initMap() {
                         strokeWeight: 2,
                     },
                 });
+            } else {
+                userMarker.setPosition(userPosition);
+            }
 
+            // 💬 円がなければ新規作成、あれば再設定
+            if (!userCircle) {
                 userCircle = new google.maps.Circle({
                     map,
                     center: userPosition,
@@ -60,19 +140,21 @@ async function initMap() {
                     strokeOpacity: 0.5,
                     strokeWeight: 1,
                 });
-
-                // ✅ 初回のみ中心を設定
-                map.setCenter(userPosition);
-                map.setZoom(16);
-
-                if (typeof initShelterCards === "function") {
-                    await initShelterCards(map, lat, lng, showRouteToShelter);
-                }
             } else {
-                // ✅ マーカーと円だけ動かす（地図は動かさない）
-                userMarker.setPosition(userPosition);
+                // 言語切替後、mapが変わるため map を再指定して強制再描画
+                userCircle.setMap(map);
                 userCircle.setCenter(userPosition);
                 userCircle.setRadius(accuracy / 16);
+            }
+
+            // ✅ 初回のみ中心移動
+            if (!map.getBounds() || !map.getBounds().contains(userPosition)) {
+                map.setCenter(userPosition);
+                map.setZoom(16);
+            }
+
+            if (typeof initShelterCards === "function") {
+                await initShelterCards(map, lat, lng, showRouteToShelter);
             }
         },
         (err) => {
@@ -85,19 +167,22 @@ async function initMap() {
             maximumAge: 0,
         }
     );
-
-
-    // ✅ DBに保存された報告データをロードして地図にマーカー表示
-    loadReports();
-
-    // 地図クリックで報告ダイアログを開く
-    map.addListener("click", (e) => {
-    openReportDialog(e.latLng);
-    });
-
 }
 
+// ============================
+// 🛑 追跡停止
+// ============================
+function stopTracking() {
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        console.log("🛑 位置追跡を停止しました");
+        watchId = null;
+    }
+}
+
+// ============================
 // 🚶 経路表示
+// ============================
 function showRouteToShelter(shelter) {
     if (!userPosition) {
         alert("現在地がまだ取得されていません。");
@@ -119,32 +204,21 @@ function showRouteToShelter(shelter) {
     });
 }
 
+// ============================
 // 📍 現在地に戻るボタン
+// ============================
 function recenterMap() {
     if (userPosition && map) {
-        map.panTo(userPosition); // ← ボタン押下時のみ中心に戻す
+        map.panTo(userPosition);
         map.setZoom(16);
     } else {
         alert("現在地がまだ取得されていません。");
     }
 }
 
-// 🔴 追跡停止（任意）
-function stopTracking() {
-    if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-        console.log("位置追跡を停止しました");
-    }
-}
-
-// 手動で追従を再開
-function recenterMap() {
-    if (userPosition && map) {
-        map.panTo(userPosition);
-        isFollowing = true;
-        console.log("現在地追従を再開");
-    }
-}
+// ============================
+// 💬 報告関連関数（変更なし）
+// ============================
 function addReport(lat, lng) {
     const status = prompt("この道は通れますか？（通れる or 通れない）");
     const comment = prompt("コメントを入力してください（任意）");
@@ -160,85 +234,59 @@ function addReport(lat, lng) {
         body: JSON.stringify(payload),
     })
         .then(async (res) => {
-        const text = await res.text();
-        console.log("サーバー応答:", text);
-        return JSON.parse(text);
+            const text = await res.text();
+            console.log("サーバー応答:", text);
+            return JSON.parse(text);
         })
         .then((data) => {
-        if (data.success) {
-            alert("報告を送信しました！");
-            // ✅ 送信直後にマーカー追加
-            addReportMarker(lat, lng, status, comment, new Date().toLocaleString());
-        } else {
-            alert("送信に失敗しました: " + (data.error || "原因不明"));
-        }
+            if (data.success) {
+                alert("報告を送信しました！");
+                addReportMarker(lat, lng, status, comment, new Date().toLocaleString());
+            } else {
+                alert("送信に失敗しました: " + (data.error || "原因不明"));
+            }
         })
         .catch((err) => {
-        console.error("送信エラー:", err);
-        alert("通信エラー: " + err.message);
+            console.error("送信エラー:", err);
+            alert("通信エラー: " + err.message);
         });
 }
 
-// ✅ DBから報告データを取得してマーカーを地図に表示する
+// ✅ DBから報告データを取得してマーカーを地図に表示
 function loadReports() {
     console.log("🟦 loadReports() 開始");
 
     fetch("https://hinavi.sakura.ne.jp/getReport.php")
-        .then(res => {
-        console.log("🟨 レスポンス受信:", res.status);
-        return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-        console.log("🟩 サーバーからのデータ:", data);
+            if (data.success) {
+                data.reports.forEach(rep => {
+                    const iconUrl = rep.status === "通れる" ? "img/ok.svg" : "img/ng.svg";
+                    const marker = new google.maps.Marker({
+                        position: { lat: parseFloat(rep.lat), lng: parseFloat(rep.lng) },
+                        map: map,
+                        icon: {
+                            url: iconUrl,
+                            scaledSize: new google.maps.Size(24, 24),
+                            anchor: new google.maps.Point(12, 24)
+                        }
+                    });
 
-        if (data.success) {
-            if (data.reports.length === 0) {
-            console.warn("⚠️ 報告データが空です");
+                    const info = new google.maps.InfoWindow({
+                        content: `<b>${rep.status}</b><br>${rep.comment || ""}<br><small>${rep.created_at}</small>`,
+                    });
+
+                    marker.addListener("click", () => info.open(map, marker));
+                });
             }
-
-            data.reports.forEach(rep => {
-            console.log(`📍 マーカー作成: (${rep.lat}, ${rep.lng}) 状態=${rep.status}`);
-
-            const iconUrl = rep.status === "通れる" ? "img/ok.svg" : "img/ng.svg";
-
-            const marker = new google.maps.Marker({
-            position: { lat: parseFloat(rep.lat), lng: parseFloat(rep.lng) },
-            map: map,
-            icon: {
-                url: iconUrl,
-                scaledSize: new google.maps.Size(24, 24), // 幅24px × 高さ24pxに縮小
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(12, 24)     // ピン先端を座標に合わせる
-            }
-            });
-
-
-            const info = new google.maps.InfoWindow({
-                content: `<b>${rep.status}</b><br>${rep.comment || ""}<br><small>${rep.created_at}</small>`,
-            });
-
-            marker.addListener("click", () => info.open(map, marker));
-            });
-        } else {
-            console.error("❌ データ取得に失敗:", data.error);
-        }
         })
-        .catch(err => {
-        console.error("🚨 通信エラー:", err);
-        })
-        .finally(() => {
-        console.log("🟫 loadReports() 完了");
-        });
+        .catch(err => console.error("🚨 通信エラー:", err))
+        .finally(() => console.log("🟫 loadReports() 完了"));
 }
 
-
-
-// ============================
-// ✅ マーカー生成関数（共通）
-// ============================
+// ✅ 共通マーカー生成
 function addReportMarker(lat, lng, status, comment, created_at) {
-    const iconUrl =
-        status === "通れる"
+    const iconUrl = status === "通れる"
         ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
         : "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
 
@@ -254,5 +302,4 @@ function addReportMarker(lat, lng, status, comment, created_at) {
 
     marker.addListener("click", () => info.open(map, marker));
 }
-
 
