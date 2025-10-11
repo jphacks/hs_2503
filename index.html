@@ -8,35 +8,26 @@
   <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<!-- ヘッダー -->
-<div id="header">
-  <div>hinavi</div>
-  <button id="recenter-btn" onclick="recenterMap()"> 現在地に戻る</button>
-</div>
-<!-- メインコンテナ -->
-<div id="container">
-<div id="shelter-list"></div>
-<div id="shelter-detail" class="shelter-detail" style="display:none;">
-    <button id="close-detail">閉じる</button>
-    <div id="detail-content"></div>
-</div>
-<div id="map"></div>
-</div>
+  <!-- ヘッダー -->
+  <div id="header">
+    <img src="img/logo2.png" alt="hinavi_logo" id="logo">
+    <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
+  </div>
 
   <!-- 災害情報バー -->
   <div id="disaster-info">読み込み中...</div>
 
   <!-- メインコンテナ -->
-  <main id="container">
-    <aside id="shelter-list"></aside>
+  <div id="container">
+    <div id="shelter-list"></div>
 
-    <section id="shelter-detail" class="shelter-detail" style="display:none;">
+    <div id="shelter-detail" class="shelter-detail" style="display:none;">
       <button id="close-detail">閉じる</button>
       <div id="detail-content"></div>
-    </section>
+    </div>
 
     <div id="map"></div>
-  </main>
+  </div>
 
   <!-- フッター -->
   <footer id="footer">© hinavi 2025 all rights reserved.</footer>
