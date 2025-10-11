@@ -88,7 +88,6 @@ function addShelterMarkers(map, shelters, onNavigateCallback) {
             showShelterDetail(shelter);
         });
 
-        // マーカークリックで経路表示もしたい場合は下記を追加
         marker.addListener("dblclick", () => {
             onNavigateCallback(shelter);
         });
@@ -114,38 +113,25 @@ document.getElementById("close-detail").addEventListener("click", () => {
 });
 
 // --- メイン処理 ---
-async function initShelterCards(map, onNavigateCallback) {
+// 現在地 lat, lng は map.js 側で取得し渡す
+async function initShelterCards(map, userLat, userLng, onNavigateCallback) {
     try {
         const shelters = await loadSheltersFromCSV('csv/shelter_japan.csv');
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
+        // 各避難所との距離を計算
+        shelters.forEach(s => {
+            s.distance = calculateDistance(userLat, userLng, s.lat, s.lng);
+        });
 
-                    // 各避難所との距離を計算
-                    shelters.forEach(s => {
-                        s.distance = calculateDistance(userLat, userLng, s.lat, s.lng);
-                    });
+        // 近い順にソートして5件だけ取得
+        const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
 
-                    // 近い順にソートして5件だけ取得
-                    const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
+        // カード表示
+        createShelterCards(nearest, onNavigateCallback);
 
-                    // カード表示
-                    createShelterCards(nearest, onNavigateCallback);
+        // マーカー表示
+        addShelterMarkers(map, nearest, onNavigateCallback);
 
-                    // マーカー表示
-                    addShelterMarkers(map, nearest, onNavigateCallback);
-                },
-                error => {
-                    console.error("現在地が取得できませんでした:", error);
-                    alert("現在地が取得できません。ブラウザの位置情報設定を確認してください。");
-                }
-            );
-        } else {
-            alert("このブラウザでは位置情報が利用できません。");
-        }
     } catch (error) {
         console.error("避難所データの読み込みに失敗しました:", error);
     }
