@@ -17,6 +17,7 @@ async function initMap() {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: true,
+        gestureHandling: "greedy",
     });
 
     directionsService = new google.maps.DirectionsService();
@@ -136,4 +137,13 @@ function recenterMap() {
         isFollowing = true;
         console.log("現在地追従を再開");
     }
+}
+
+function recenterMap() {
+  if (userPosition && map) {
+    map.panTo(userPosition);
+    map.setZoom(16);
+  } else {
+    alert("現在地がまだ取得されていません。");
+  }
 }
