@@ -5,26 +5,28 @@ body {
     flex-direction: column;
     height: 100vh;
 }
-
+ 
 /* ヘッダー */
 #header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 8vh;
     background-color: #07ae6e;
-    color: white;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding-left: 20px;
-    font-size: 24px;
-    font-weight: bold;
+    padding-left: 20px;  /* ロゴと左端の間隔 */
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-
+ 
+/* ロゴ画像 */
+#logo {
+    height: 9vh;  /* ロゴの高さを調整 */
+    width: auto;   /* 高さに合わせて幅を自動調整 */
+}
+ 
 /* === 現在地に戻るボタン === */
 #recenter-btn {
   margin-left: auto;            /* ✅ 右端へ移動 */
@@ -39,19 +41,18 @@ body {
   cursor: pointer;
   transition: 0.3s;
 }
-
+ 
 #recenter-btn:hover {
   background: #eafff4;
 }
-
-
+ 
 /* コンテナ */
 #container {
     display: flex;
     flex: 1;
     padding-top: 60px;
 }
-
+ 
 /* 避難所カード */
 #shelter-list {
     width: 300px;
@@ -61,7 +62,7 @@ body {
     box-sizing: border-box;
     background-color: #f9f9f9;
 }
-
+ 
 .shelter-card {
     background: white;
     padding: 10px;
@@ -69,18 +70,28 @@ body {
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     cursor: pointer;
-    transition: transform 0.1s;
+    transition: all 0.3s ease;  /* 高さや背景色などの変化を滑らかに */
+    overflow: hidden;
 }
-
+ 
+/* クリックで開いた状態のカード */
+.shelter-card.expanded {
+    background-color: #ebffe7;
+    padding-bottom: 20px;  /* 詳細分の余白を追加 */
+}
+ 
+ 
 .shelter-card:hover {
     transform: scale(1.02);
 }
-
+ 
+ 
+ 
 /* マップ */
 #map {
     flex: 1;
 }
-
+ 
 /* フッター */
 #footer {
     height: 30px;
@@ -90,7 +101,7 @@ body {
     font-size: 14px;
     color: #555;
 }
-
+ 
 #disaster-info {
   position: fixed;      /* 固定表示 */
   top: 60px;            /* 上からの距離 */
@@ -111,51 +122,112 @@ body {
     #container {
         flex-direction: column;  /* 横並びから縦並びに変更 */
     }
-
+ 
     #shelter-list {
         width: 100%;            /* 横幅いっぱい */
         height: 30vh;           /* 高さを画面に対して調整 */
         border-right: none;
         border-bottom: 1px solid #ccc;
     }
-
+ 
     #map {
         height: 70vh;           /* 高さを画面の70%に */
         width: 100%;
     }
-
+ 
     .shelter-card {
         font-size: 14px;
         padding: 12px;
     }
-
+ 
     #header {
         font-size: 20px;
         padding-left: 10px;
     }
-
+ 
     #footer {
         font-size: 12px;
     }
 }
-.shelter-detail {
+ 
+/* 報告ダイアログ */
+#reportDialog {
+  display: none; /* 初期非表示 */
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-height: 50%;
-  background: #fff;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-  overflow-y: auto;
-  padding: 10px;
-  z-index: 1000;
+  bottom: 20px;
+  left: 20px;
+  width: 250px; /* 幅調整 */
+  background-color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  font-family: 'Arial', sans-serif;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
-#close-detail {
-  float: right;
-  background: #07ae6e;
-  color: white;
+
+/* 開いたときのアニメーション */
+#reportDialog.show {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ダイアログのタイトル */
+#reportDialog p {
+  margin: 0 0 8px 0;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ボタン共通 */
+#reportDialog button {
+  padding: 6px 10px;
+  margin-right: 5px;
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
+
+/* ✅ 通れるボタン */
+#reportDialog button:nth-of-type(1) {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+/* 🚫 通れないボタン */
+#reportDialog button:nth-of-type(2) {
+  background-color: #F44336;
+  color: #fff;
+}
+
+/* ボタンホバー時 */
+#reportDialog button:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* テキストエリア */
+#reportDialog textarea {
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 13px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* テキストエリアフォーカス */
+#reportDialog textarea:focus {
+  outline: none;
+  border-color: #4285F4;
+  box-shadow: 0 0 4px rgba(66, 133, 244, 0.5);
+}
+
+ 
