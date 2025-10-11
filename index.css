@@ -1,0 +1,72 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ヘッダー */
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #07ae6e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* コンテナ */
+#container {
+    display: flex;
+    flex: 1;
+    padding-top: 60px;
+}
+
+/* 避難所カード */
+#shelter-list {
+    width: 300px;
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+}
+
+.shelter-card {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.shelter-card:hover {
+    transform: scale(1.02);
+}
+
+/* マップ */
+#map {
+    flex: 1;
+}
+
+/* フッター */
+#footer {
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #f0f0f0;
+    font-size: 14px;
+    color: #555;
+}
