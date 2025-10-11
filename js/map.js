@@ -98,3 +98,23 @@ function initMap() {
   );
 }
 
+function showRouteToShelter(shelter) {
+  if (!userPosition) {
+    alert("現在地がまだ取得されていません。");
+    return;
+  }
+
+  const request = {
+    origin: userPosition,
+    destination: { lat: shelter.lat, lng: shelter.lng },
+    travelMode: google.maps.TravelMode.WALKING
+  };
+
+  directionsService.route(request, (result, status) => {
+    if (status === google.maps.DirectionsStatus.OK) {
+      directionsRenderer.setDirections(result);
+    } else {
+      alert("経路を取得できませんでした: " + status);
+    }
+  });
+}

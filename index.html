@@ -13,6 +13,10 @@
 <!-- メインコンテナ -->
 <div id="container">
 <div id="shelter-list"></div>
+<div id="shelter-detail" class="shelter-detail" style="display:none;">
+    <button id="close-detail">閉じる</button>
+    <div id="detail-content"></div>
+</div>
 <div id="map"></div>
 </div>
 
@@ -21,7 +25,7 @@
 
 <!-- APIキー -->
 <script>
-    const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
+    const GOOGLE_MAPS_API_KEY = "hogehoge";
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.defer = true;
