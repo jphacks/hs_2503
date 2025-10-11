@@ -18,6 +18,7 @@ async function initMap() {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: true,
+        gestureHandling: "greedy", 
     });
 
     // 経路描画用のサービス
