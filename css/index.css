@@ -71,6 +71,19 @@ body {
     color: #555;
 }
 
+#disaster-info {
+  position: fixed;      /* 固定表示 */
+  top: 60px;            /* 上からの距離 */
+  right: 0px;          /* 右からの距離 */
+  width: 300px;         /* 横幅調整 */
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  font-family: sans-serif;
+  z-index: 9999;        /* 他の要素より前面 */
+}
 /* -----------------------------
    モバイル対応
 ----------------------------- */
