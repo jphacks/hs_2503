@@ -1,4 +1,4 @@
-let watchId;
+//let watchId;
 let userMarker;
 
 function startWalkingNavigation(shelter) {
