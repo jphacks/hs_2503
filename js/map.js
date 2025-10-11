@@ -3,26 +3,28 @@ let directionsService;
 let directionsRenderer;
 let userMarker = null;
 let userCircle = null;
-let watchId = null;
 
-/* -----------------------------
-   ① 避難所マップ初期化
------------------------------ */
-function init_map() {
-  const center = { lat: 34.3853, lng: 132.4553 }; // 広島駅あたり
+function initMap() {
+  console.log("initMap() 実行");
+
+  // 仮の初期位置（広島市）
+  const defaultPos = { lat: 34.3853, lng: 132.4553 };
+
+  // 地図を初期化
   map = new google.maps.Map(document.getElementById("map"), {
-    center: center,
-    zoom: 16,
+    center: defaultPos,
+    zoom: 15,
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: true,
   });
 
+  // 経路描画用のサービス設定
   directionsService = new google.maps.DirectionsService();
-  directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+  directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
-  // 避難所マーカー配置
-  if (typeof shelters !== "undefined") {
+  // === 避難所マーカーの表示 ===
+  if (typeof shelters !== "undefined" && shelters.length > 0) {
     shelters.forEach((shelter) => {
       new google.maps.Marker({
         position: { lat: shelter.lat, lng: shelter.lng },
@@ -33,41 +35,38 @@ function init_map() {
     });
   }
 
-  // カード作成（別JS関数を呼ぶ想定）
+  // === カード作成関数（別JSで定義されている想定） ===
   if (typeof createShelterCards === "function") {
     createShelterCards(startWalkingNavigation);
   }
-}
 
-/* -----------------------------
-   ② 現在地リアルタイム追跡
------------------------------ */
-function initMap_current_location() {
+  // === 現在地を取得して地図の中心に設定 ===
   if (!navigator.geolocation) {
-    alert("このブラウザは位置情報取得に対応していません。");
+    alert("このブラウザは位置情報を取得できません。");
     return;
   }
 
-  // watchPositionでリアルタイム追跡
-  watchId = navigator.geolocation.watchPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      console.log("現在地取得成功:", pos.coords);
+
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const accuracy = pos.coords.accuracy;
       const currentPos = { lat, lng };
 
-      // 既存マーカー削除
-      if (userMarker) userMarker.setMap(null);
-      if (userCircle) userCircle.setMap(null);
+      // 現在地を中心に移動
+      map.setCenter(currentPos);
+      map.setZoom(16);
 
-      // 現在地マーカー（青点）
+      // 現在地マーカー（青い丸）
       userMarker = new google.maps.Marker({
         position: currentPos,
         map,
         title: "あなたの現在地",
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 8,
+          scale: 2,
           fillColor: "#4285F4",
           fillOpacity: 1,
           strokeColor: "white",
@@ -75,7 +74,7 @@ function initMap_current_location() {
         },
       });
 
-      // 精度範囲を示す円
+      // 精度円
       userCircle = new google.maps.Circle({
         map,
         center: currentPos,
@@ -86,47 +85,16 @@ function initMap_current_location() {
         strokeOpacity: 0.5,
         strokeWeight: 1,
       });
-
-      // 初回 or 大きく移動したら中心に移動
-      map.setCenter(currentPos);
     },
-    (error) => {
-      console.error("位置情報の取得に失敗:", error);
-      showError(error);
+    (err) => {
+      console.error("位置情報エラー:", err);
+      alert("現在地の取得に失敗しました: " + err.message);
     },
     {
       enableHighAccuracy: true,
-      maximumAge: 0,
       timeout: 10000,
+      maximumAge: 0,
     }
   );
 }
 
-/* -----------------------------
-   ③ 両方まとめて初期化（Google Mapsのcallbackで呼ばれる）
------------------------------ */
-function initMap_all() {
-  init_map(); // 避難所マップ
-  initMap_current_location(); // 現在地追跡
-}
-
-/* -----------------------------
-   ④ エラー処理
------------------------------ */
-function showError(error) {
-  let message;
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      message = "位置情報の取得が拒否されました。";
-      break;
-    case error.POSITION_UNAVAILABLE:
-      message = "位置情報を取得できませんでした。";
-      break;
-    case error.TIMEOUT:
-      message = "位置情報の取得がタイムアウトしました。";
-      break;
-    default:
-      message = "不明なエラーが発生しました。";
-  }
-  alert(message);
-}
