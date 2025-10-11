@@ -37,8 +37,8 @@ async function initMap() {
             const accuracy = pos.coords.accuracy;
             userPosition = { lat, lng };
 
-            map.setCenter(userPosition);
-            map.setZoom(16);
+            // map.setCenter(userPosition);
+            // map.setZoom(16);
 
             // 現在地マーカー
             userMarker = new google.maps.Marker({
