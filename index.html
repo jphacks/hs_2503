@@ -10,7 +10,7 @@
 <body>
   <!-- ヘッダー -->
   <div id="header">
-    <img src="img/logo2.png" alt="hinavi_logo" id="logo">
+    <img src="img/logo1.png" alt="hinavi_logo" id="logo">
     <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
   </div>
 
@@ -19,6 +19,14 @@
 
   <!-- メインコンテナ -->
   <div id="container">
+        <!-- ✅ 通行報告フォーム -->
+  <div id="reportDialog"
+      style="display:none; position:fixed; bottom:20px; left:20px; background:white; padding:10px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:9999;">
+    <p>この地点は？</p>
+    <button onclick="submitReport('pass')">✅ 通れる</button>
+    <button onclick="submitReport('blocked')">🚫 通れない</button><br>
+    <textarea id="comment" placeholder="補足コメント..." style="width:200px; height:50px; margin-top:5px;"></textarea>
+  </div>
     <!-- 避難所カードリスト -->
     <div id="shelter-list"></div>
 
@@ -44,5 +52,6 @@
   <script src="js/map.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/disaster-info.js"></script>
+  <script src="js/report.js"></script>
 </body>
 </html>
