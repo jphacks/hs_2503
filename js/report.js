@@ -14,16 +14,19 @@ function submitReport(status) {
   const readableStatus = status === "pass" ? "通れる" : "通れない";
 
   // --- 地図上にマーカーを追加 ---
-  const iconUrl =
-    status === "pass"
-      ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-      : "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+const iconUrl = status === "pass" ? "img/ok.svg" : "img/ng.svg";
 
-  const marker = new google.maps.Marker({
-    position: selectedLatLng,
-    map,
-    icon: iconUrl,
-  });
+const marker = new google.maps.Marker({
+  position: selectedLatLng,
+  map: map,
+  icon: {
+    url: iconUrl,
+    scaledSize: new google.maps.Size(24, 24),  // 幅24px × 高さ24px
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(12, 24)      // ピン先端を座標に合わせる
+  }
+});
+
 
   const info = new google.maps.InfoWindow({
     content: `<b>${readableStatus}</b><br>${comment}`,
