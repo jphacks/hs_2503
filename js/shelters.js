@@ -37,8 +37,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-// --- 避難所カード生成 ---
-function createShelterCards(shelters, onClickCallback) {
+// --- 避難所カード生成（詳細ボタン・経路ボタン付き） ---
+function createShelterCards(shelters, onNavigateCallback) {
     const listDiv = document.getElementById("shelter-list");
     listDiv.innerHTML = "";
 
@@ -49,17 +49,28 @@ function createShelterCards(shelters, onClickCallback) {
             <strong>${shelter.name}</strong><br>
             ${shelter.address}<br>
             <small>直線距離: ${shelter.distance.toFixed(2)} km</small><br>
+            <button class="detail-btn">詳細を見る</button>
+            <button class="navigate-btn">経路表示</button>
         `;
-        card.onclick = () => {
-            onClickCallback(shelter);
+
+        // 詳細ボタン
+        card.querySelector('.detail-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
             showShelterDetail(shelter);
-        };
+        });
+
+        // 経路ボタン
+        card.querySelector('.navigate-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            onNavigateCallback(shelter);
+        });
+
         listDiv.appendChild(card);
     });
 }
 
 // --- 避難所マーカー表示 ---
-function addShelterMarkers(map, shelters, onClickCallback) {
+function addShelterMarkers(map, shelters, onNavigateCallback) {
     shelters.forEach(shelter => {
         const marker = new google.maps.Marker({
             position: { lat: shelter.lat, lng: shelter.lng },
@@ -74,8 +85,11 @@ function addShelterMarkers(map, shelters, onClickCallback) {
 
         marker.addListener("click", () => {
             infoWindow.open(map, marker);
-            onClickCallback(shelter);
             showShelterDetail(shelter);
+        });
+
+        marker.addListener("dblclick", () => {
+            onNavigateCallback(shelter);
         });
     });
 }
@@ -88,7 +102,7 @@ function showShelterDetail(shelter) {
         <h3>${shelter.name}</h3>
         <p>${shelter.address}</p>
         <p>緯度: ${shelter.lat.toFixed(6)}, 経度: ${shelter.lng.toFixed(6)}</p>
-        <p>距離: ${shelter.distance.toFixed(2)} km</p>
+        <p>直線距離: ${shelter.distance.toFixed(2)} km</p>
     `;
     detailDiv.style.display = "block";
 }
@@ -99,39 +113,25 @@ document.getElementById("close-detail").addEventListener("click", () => {
 });
 
 // --- メイン処理 ---
-async function initShelterCards(map, onClickCallback) {
+// 現在地 lat, lng は map.js 側で取得し渡す
+async function initShelterCards(map, userLat, userLng, onNavigateCallback) {
     try {
         const shelters = await loadSheltersFromCSV('csv/shelter_japan.csv');
 
-        // 現在地取得
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
+        // 各避難所との距離を計算
+        shelters.forEach(s => {
+            s.distance = calculateDistance(userLat, userLng, s.lat, s.lng);
+        });
 
-                    // 各避難所との距離を計算
-                    shelters.forEach(s => {
-                        s.distance = calculateDistance(userLat, userLng, s.lat, s.lng);
-                    });
+        // 近い順にソートして5件だけ取得
+        const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
 
-                    // 近い順にソートして5件だけ取得
-                    const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
+        // カード表示
+        createShelterCards(nearest, onNavigateCallback);
 
-                    // カード表示
-                    createShelterCards(nearest, onClickCallback);
+        // マーカー表示
+        addShelterMarkers(map, nearest, onNavigateCallback);
 
-                    // ピン表示
-                    addShelterMarkers(map, nearest, onClickCallback);
-                },
-                error => {
-                    console.error("現在地が取得できませんでした:", error);
-                    alert("現在地が取得できません。ブラウザの位置情報設定を確認してください。");
-                }
-            );
-        } else {
-            alert("このブラウザでは位置情報が利用できません。");
-        }
     } catch (error) {
         console.error("避難所データの読み込みに失敗しました:", error);
     }
