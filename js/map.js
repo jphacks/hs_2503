@@ -3,7 +3,8 @@ let directionsService;
 let directionsRenderer;
 let userMarker = null;
 let userCircle = null;
-let userPosition = null; // ← 現在地を保持
+let userPosition = null;
+let watchId = null; // ← 位置追跡のIDを保持
 
 async function initMap() {
     console.log("initMap() 実行");
@@ -18,60 +19,64 @@ async function initMap() {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: true,
-        gestureHandling: "greedy", 
     });
 
-    // 経路描画用のサービス
+    // 経路描画用
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
-    // 現在地を取得
+    // 現在地を追跡
     if (!navigator.geolocation) {
         alert("このブラウザは位置情報を取得できません。");
         return;
     }
 
-    navigator.geolocation.getCurrentPosition(
+    watchId = navigator.geolocation.watchPosition(
         async (pos) => {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
             const accuracy = pos.coords.accuracy;
             userPosition = { lat, lng };
 
-            map.setCenter(userPosition);
-            map.setZoom(16);
+            // 初回のみ地図を中心へ移動
+            if (!userMarker) {
+                map.setCenter(userPosition);
+                map.setZoom(16);
 
-            // 現在地マーカー
-            userMarker = new google.maps.Marker({
-                position: userPosition,
-                map,
-                title: "あなたの現在地",
-                icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 8,
+                userMarker = new google.maps.Marker({
+                    position: userPosition,
+                    map,
+                    title: "あなたの現在地",
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8,
+                        fillColor: "#4285F4",
+                        fillOpacity: 1,
+                        strokeColor: "white",
+                        strokeWeight: 2,
+                    },
+                });
+
+                userCircle = new google.maps.Circle({
+                    map,
+                    center: userPosition,
+                    radius: accuracy / 16,
                     fillColor: "#4285F4",
-                    fillOpacity: 1,
-                    strokeColor: "white",
-                    strokeWeight: 2,
-                },
-            });
+                    fillOpacity: 0.2,
+                    strokeColor: "#4285F4",
+                    strokeOpacity: 0.5,
+                    strokeWeight: 1,
+                });
 
-            // 精度円
-            userCircle = new google.maps.Circle({
-                map,
-                center: userPosition,
-                radius: accuracy / 16,
-                fillColor: "#4285F4",
-                fillOpacity: 0.2,
-                strokeColor: "#4285F4",
-                strokeOpacity: 0.5,
-                strokeWeight: 1,
-            });
-
-            // --- shelters の読み込みとカード・マーカー表示 ---
-            // shelter.js の関数を呼ぶ
-            if (typeof initShelterCards === "function") {
-                await initShelterCards(map, lat, lng, showRouteToShelter);
+                // --- shelters の初期化 ---
+                if (typeof initShelterCards === "function") {
+                    await initShelterCards(map, lat, lng, showRouteToShelter);
+                }
+            } else {
+                // すでにマーカーがある場合は位置を更新
+                userMarker.setPosition(userPosition);
+                userCircle.setCenter(userPosition);
+                userCircle.setRadius(accuracy / 16);
             }
         },
         (err) => {
@@ -79,7 +84,7 @@ async function initMap() {
             alert("現在地の取得に失敗しました: " + err.message);
         },
         {
-            enableHighAccuracy: true,
+            enableHighAccuracy: true, // 高精度
             timeout: 10000,
             maximumAge: 0,
         }
@@ -106,6 +111,14 @@ function showRouteToShelter(shelter) {
             alert("経路を取得できませんでした: " + status);
         }
     });
+}
+
+// 追跡停止（必要なら）
+function stopTracking() {
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        console.log("位置追跡を停止しました");
+    }
 }
 
 function recenterMap() {
