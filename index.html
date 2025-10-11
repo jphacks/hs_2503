@@ -25,7 +25,7 @@
 
 <!-- APIキー -->
 <script>
-    const GOOGLE_MAPS_API_KEY = "hogehoge";
+    const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.defer = true;
@@ -38,5 +38,8 @@
 <script src="js/shelters.js"></script>
 <script src="js/map.js"></script>
 <script src="js/navigation.js"></script>
+
+<div id="disaster-info">読み込み中...</div>
+<script src="js/disaster-info.js"></script>
 </body>
 </html>
