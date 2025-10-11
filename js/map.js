@@ -66,7 +66,7 @@ function initMap() {
         title: "あなたの現在地",
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 4,
+          scale: 2,
           fillColor: "#4285F4",
           fillOpacity: 1,
           strokeColor: "white",
