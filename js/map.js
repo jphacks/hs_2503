@@ -5,7 +5,6 @@ let userMarker = null;
 let userCircle = null;
 let userPosition = null;
 let watchId = null;
-let isFollowing = true; // ← 現在地追従フラグ
 
 async function initMap() {
     console.log("initMap() 実行");
@@ -22,18 +21,12 @@ async function initMap() {
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
-    // 地図をドラッグしたら追従を一時停止
-    map.addListener("dragstart", () => {
-        isFollowing = false;
-        console.log("地図ドラッグ検知 → 追従停止");
-    });
-
-    // 現在地追跡開始
     if (!navigator.geolocation) {
         alert("このブラウザは位置情報を取得できません。");
         return;
     }
 
+    // 現在地追跡
     watchId = navigator.geolocation.watchPosition(
         async (pos) => {
             const lat = pos.coords.latitude;
@@ -41,8 +34,8 @@ async function initMap() {
             const accuracy = pos.coords.accuracy;
             userPosition = { lat, lng };
 
+            // === 初回のみ ===
             if (!userMarker) {
-                // 初回：マーカーと円を作成
                 userMarker = new google.maps.Marker({
                     position: userPosition,
                     map,
@@ -68,23 +61,18 @@ async function initMap() {
                     strokeWeight: 1,
                 });
 
+                // ✅ 初回のみ中心を設定
                 map.setCenter(userPosition);
                 map.setZoom(16);
 
-                // 避難所カードの初期化
                 if (typeof initShelterCards === "function") {
                     await initShelterCards(map, lat, lng, showRouteToShelter);
                 }
             } else {
-                // 位置を更新
+                // ✅ マーカーと円だけ動かす（地図は動かさない）
                 userMarker.setPosition(userPosition);
                 userCircle.setCenter(userPosition);
                 userCircle.setRadius(accuracy / 16);
-            }
-
-            // 追従ONのときは中心を更新
-            if (isFollowing) {
-                map.panTo(userPosition);
             }
         },
         (err) => {
@@ -109,7 +97,7 @@ async function initMap() {
 
 }
 
-// 経路表示
+// 🚶 経路表示
 function showRouteToShelter(shelter) {
     if (!userPosition) {
         alert("現在地がまだ取得されていません。");
@@ -131,7 +119,17 @@ function showRouteToShelter(shelter) {
     });
 }
 
-// 追跡停止
+// 📍 現在地に戻るボタン
+function recenterMap() {
+    if (userPosition && map) {
+        map.panTo(userPosition); // ← ボタン押下時のみ中心に戻す
+        map.setZoom(16);
+    } else {
+        alert("現在地がまだ取得されていません。");
+    }
+}
+
+// 🔴 追跡停止（任意）
 function stopTracking() {
     if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
