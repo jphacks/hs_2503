@@ -66,7 +66,7 @@ function initMap() {
         title: "あなたの現在地",
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 2,
+          scale: 8,
           fillColor: "#4285F4",
           fillOpacity: 1,
           strokeColor: "white",
@@ -78,7 +78,7 @@ function initMap() {
       userCircle = new google.maps.Circle({
         map,
         center: currentPos,
-        radius: accuracy,
+        radius: accuracy/16,
         fillColor: "#4285F4",
         fillOpacity: 0.2,
         strokeColor: "#4285F4",
