@@ -55,7 +55,12 @@ function addShelterMarkers(map, shelters, onClickCallback) {
             position: { lat: shelter.lat, lng: shelter.lng },
             map: map,
             title: shelter.name,
-            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            icon: {
+                url: 'img/pin1.png',       // アイコン画像のURL
+                scaledSize: new google.maps.Size(80, 80), // 幅40px × 高さ40pxにリサイズ
+                origin: new google.maps.Point(0, 0),      // 画像の起点
+                anchor: new google.maps.Point(20, 40)     // アイコンの先端位置をマーカー位置に合わせる
+            }
         });
 
         marker.addListener("click", () => {
