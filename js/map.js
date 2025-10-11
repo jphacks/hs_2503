@@ -37,8 +37,8 @@ async function initMap() {
             const accuracy = pos.coords.accuracy;
             userPosition = { lat, lng };
 
-            // map.setCenter(userPosition);
-            // map.setZoom(16);
+            map.setCenter(userPosition);
+            map.setZoom(16);
 
             // 現在地マーカー
             userMarker = new google.maps.Marker({
@@ -105,4 +105,13 @@ function showRouteToShelter(shelter) {
             alert("経路を取得できませんでした: " + status);
         }
     });
+}
+
+function recenterMap() {
+  if (userPosition && map) {
+    map.panTo(userPosition);
+    map.setZoom(16);
+  } else {
+    alert("現在地がまだ取得されていません。");
+  }
 }
