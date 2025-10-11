@@ -1,5 +1,5 @@
 # hinavi
-<img width="945" height="533" alt="image" src="https://github.com/user-attachments/assets/528e2ed6-c992-490d-8306-72803a8ae34d" 
+<img width="936" height="527" alt="Image" src="https://github.com/user-attachments/assets/a38331a1-38b0-403c-b9f1-a2b9d634306d" />
   
 ## 製品概要
 **地理情報弱者**でも災害・避難所情報を理解できて、迅速な避難を可能にする
