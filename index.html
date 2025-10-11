@@ -1,45 +1,57 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hinavi 災害情報マップ</title>
-    <link rel="icon" href="images/icon.png" type="image/png">
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hinavi 災害情報マップ</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<!-- ヘッダー -->
-<div id="header">hinavi</div>
-<!-- メインコンテナ -->
-<div id="container">
-<div id="shelter-list"></div>
-<div id="shelter-detail" class="shelter-detail" style="display:none;">
-    <button id="close-detail">閉じる</button>
-    <div id="detail-content"></div>
-</div>
-<div id="map"></div>
-</div>
+  <!-- ヘッダー -->
+  <div id="header">
+    <img src="img/logo1.png" alt="hinavi_logo" id="logo">
+    <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
+  </div>
 
-<!-- コピーライト -->
-<div id="footer">© hinavi 2025 all rights reserved.</div>
+  <!-- 災害情報バー -->
+  <div id="disaster-info">読み込み中...</div>
 
-<!-- APIキー -->
-<script>
+  <!-- メインコンテナ -->
+  <div id="container">
+        <!-- ✅ 通行報告フォーム -->
+  <div id="reportDialog"
+      style="display:none; position:fixed; bottom:20px; left:20px; background:white; padding:10px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:9999;">
+    <p>この地点は？</p>
+    <button onclick="submitReport('pass')">✅ 通れる</button>
+    <button onclick="submitReport('blocked')">🚫 通れない</button><br>
+    <textarea id="comment" placeholder="補足コメント..." style="width:200px; height:50px; margin-top:5px;"></textarea>
+  </div>
+    <!-- 避難所カードリスト -->
+    <div id="shelter-list"></div>
+
+    <!-- Google Map -->
+    <div id="map"></div>
+  </div>
+
+  <!-- フッター -->
+  <footer id="footer">© hinavi 2025 all rights reserved.</footer>
+
+  <!-- Google Maps API -->
+  <script>
     const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.defer = true;
     script.async = true;
     document.head.appendChild(script);
-</script>
+  </script>
 
-
-<!-- 各機能JS -->
-<script src="js/shelters.js"></script>
-<script src="js/map.js"></script>
-<script src="js/navigation.js"></script>
-
-<div id="disaster-info">読み込み中...</div>
-<script src="js/disaster-info.js"></script>
+  <!-- 機能スクリプト -->
+  <script src="js/shelters.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/disaster-info.js"></script>
+  <script src="js/report.js"></script>
 </body>
 </html>
