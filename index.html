@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hinavi 災害情報マップ</title>
-    <link rel="icon" href="images/icon.png" type="image/png">
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hinavi 災害情報マップ</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 <!-- ヘッダー -->
@@ -23,23 +23,38 @@
 <div id="map"></div>
 </div>
 
-<!-- コピーライト -->
-<div id="footer">© hinavi 2025 all rights reserved.</div>
+  <!-- 災害情報バー -->
+  <div id="disaster-info">読み込み中...</div>
 
-<!-- APIキー -->
-<script>
+  <!-- メインコンテナ -->
+  <main id="container">
+    <aside id="shelter-list"></aside>
+
+    <section id="shelter-detail" class="shelter-detail" style="display:none;">
+      <button id="close-detail">閉じる</button>
+      <div id="detail-content"></div>
+    </section>
+
+    <div id="map"></div>
+  </main>
+
+  <!-- フッター -->
+  <footer id="footer">© hinavi 2025 all rights reserved.</footer>
+
+  <!-- Google Maps API -->
+  <script>
     const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.defer = true;
     script.async = true;
     document.head.appendChild(script);
-</script>
+  </script>
 
-
-<!-- 各機能JS -->
-<script src="js/shelters.js"></script>
-<script src="js/map.js"></script>
-<script src="js/navigation.js"></script>
+  <!-- 機能スクリプト -->
+  <script src="js/shelters.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/disaster-info.js"></script>
 </body>
 </html>
