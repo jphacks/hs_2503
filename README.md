@@ -1,5 +1,6 @@
 # hinavi
-
+<img width="945" height="533" alt="image" src="https://github.com/user-attachments/assets/528e2ed6-c992-490d-8306-72803a8ae34d" 
+  
 ## 製品概要
 **地理情報弱者**でも災害・避難所情報を理解できて、迅速な避難を可能にする
   - 地理情報弱者: 紙地図や案内図を理解できず、アプリがないと目的地にたどり着けない人
