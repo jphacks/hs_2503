@@ -1,11 +1,12 @@
 # サンプル（プロダクト名）
 
-[![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2025/05/JPHACKS2025_ogp.jpg)](https://www.youtube.com/watch?v=lA9EluZugD8)
-
 ## 製品概要
-テスト1
+地理情報弱者でも災害・避難所情報を理解できて、迅速な避難を可能にする
 ### 背景(製品開発のきっかけ、課題等）
+
+
 ### 製品説明（具体的な製品の説明）
+
 ### 特長
 #### 1. 特長1
 #### 2. 特長2
