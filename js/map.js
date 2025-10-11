@@ -201,16 +201,19 @@ function loadReports() {
             data.reports.forEach(rep => {
             console.log(`📍 マーカー作成: (${rep.lat}, ${rep.lng}) 状態=${rep.status}`);
 
-            const iconUrl =
-                rep.status === "通れる"
-                ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                : "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+            const iconUrl = rep.status === "通れる" ? "img/ok.svg" : "img/ng.svg";
 
             const marker = new google.maps.Marker({
-                position: { lat: parseFloat(rep.lat), lng: parseFloat(rep.lng) },
-                map,
-                icon: iconUrl,
+            position: { lat: parseFloat(rep.lat), lng: parseFloat(rep.lng) },
+            map: map,
+            icon: {
+                url: iconUrl,
+                scaledSize: new google.maps.Size(24, 24), // 幅24px × 高さ24pxに縮小
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(12, 24)     // ピン先端を座標に合わせる
+            }
             });
+
 
             const info = new google.maps.InfoWindow({
                 content: `<b>${rep.status}</b><br>${rep.comment || ""}<br><small>${rep.created_at}</small>`,
