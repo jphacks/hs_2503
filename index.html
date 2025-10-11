@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hinavi 災害情報マップ</title>
+    <link rel="icon" href="images/icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- ヘッダー -->
+<div id="header">hinavi</div>
+<!-- メインコンテナ -->
+<div id="container">
+<div id="shelter-list"></div>
+<div id="map"></div>
+</div>
+
+<!-- コピーライト -->
+<div id="footer">© hinavi 2025 all rights reserved.</div>
+
+<!-- APIキー -->
+<script>
+    const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.defer = true;
+    script.async = true;
+    document.head.appendChild(script);
+</script>
+
+
+<!-- 各機能JS -->
+<script src="js/shelters.js"></script>
+<script src="js/map.js"></script>
+<script src="js/navigation.js"></script>
+</body>
+</html>
