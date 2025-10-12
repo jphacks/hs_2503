@@ -73,3 +73,34 @@ https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=shari
 - 地図上にコメントを追加する機能 -> https://github.com/jphacks/hs_2503/blob/main/js/report.js
 - DB上に情報が残り，随時地図上に更新されていく -> https://github.com/jphacks/hs_2503/blob/main/js/map.js#L296-L346
 
+
+## ディレクトリ構造
+main/
+├── index.html              # メインページ（地図表示・UI全体）
+├── getReport.php           # DBから報告データを取得して返すAPI
+├── sendReport.php          # 報告内容をDBへ保存するAPI
+├── likes.php               # 「いいね」機能用のAPI（今後実装予定の機能）
+│
+├── css/                    # スタイル関連
+│   └── style.css           # 全体のデザイン・レスポンシブ対応
+│
+├── csv/                    # CSVデータ置き場（避難所情報など）
+│   └── shelters.csv
+│
+├── img/                    # アイコンや画像素材
+│   ├── ok.svg              # 通れるマーカー
+│   ├── ng.svg              # 通れないマーカー
+│   │ ・・・
+│   ├── step.svg            # 段差マーカー
+│   └── comment.svg         # コメントマーカー
+│
+├── js/                     # JavaScript関連
+│   ├── disaster-info.js    # 災害情報取得
+│   ├── lang.js             # 多言語対応
+│   ├── map.js              # Google Maps制御・現在地追跡・投稿機能
+│   ├── navigation.js       # 経路案内
+│   ├── report.js           # コメント共有機能
+│   └── shelters.js         # 避難所情報
+│
+├── LICENSE                 # ライセンス情報
+└── README.md               # プロジェクト概要・使い方・構成説明
