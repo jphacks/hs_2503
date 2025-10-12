@@ -209,30 +209,24 @@ window.loadDisasterInfo = async function() {
     <div id="disaster-body">
         <!-- 警報 -->
         <div class="disaster-item">
-        <h4>警報・注意報</h4>
+        <h4>${T.warnTitle}</h4>
         ${
             warningTexts.length > 0
             ? `<p>${warningTexts.join(", ")}</p>`
-            : `<p>現在、警報・注意報は発表されていません。</p>`
+            : `<p>${T.noWarn}</p>`
         }
         </div>
 
         <!-- 地震 -->
         <div class="disaster-item">
-        <h4>最新の地震情報</h4>
+        <h4>${localQuake ? localQuake.title : T.quakeTitle}</h4>
         ${
             localQuake
-            ? `<p>${localQuake.title}  震源：${localQuake.hypocenter}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
-            : `<p>${prefName}周辺では最近の地震はありません。</p>`
+            ? `<p>震源：${localQuake.hypocenter}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+            : `<p>${T.noQuake(prefName)}</p>`
         }
         </div>
 
-    </div>
-    <!-- 情報提供を下部に配置 -->
-    <div id="disaster-source">
-    情報提供：
-    <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
-    <a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
     </div>
     </div>
 
