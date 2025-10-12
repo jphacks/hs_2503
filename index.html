@@ -1,45 +1,169 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hinavi 災害情報マップ</title>
-    <link rel="icon" href="images/icon.png" type="image/png">
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hinavi 災害情報マップ</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<!-- ヘッダー -->
-<div id="header">hinavi</div>
-<!-- メインコンテナ -->
-<div id="container">
-<div id="shelter-list"></div>
-<div id="shelter-detail" class="shelter-detail" style="display:none;">
-    <button id="close-detail">閉じる</button>
-    <div id="detail-content"></div>
-</div>
-<div id="map"></div>
-</div>
+  <!-- ヘッダー -->
+  <div id="header">
+    <img src="img/logo1.png" alt="hinavi_logo" id="logo">
+    <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
-<!-- コピーライト -->
-<div id="footer">© hinavi 2025 all rights reserved.</div>
+    <!-- 🌐 言語設定セレクト -->
+    <select id="language-select" onchange="changeLanguage(this.value)">
+      <option value="ja">日本語</option>
+      <option value="en">English</option>
+      <option value="zh">中文</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
 
-<!-- APIキー -->
-<script>
+  <!-- 災害情報バー -->
+  <div id="disaster-info" data-i18n="loading">読み込み中...</div>
+
+  <!-- メインコンテナ -->
+  <div id="container">
+
+    <!-- ✅ 通行報告フォーム -->
+  <div id="reportDialog" class="report-dialog">
+    <div class="status-options">
+      <label class="status-btn pass">
+        <input type="radio" name="status" value="pass">
+        通れる
+      </label>
+      <label class="status-btn fail">
+        <input type="radio" name="status" value="fail">
+        通れない
+      </label>
+      <label class="status-btn step">
+        <input type="radio" name="status" value="step">
+        段差
+      </label>
+      <label class="status-btn comment">
+        <input type="radio" name="status" value="comment">
+        コメント
+      </label>
+    </div>
+
+    <textarea id="comment" placeholder="コメントを入力"></textarea>
+    <button onclick="submitReport()">送信</button>
+  </div>
+
+
+    <!-- 避難所カードリスト -->
+    <div id="shelter-list"></div>
+
+    <!-- Google Map -->
+    <div id="map"></div>
+  </div>
+
+  <!-- フッター -->
+  <footer id="footer" data-i18n="footer">© hinavi 2025 all rights reserved.</footer>
+
+  <!---
+    <script>
     const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    let currentLang = "ja";
+    let currentScript = null;
+
+    // ✅ Google Maps APIを動的にロード
+    function loadGoogleMaps(lang = "ja") {
+    // 旧追跡を停止（map.js 側の関数を呼ぶ）
+    if (window.stopTracking) {
+        console.log("🛑 stopTracking() 実行");
+        window.stopTracking();
+    }
+
+    // 古いスクリプトを削除
+    if (currentScript) {
+        currentScript.remove();
+        currentScript = null;
+    }
+
+    // mapコンテナを初期化
+    document.getElementById("map").innerHTML = "";
+
+    // 新しい言語でAPIを再ロード
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
     script.defer = true;
     script.async = true;
     document.head.appendChild(script);
-</script>
+    currentScript = script;
+    }
+
+    // ✅ 言語変更イベント
+    document.getElementById("language-select").addEventListener("change", (e) => {
+    currentLang = e.target.value;
+    console.log(`🌐 言語変更: ${currentLang}`);
+    loadGoogleMaps(currentLang);
+    });
+
+    // ✅ 初期読み込み
+    loadGoogleMaps(currentLang);
+
+    </script>
+    -->
 
 
-<!-- 各機能JS -->
-<script src="js/shelters.js"></script>
-<script src="js/map.js"></script>
-<script src="js/navigation.js"></script>
+    <script>
+        const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
+        // ✅ 言語はグローバルで管理
+        window.currentLang = "ja";
+        let currentScript = null;
 
-<div id="disaster-info">読み込み中...</div>
-<script src="js/disaster-info.js"></script>
+        // 最新位置を保持（グローバルにも反映）
+        let latestPosition = null;
+        window.setLatestPosition = (pos) => {
+            latestPosition = pos;
+            window.userLat = pos?.lat;
+            window.userLng = pos?.lng;
+            // 位置更新のたびに避難所を再読込（マップがあれば）
+            if (window.map && window.reloadShelters) {
+            reloadShelters(); // shelter.js 側の関数（グローバル公開しておく）
+            }
+        };
+        window.getLatestPosition = () => latestPosition;
+
+        function loadGoogleMaps(lang = "ja") {
+            console.log(`🌐 言語切り替え → ${lang}`);
+            // ✅ 言語を“唯一の真実”に反映
+            window.currentLang = lang;
+
+            if (window.stopTracking) window.stopTracking();
+
+            if (currentScript) { currentScript.remove(); currentScript = null; }
+            document.getElementById("map").innerHTML = "";
+
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
+            script.defer = true;
+            script.async = true;
+            document.head.appendChild(script);
+            currentScript = script;
+        }
+
+        // 言語セレクト
+        document.getElementById("language-select").addEventListener("change", (e) => {
+            loadGoogleMaps(e.target.value);  // ← ここで window.currentLang も更新済み
+        });
+
+        // 初回
+        loadGoogleMaps(window.currentLang);
+    </script>
+
+  <!-- 機能スクリプト -->
+  <script src="js/shelters.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/disaster-info.js"></script>
+  <script src="js/report.js"></script>
+
+  <!-- 🌐 言語切替スクリプト -->
+  <script src="js/lang.js"></script>
 </body>
 </html>
