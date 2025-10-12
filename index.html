@@ -32,7 +32,11 @@
   <div id="container">
     <!-- ✅ 通行報告フォーム -->
     <div id="reportDialog" class="report-dialog">
-      <p data-i18n="question">この地点は？</p>
+      <!-- タイトルと×ボタンを横並び -->
+      <div class="report-header">
+        <p data-i18n="question">この地点は？</p>
+        <button id="close-report" onclick="closeReportDialog()">×</button>
+      </div>
 
       <div class="status-options">
         <label class="status-btn pass">

@@ -64,15 +64,25 @@ async function loadSheltersFromCSV(csvPath) {
     return shelters;
 }
 
+// --- 多言語ラベルを返す ---
+function getLabels(lang = "ja") {
+    const labels = {
+        ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
+        zh: { distance: "直线距离", elevation: "海拔", hazard: "适用灾害类型" },
+        en: { distance: "Distance", elevation: "Elevation", hazard: "Applicable hazards" },
+        es: { distance: "Distancia en línea recta", elevation: "Altitud", hazard: "Tipos de desastres aplicables" },
+    };
+    return labels[lang] || labels.ja;
+}
 
 // --- カードHTMLを生成する共通関数 ---
-function getShelterCardHTML(shelter, expanded = false) {
+function getShelterCardHTML(shelter, expanded = false, labels = getLabels()) {
     let extraInfo = "";
 
     if (expanded) {
         extraInfo = `
-            標高: ${shelter.elevation !== undefined ? `${shelter.elevation} m` : "取得中..."}<br>
-            対象の災害種別: ${shelter.disasterType ?? "不明"}<br>
+            ${labels.elevation}: ${shelter.elevation !== undefined ? `${shelter.elevation} m` : "取得中..."}<br>
+            ${labels.hazard}: ${shelter.disasterType || "不明"}<br>
         `;
     }
 
@@ -80,7 +90,7 @@ function getShelterCardHTML(shelter, expanded = false) {
         <strong>${shelter.name}</strong><br>
         <small>
         ${shelter.address}<br>
-        直線距離: ${shelter.distance.toFixed(2)} km<br>
+        ${labels.distance}: ${shelter.distance.toFixed(2)} km<br>
         ${extraInfo}
         </small>
     `;
@@ -148,51 +158,36 @@ function toggleCard(card, shelter, onClickCallback) {
 }
 
 // --- 展開 ---
-function expandCard(card, shelter) {
+async function expandCard(card, shelter) {
     const lang = window.currentLang || "ja";
-
-    // 🌏 多言語ラベル辞書
-    const labels = {
-        ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
-        zh: { distance: "直线距离", elevation: "海拔", hazard: "适用灾害类型" },
-        en: { distance: "Distance", elevation: "Elevation", hazard: "Applicable hazards" },
-        es: { distance: "Distancia en línea recta", elevation: "Altitud", hazard: "Tipos de desastres aplicables" },
-    };
-    const L = labels[lang] || labels.ja;
+    const labels = getLabels(lang);
 
     card.classList.add('expanded');
-    card.innerHTML = `
-        <strong>${shelter.name}</strong><br>
-        <small>
-        ${shelter.address}<br>
-        ${L.distance}: ${shelter.distance.toFixed(2)} km<br>
-        ${L.elevation}: <br>
-        ${L.hazard}: <br>
-        </small>
-    `;
+
+    // まず取得中を表示
+    card.innerHTML = getShelterCardHTML(shelter, true, labels);
+
+    if (shelter.elevation === undefined) {
+        try {
+            const elevation = await getElevation(shelter.lat, shelter.lng);
+            shelter.elevation = elevation.toFixed(1);
+
+            if (expandedCard === card) {
+                card.innerHTML = getShelterCardHTML(shelter, true, labels);
+            }
+        } catch (err) {
+            console.error("標高取得失敗:", err);
+        }
+    }
 }
 
 // --- 収縮 ---
 function collapseCard(card, shelter) {
     const lang = window.currentLang || "ja";
-
-    // 🌏 多言語ラベル辞書（同じものを使用）
-    const labels = {
-        ja: { distance: "直線距離" },
-        zh: { distance: "直线距离" },
-        en: { distance: "Distance" },
-        es: { distance: "Distancia en línea recta" },
-    };
-    const L = labels[lang] || labels.ja;
+    const labels = getLabels(lang);
 
     card.classList.remove('expanded');
-    card.innerHTML = `
-        <strong>${shelter.name}</strong><br>
-        <small>
-        ${shelter.address}<br>
-        ${L.distance}: ${shelter.distance.toFixed(2)} km<br>
-        </small>
-    `;
+    card.innerHTML = getShelterCardHTML(shelter, false, labels);
 }
 
 
