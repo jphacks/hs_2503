@@ -1,15 +1,15 @@
 let selectedLatLng;
 let tempMarker = null; // 仮ピン
-
+ 
 // ✅ 報告フォームを開く（仮ピン設置）
 function openReportDialog(latLng) {
     selectedLatLng = latLng;
-
+ 
     // 既存の仮ピンがあれば削除
     if (tempMarker) {
         tempMarker.setMap(null);
     }
-
+ 
     // 仮ピンを作成（ドラッグ可能）
     tempMarker = new google.maps.Marker({
         position: selectedLatLng,
@@ -23,11 +23,11 @@ function openReportDialog(latLng) {
         draggable: true, // ドラッグ可能
         opacity: 0.7     // 仮ピン感
     });
-
+ 
     // フォーム表示
     document.getElementById("reportDialog").style.display = "block";
 }
-
+ 
 // ✅ フォーム送信
 function submitReport() {
     // ラジオボタン選択
@@ -36,10 +36,10 @@ function submitReport() {
         alert("コメントタイプを選んでください");
         return;
     }
-
+ 
     const statusValue = statusRadio.value; // pass / fail / step / comment
     const comment = document.getElementById("comment").value;
-
+ 
     // ステータスラベルとアイコン
     let readableStatus, iconUrl;
     switch (statusValue) {
@@ -60,11 +60,11 @@ function submitReport() {
             iconUrl = "img/comment.svg";
             break;
     }
-
+ 
     // 仮ピンの位置を取得
     const lat = tempMarker.getPosition().lat();
     const lng = tempMarker.getPosition().lng();
-
+ 
     // --- 地図上に確定マーカーを追加 ---
     const marker = new google.maps.Marker({
         position: { lat, lng },
@@ -76,18 +76,18 @@ function submitReport() {
             anchor: new google.maps.Point(12, 24)
         }
     });
-
+ 
     const info = new google.maps.InfoWindow({
         content: `<b>${readableStatus}</b><br>${comment}`,
     });
     marker.addListener("click", () => info.open(map, marker));
-
-
-
+ 
+ 
+ 
     // --- サーバー送信 ---
     const payload = { lat, lng, status: readableStatus, comment };
     console.log("送信データ:", payload);
-
+ 
     fetch("https://hinavi.sakura.ne.jp/sendReport.php", {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -105,26 +105,26 @@ function submitReport() {
     .then((data) => {
     if (data.success) {
         alert("報告を送信しました！");
-
+ 
         // コメント欄をクリア
         document.getElementById("comment").value = "";
-
+ 
         // ラジオボタンの選択を解除
         document.querySelectorAll('input[name="status"]').forEach(r => r.checked = false);
-
+ 
         // ボタンのハイライトも解除
         document.querySelectorAll('.status-btn').forEach(l => l.classList.remove('selected'));
     } else {
         alert("送信に失敗しました: " + (data.error || "原因不明"));
     }
 })
-
-
+ 
+ 
     .catch((err) => {
         console.error("送信エラー:", err);
         alert("通信エラー: " + err.message);
     });
-
+ 
     // フォーム非表示 & 仮ピン削除
     document.getElementById("reportDialog").style.display = "none";
     if (tempMarker) {
@@ -143,20 +143,22 @@ document.querySelectorAll('.status-btn').forEach(label => {
     label.querySelector('input').checked = true;
   });
 });
-
+ 
 // ×ボタンでフォームを閉じる処理
 document.getElementById("close-report").addEventListener("click", () => {
   // フォームを非表示
   document.getElementById("reportDialog").style.display = "none";
-
+ 
   // 仮ピンを削除
   if (tempMarker) {
     tempMarker.setMap(null);
     tempMarker = null;
   }
-
+ 
   // 入力内容をリセット
   document.getElementById("comment").value = "";
   document.querySelectorAll('input[name="status"]').forEach(r => r.checked = false);
   document.querySelectorAll('.status-btn').forEach(l => l.classList.remove('selected'));
 });
+ 
+ 
