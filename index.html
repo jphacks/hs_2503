@@ -47,52 +47,6 @@
   <!-- フッター -->
   <footer id="footer" data-i18n="footer">© hinavi 2025 all rights reserved.</footer>
 
-  <!---
-    <script>
-    const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-    let currentLang = "ja";
-    let currentScript = null;
-
-    // ✅ Google Maps APIを動的にロード
-    function loadGoogleMaps(lang = "ja") {
-    // 旧追跡を停止（map.js 側の関数を呼ぶ）
-    if (window.stopTracking) {
-        console.log("🛑 stopTracking() 実行");
-        window.stopTracking();
-    }
-
-    // 古いスクリプトを削除
-    if (currentScript) {
-        currentScript.remove();
-        currentScript = null;
-    }
-
-    // mapコンテナを初期化
-    document.getElementById("map").innerHTML = "";
-
-    // 新しい言語でAPIを再ロード
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
-    script.defer = true;
-    script.async = true;
-    document.head.appendChild(script);
-    currentScript = script;
-    }
-
-    // ✅ 言語変更イベント
-    document.getElementById("language-select").addEventListener("change", (e) => {
-    currentLang = e.target.value;
-    console.log(`🌐 言語変更: ${currentLang}`);
-    loadGoogleMaps(currentLang);
-    });
-
-    // ✅ 初期読み込み
-    loadGoogleMaps(currentLang);
-
-    </script>
-    -->
-
-
     <script>
         const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
         // ✅ 言語はグローバルで管理
