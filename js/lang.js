@@ -11,15 +11,15 @@ const translations = {
     "footer": "© hinavi 2025 all rights reserved.",
     "recenter": "現在地に戻る",
   },
-  en: {
-    "loading": "Loading...",
-    "question": "What's the condition here?",
-    "pass": "✅ Passable",
-    "blocked": "🚫 Not passable",
-    "comment": "Additional comments...",
-    "footer": "© hinavi 2025 all rights reserved.",
-    "recenter": "Recenter Map"
-  },
+  // en: {
+  //   "loading": "Loading...",
+  //   "question": "What's the condition here?",
+  //   "pass": "✅ Passable",
+  //   "blocked": "🚫 Not passable",
+  //   "comment": "Additional comments...",
+  //   "footer": "© hinavi 2025 all rights reserved.",
+  //   "recenter": "Recenter Map"
+  // },
   zh: {
     "loading": "加载中...",
     "question": "这个地点情况如何？",
@@ -29,15 +29,15 @@ const translations = {
     "footer": "© hinavi 2025 版权所有。",
     "recenter": "返回当前位置"
   },
-  es: {
-    "loading": "Cargando...",
-    "question": "¿Cuál es la condición aquí?",
-    "pass": "✅ Transitable",
-    "blocked": "🚫 No transitable",
-    "comment": "Comentarios adicionales...",
-    "footer": "© hinavi 2025 todos los derechos reservados.",
-    "recenter": "Volver a ubicación actual"
-  }
+  // es: {
+  //   "loading": "Cargando...",
+  //   "question": "¿Cuál es la condición aquí?",
+  //   "pass": "✅ Transitable",
+  //   "blocked": "🚫 No transitable",
+  //   "comment": "Comentarios adicionales...",
+  //   "footer": "© hinavi 2025 todos los derechos reservados.",
+  //   "recenter": "Volver a ubicación actual"
+  // }
 };
 
 

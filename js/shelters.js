@@ -148,22 +148,51 @@ function toggleCard(card, shelter, onClickCallback) {
 }
 
 // --- 展開 ---
-async function expandCard(card, shelter) {
-    card.classList.add('expanded');
-    card.innerHTML = getShelterCardHTML(shelter, true);
+function expandCard(card, shelter) {
+    const lang = window.currentLang || "ja";
 
-    // 🌍 標高を取得して表示を更新
-    if (shelter.elevation === undefined) {
-        const elevation = await getElevation(shelter.lat, shelter.lng);
-        shelter.elevation = elevation;
-        card.innerHTML = getShelterCardHTML(shelter, true);
-    }
+    // 🌏 多言語ラベル辞書
+    const labels = {
+        ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
+        zh: { distance: "直线距离", elevation: "海拔", hazard: "适用灾害类型" },
+        en: { distance: "Distance", elevation: "Elevation", hazard: "Applicable hazards" },
+        es: { distance: "Distancia en línea recta", elevation: "Altitud", hazard: "Tipos de desastres aplicables" },
+    };
+    const L = labels[lang] || labels.ja;
+
+    card.classList.add('expanded');
+    card.innerHTML = `
+        <strong>${shelter.name}</strong><br>
+        <small>
+        ${shelter.address}<br>
+        ${L.distance}: ${shelter.distance.toFixed(2)} km<br>
+        ${L.elevation}: <br>
+        ${L.hazard}: <br>
+        </small>
+    `;
 }
 
 // --- 収縮 ---
 function collapseCard(card, shelter) {
+    const lang = window.currentLang || "ja";
+
+    // 🌏 多言語ラベル辞書（同じものを使用）
+    const labels = {
+        ja: { distance: "直線距離" },
+        zh: { distance: "直线距离" },
+        en: { distance: "Distance" },
+        es: { distance: "Distancia en línea recta" },
+    };
+    const L = labels[lang] || labels.ja;
+
     card.classList.remove('expanded');
-    card.innerHTML = getShelterCardHTML(shelter, false);
+    card.innerHTML = `
+        <strong>${shelter.name}</strong><br>
+        <small>
+        ${shelter.address}<br>
+        ${L.distance}: ${shelter.distance.toFixed(2)} km<br>
+        </small>
+    `;
 }
 
 
@@ -188,9 +217,9 @@ async function initShelterCards(map, userLat, userLng, onClickCallback) {
         const lang = window.currentLang || "ja";
         const csvMap = {
             ja: "./csv/shelter_japan.csv",
-            en: "./csv/shelter_hiroshima_english.csv",
+            // en: "./csv/shelter_hiroshima_english.csv",
             zh: "./csv/shelter_hiroshima_chinese.csv",
-            es: "./csv/shelter_hiroshima_spanish.csv",
+            // es: "./csv/shelter_hiroshima_spanish.csv",
         };
 
         // 対応言語がなければ日本語をデフォルトに

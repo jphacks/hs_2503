@@ -11,17 +11,15 @@
   <!-- ヘッダー -->
   <div id="header">
     <img src="img/logo1.png" alt="hinavi_logo" id="logo">
-    <div id="header-right"></div>
-      <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
+    <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
-      <!-- 🌐 言語設定セレクト -->
-      <select id="language-select" onchange="changeLanguage(this.value)">
-        <option value="ja">日本語</option>
-        <option value="en">English</option>
-        <option value="zh">中文</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
+    <!-- 🌐 言語設定セレクト -->
+    <select id="language-select">
+      <option value="ja">日本語</option>
+      <!--option value="en">English</option-->
+      <option value="zh">中文</option>
+      <!--option value="es">Español</option-->
+    </select>
   </div>
 
   <!-- 災害情報バー -->
@@ -29,7 +27,6 @@
 
   <!-- メインコンテナ -->
   <div id="container">
-
     <!-- ✅ 通行報告フォーム -->
   <div id="reportDialog" class="report-dialog">
     <div class="status-options">
@@ -66,106 +63,55 @@
   <!-- フッター -->
   <footer id="footer" data-i18n="footer">© hinavi 2025 all rights reserved.</footer>
 
-  <!---
-    <script>
+  <!-- メインスクリプト -->
+  <script>
     const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-    let currentLang = "ja";
+    window.currentLang = "ja";
     let currentScript = null;
 
-    // ✅ Google Maps APIを動的にロード
+    // 最新位置管理
+    let latestPosition = null;
+    window.setLatestPosition = (pos) => {
+      latestPosition = pos;
+      window.userLat = pos?.lat;
+      window.userLng = pos?.lng;
+      if (window.map && window.reloadShelters) reloadShelters();
+    };
+    window.getLatestPosition = () => latestPosition;
+
     function loadGoogleMaps(lang = "ja") {
-    // 旧追跡を停止（map.js 側の関数を呼ぶ）
-    if (window.stopTracking) {
-        console.log("🛑 stopTracking() 実行");
-        window.stopTracking();
+      console.log(`🌐 言語切り替え → ${lang}`);
+      window.currentLang = lang;
+      if (window.stopTracking) window.stopTracking();
+      if (currentScript) { currentScript.remove(); currentScript = null; }
+      document.getElementById("map").innerHTML = "";
+
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
+      script.defer = true;
+      script.async = true;
+      document.head.appendChild(script);
+      currentScript = script;
     }
 
-    // 古いスクリプトを削除
-    if (currentScript) {
-        currentScript.remove();
-        currentScript = null;
-    }
-
-    // mapコンテナを初期化
-    document.getElementById("map").innerHTML = "";
-
-    // 新しい言語でAPIを再ロード
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
-    script.defer = true;
-    script.async = true;
-    document.head.appendChild(script);
-    currentScript = script;
-    }
-
-    // ✅ 言語変更イベント
+    // 言語切り替えイベント
     document.getElementById("language-select").addEventListener("change", (e) => {
-    currentLang = e.target.value;
-    console.log(`🌐 言語変更: ${currentLang}`);
-    loadGoogleMaps(currentLang);
+      const newLang = e.target.value;
+      loadGoogleMaps(newLang);
+      if (window.loadDisasterInfo) window.loadDisasterInfo(); // ✅ 災害情報も再読込
     });
 
-    // ✅ 初期読み込み
-    loadGoogleMaps(currentLang);
+    // 初回
+    loadGoogleMaps(window.currentLang);
+  </script>
 
-    </script>
-    -->
-
-
-    <script>
-        const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-        // ✅ 言語はグローバルで管理
-        window.currentLang = "ja";
-        let currentScript = null;
-
-        // 最新位置を保持（グローバルにも反映）
-        let latestPosition = null;
-        window.setLatestPosition = (pos) => {
-            latestPosition = pos;
-            window.userLat = pos?.lat;
-            window.userLng = pos?.lng;
-            // 位置更新のたびに避難所を再読込（マップがあれば）
-            if (window.map && window.reloadShelters) {
-            reloadShelters(); // shelter.js 側の関数（グローバル公開しておく）
-            }
-        };
-        window.getLatestPosition = () => latestPosition;
-
-        function loadGoogleMaps(lang = "ja") {
-            console.log(`🌐 言語切り替え → ${lang}`);
-            // ✅ 言語を“唯一の真実”に反映
-            window.currentLang = lang;
-
-            if (window.stopTracking) window.stopTracking();
-
-            if (currentScript) { currentScript.remove(); currentScript = null; }
-            document.getElementById("map").innerHTML = "";
-
-            const script = document.createElement("script");
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
-            script.defer = true;
-            script.async = true;
-            document.head.appendChild(script);
-            currentScript = script;
-        }
-
-        // 言語セレクト
-        document.getElementById("language-select").addEventListener("change", (e) => {
-            loadGoogleMaps(e.target.value);  // ← ここで window.currentLang も更新済み
-        });
-
-        // 初回
-        loadGoogleMaps(window.currentLang);
-    </script>
-
-  <!-- 機能スクリプト -->
+  <!-- 各種スクリプト -->
   <script src="js/shelters.js"></script>
   <script src="js/map.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/disaster-info.js"></script>
   <script src="js/report.js"></script>
-
-  <!-- 🌐 言語切替スクリプト -->
   <script src="js/lang.js"></script>
 </body>
 </html>
+
