@@ -274,8 +274,8 @@ body {
 /* 色分け */
 .status-btn.pass { background: #4CAF50; }
 .status-btn.fail { background: #F44336; }
-.status-btn.step { background: #FF9800; }
-.status-btn.comment { background: #2196F3; }
+.status-btn.step { background: rgb(159, 6, 236);}
+.status-btn.comment { background: #e5cb05; }
 
 /* コメント入力 */
 #comment {
@@ -304,6 +304,11 @@ body {
 
 .report-dialog button:hover {
   background: #512DA8;
+}
+
+.status-btn.selected {
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.6);
+  transform: translateY(-2px);
 }
 
 /* モバイル調整 */
