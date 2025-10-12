@@ -137,7 +137,20 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 // 現在地 lat, lng は map.js 側で取得し渡す
 async function initShelterCards(map, userLat, userLng, onClickCallback) {
     try {
-        const shelters = await loadSheltersFromCSV('csv/shelter_japan.csv');
+        // ✅ 言語ごとに読み込むCSVを切り替え
+        const lang = window.currentLang || "ja";
+        const csvMap = {
+            ja: "./csv/shelter_japan.csv",
+            en: "./csv/shelter_hiroshima_english.csv",
+            zh: "./csv/shelter_hiroshima_chinese.csv",
+            es: "./csv/shelter_hiroshima_spanish.csv",
+        };
+
+        // 対応言語がなければ日本語をデフォルトに
+        const csvPath = csvMap[lang] || csvMap["ja"];
+        console.log(`📄 避難所CSV読込: ${csvPath}`);
+
+        const shelters = await loadSheltersFromCSV(csvPath);
 
         // 各避難所との距離を計算
         shelters.forEach(s => {
