@@ -141,3 +141,20 @@ document.querySelectorAll('.status-btn').forEach(label => {
     label.querySelector('input').checked = true;
   });
 });
+
+// ×ボタンでフォームを閉じる処理
+document.getElementById("close-report").addEventListener("click", () => {
+  // フォームを非表示
+  document.getElementById("reportDialog").style.display = "none";
+
+  // 仮ピンを削除
+  if (tempMarker) {
+    tempMarker.setMap(null);
+    tempMarker = null;
+  }
+
+  // 入力内容をリセット
+  document.getElementById("comment").value = "";
+  document.querySelectorAll('input[name="status"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.status-btn').forEach(l => l.classList.remove('selected'));
+});
