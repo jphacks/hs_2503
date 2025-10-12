@@ -1,5 +1,24 @@
 let expandedCard = null;
 
+function getElevation(lat, lng) {
+  return new Promise((resolve, reject) => {
+    const elevator = new google.maps.ElevationService();
+    elevator.getElevationForLocations(
+      { locations: [{ lat: lat, lng: lng }] },
+      (results, status) => {
+        if (status === "OK" && results[0]) {
+          console.log("標高:", results[0].elevation);
+          resolve(results[0].elevation);
+        } else {
+          console.error("Elevation取得失敗:", status);
+          reject(status);
+        }
+      }
+    );
+  });
+}
+
+
 // --- CSVファイルを読み込む関数 ---
 async function loadSheltersFromCSV(csvPath) {
     const response = await fetch(csvPath);
@@ -13,17 +32,58 @@ async function loadSheltersFromCSV(csvPath) {
     const latIndex = headers.indexOf('緯度');
     const lngIndex = headers.indexOf('経度');
 
+    // 災害列インデックス
+    const disasterCols = [
+        '洪水',
+        '崖崩れ、土石流及び地滑り',
+        '高潮',
+        '地震',
+        '津波',
+        '大規模な火事',
+        '内水氾濫',
+        '火山現象'
+    ].map(col => headers.indexOf(col));
+
     const shelters = lines.slice(1).map(line => {
         const cols = line.split(',');
+
+        // 災害種別リスト作成
+        const disasters = disasterCols
+            .map((idx, i) => (cols[idx] === '1' ? headers[disasterCols[i]] : null))
+            .filter(d => d); // 1のものだけ残す
+
         return {
             name: cols[nameIndex]?.trim(),
             address: cols[addressIndex]?.trim(),
             lat: parseFloat(cols[latIndex]),
-            lng: parseFloat(cols[lngIndex])
+            lng: parseFloat(cols[lngIndex]),
+            disasterType: disasters.join(', ') // 文字列化してカードで表示
         };
     }).filter(s => s.name && !isNaN(s.lat) && !isNaN(s.lng));
 
     return shelters;
+}
+
+
+// --- カードHTMLを生成する共通関数 ---
+function getShelterCardHTML(shelter, expanded = false) {
+    let extraInfo = "";
+
+    if (expanded) {
+        extraInfo = `
+            標高: ${shelter.elevation !== undefined ? `${shelter.elevation} m` : "取得中..."}<br>
+            対象の災害種別: ${shelter.disasterType ?? "不明"}<br>
+        `;
+    }
+
+    return `
+        <strong>${shelter.name}</strong><br>
+        <small>
+        ${shelter.address}<br>
+        直線距離: ${shelter.distance.toFixed(2)} km<br>
+        ${extraInfo}
+        </small>
+    `;
 }
 
 // --- 避難所カード生成 ---
@@ -34,13 +94,7 @@ function createShelterCards(shelters, onClickCallback) {
     shelters.forEach(shelter => {
         const card = document.createElement('div');
         card.className = 'shelter-card';
-        card.innerHTML = `
-            <strong>${shelter.name}</strong><br>
-            <small>
-            ${shelter.address}<br>
-            直線距離: ${shelter.distance.toFixed(2)} km<br>
-            </small>
-        `;
+        card.innerHTML = getShelterCardHTML(shelter, false);
 
         card.onclick = () => {
             toggleCard(card, shelter, onClickCallback);
@@ -94,29 +148,22 @@ function toggleCard(card, shelter, onClickCallback) {
 }
 
 // --- 展開 ---
-function expandCard(card, shelter) {
+async function expandCard(card, shelter) {
     card.classList.add('expanded');
-    card.innerHTML = `
-        <strong>${shelter.name}</strong><br>
-        <small>
-        ${shelter.address}<br>
-        直線距離: ${shelter.distance.toFixed(2)} km<br>
-        標高: <br>
-        対象となる災害種別: <br>
-        </small>
-    `;
+    card.innerHTML = getShelterCardHTML(shelter, true);
+
+    // 🌍 標高を取得して表示を更新
+    if (shelter.elevation === undefined) {
+        const elevation = await getElevation(shelter.lat, shelter.lng);
+        shelter.elevation = elevation;
+        card.innerHTML = getShelterCardHTML(shelter, true);
+    }
 }
 
 // --- 収縮 ---
 function collapseCard(card, shelter) {
     card.classList.remove('expanded');
-    card.innerHTML = `
-        <strong>${shelter.name}</strong><br>
-        <small>
-        ${shelter.address}<br>
-        直線距離: ${shelter.distance.toFixed(2)} km<br>
-        </small>
-    `;
+    card.innerHTML = getShelterCardHTML(shelter, false);
 }
 
 
@@ -165,6 +212,14 @@ async function initShelterCards(map, userLat, userLng, onClickCallback) {
 
         // マーカー表示
         addShelterMarkers(map, nearest, onClickCallback);
+
+        // 🌍 裏で標高を事前取得
+        nearest.forEach(async s => {
+        if (s.elevation === undefined) {
+            const e = await getElevation(s.lat, s.lng);
+            s.elevation = e.toFixed(1);
+        }
+        });
 
     } catch (error) {
         console.error("避難所データの読み込みに失敗しました:", error);
