@@ -104,7 +104,7 @@ body {
   align-items: center;
   flex: 0 0 auto;   /* 固定幅で縮まらない */
   margin-left: auto; 
-  margin-right: auto; 
+  margin-right: 20px; 
 }
 
 
@@ -379,41 +379,121 @@ body {
   transform: translateY(-2px);
 }
 
-/* -----------------------------
-   モバイル対応
------------------------------ */
+/* ===============================
+   モバイル対応強化
+   =============================== */
 @media (max-width: 768px) {
-    #container {
-        flex-direction: column;  /* 横並びから縦並びに変更 */
-    }
 
-    #map {
-        order: 1;
-        height: 70vh;           /* 高さを画面の70%に */
-        width: 100%;
-    }
+  /* ヘッダー調整 */
+  #header {
+    height: 100px;
+    flex-wrap: nowrap;             /* 複数行に対応 */
+    justify-content: center;     /* 中央寄せ */
+    padding: 0 10px;
+  }
 
-    #shelter-list {
-        order: 2;
-        width: 100%;            /* 横幅いっぱい */
-        height: 30vh;           /* 高さを画面に対して調整 */
-        border-right: none;
-        border-bottom: 1px solid #ccc;
-    }
- 
-    .shelter-card {
-        font-size: 14px;
-        padding: 12px;
-    }
- 
-    #header {
-        font-size: 20px;
-        padding-left: 10px;
-    }
- 
-    #footer {
-        font-size: 12px;
-    }
+  #logo {
+    height: 40px;
+    margin-left: 0;
+  }
+
+  /* 災害情報を1行で収める or 縦並び */
+  #disaster-info {
+    flex-direction: column;      /* 横並びだと潰れるので縦に */
+    align-items: center;
+    gap: 4px;
+    margin-left: 0;
+  }
+
+  .disaster-item h4, .disaster-item p {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* ボタン群を1行で表示（折り返さない） */
+  #header-right {
+    display: flex;
+    flex-wrap: nowrap;         /* 折り返し禁止 */
+    justify-content: center;   /* 中央揃え（右寄せにしたいなら「flex-end」） */
+    align-items: center;       /* 縦方向中央 */
+    gap: 8px;                  /* ボタン間の隙間 */
+    margin: 4px 0;
+  }
+
+  #recenter-btn,
+  #language-select {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  /* フッター */
+  #footer {
+    flex-direction: column;   /* 左右並び→縦並び */
+    text-align: center;
+    height: auto;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+
+  /* 地図と避難所リスト */
+  #container {
+    flex-direction: column;
+  }
+
+  #map {
+    order: 1;
+    height: 65vh;
+    width: 100%;
+  }
+
+  #shelter-list {
+    order: 2;
+    width: 100%;
+    height: 25vh;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    padding: 8px;
+  }
+
+  .shelter-card {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  /* コメントダイアログ */
+  #reportDialog {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+    bottom: 10px;
+    font-size: 13px;
+  }
+
+  #reportDialog textarea {
+    height: 60px;
+  }
+}
+
+/* さらに狭い画面（iPhone SEなど） */
+@media (max-width: 400px) {
+  #header {
+    flex-direction: column;
+    height: auto;
+    padding: 6px 0;
+  }
+
+  #disaster-info {
+    font-size: 11px;
+  }
+
+  .status-btn {
+    flex: 1 1 100%;  /* 縦並び */
+  }
+
+  #footer {
+    font-size: 11px;
+  }
 }
 
 /* モバイル調整 */
