@@ -302,4 +302,3 @@ function addReportMarker(lat, lng, status, comment, created_at) {
 
     marker.addListener("click", () => info.open(map, marker));
 }
-
