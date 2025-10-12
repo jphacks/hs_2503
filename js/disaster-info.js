@@ -95,9 +95,50 @@ window.loadDisasterInfo = async function() {
       const geoData = await geoRes.json();
 
       const city = geoData.address.city || geoData.address.town || geoData.address.village || "不明な地域";
-      const cityCodeMap = { "広島市": "3410000", "呉市": "3420200", "東広島市": "3421200", "福山市": "3420700", "掛川市":"2221300" };
-      const matchedKey = Object.keys(cityCodeMap).find((key) => city.includes(key));
-      const CLASS_AREA_CODE = matchedKey ? cityCodeMap[matchedKey] : null;
+      // === 市町村名 → コード変換 ===
+        async function getCityCode(city) {
+            try {
+                // CSVファイルをUTF-8としてfetch
+                const res = await fetch("/csv/city_code.csv");
+                if (!res.ok) {
+                    throw new Error(`CSVファイルの取得に失敗 (${res.status})`);
+                }
+
+                // UTF-8でデコード
+                const buffer = await res.arrayBuffer();
+                const decoder = new TextDecoder("utf-8"); // 文字コード固定
+                const lines = decoder.decode(buffer);
+
+                // === CSVをオブジェクト化 ===
+                const linesArray = lines.split(/\r?\n/); // 改行で分割
+                const cityCodeMap = {};
+                for (const line of linesArray) {
+                    if (!line.trim()) continue;
+                    const parts = line.trim().split(/[\s,]+/);
+                    if (parts.length < 2) continue;
+
+                    let code = parts[0].replace(/^"|"$/g, "").trim();
+                    let name = parts[1].replace(/^"|"$/g, "").trim();
+                    if (name && code) {
+                        cityCodeMap[name] = code;
+                    }
+                }
+                // 部分一致で市町村名検索
+                const matchedKey = Object.keys(cityCodeMap).find(key => city.includes(key));
+                if (matchedKey) {
+                    console.log(`市町村名一致: ${matchedKey} → コード ${cityCodeMap[matchedKey]}`);
+                    return cityCodeMap[matchedKey];
+                } else {
+                    console.warn(`"${city}" に一致する市町村名が見つかりません`);
+                    return null;
+                }
+
+            } catch (err) {
+                console.error("CSVから市町村コードの取得に失敗:", err);
+                return null;
+            }
+        }
+        const CLASS_AREA_CODE = await getCityCode(city);
 
       if (!CLASS_AREA_CODE) {
         output.innerHTML = `<p>${city} の市町村コードが見つかりません。</p>`;
