@@ -55,7 +55,7 @@
 <img width="612" height="381" alt="画像" src="https://github.com/user-attachments/assets/e70ac11c-a672-4ed3-8b57-bb316e650ae9" />
 </p>
 
-#### 解決出来ること（新規性）
+#### 解決出来ること（新規性）/デモ
 - 1つのアプリで災害・避難所情報から経路案内まで避難に必要な機能が搭載されているため、[**地理情報弱者**](#geo-weaker)でも迷うことなく避難できる
 - 災害時に生じる**地理情報格差**をなくすことができる
 - 災害時の避難や避難所に関するコメントで情報共有ができる
@@ -84,8 +84,6 @@
 - 想定ユーザーを[**地理情報弱者**](#geo-weaker)に絞り、誰でも迷わず使えるUI/UX設計にしたこと
 - ローカル情報をユーザーが投稿・共有できる機能を、MAP上のSNSとして簡単に確認・共有できる形にしたこと
 
-## デモ動画
-https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=sharing
 
 ## 開発技術
 
