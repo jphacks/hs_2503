@@ -3,8 +3,8 @@
 <div align="center">
 🎉 <strong>JPHACKS 2025 Hack Day（@広島会場）</strong> 🎉<br>
 🥇 <strong>「Best Hackday Award」受賞！</strong> 🥇<br>
-🥇 <strong>「スポンサー賞」受賞！</strong> 🥇<br>
-🥇 <strong>「スポンサー賞」受賞！</strong> 🥇
+🥇 <strong>「川田テクノシステム株式会社・スポンサー賞」受賞！</strong> 🥇<br>
+🥇 <strong>「株式会社東海理化・スポンサー賞」受賞！</strong> 🥇
 </div>
 
   
