@@ -8,6 +8,8 @@ let userMarker = null;
 let userCircle = null;
 let userPosition = null;
 let watchId = null;
+let routeRenderers = [];
+let routeButtons = [];
 
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
@@ -193,16 +195,35 @@ function showRouteToShelter(shelter) {
         origin: userPosition,
         destination: { lat: shelter.lat, lng: shelter.lng },
         travelMode: google.maps.TravelMode.WALKING,
+        provideRouteAlternatives: true
     };
 
     directionsService.route(request, (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-            directionsRenderer.setDirections(result);
+            // 既存のレンダラーを消す
+            routeRenderers.forEach(r => r.setMap(null));
+            routeRenderers = [];
+
+            const colors = ["#1976D2", "#43A047", "#E53935"];
+
+            result.routes.slice(0, 3).forEach((route, index) => {
+                // ルートの座標だけ取り出す
+                const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+                const polyline = new google.maps.Polyline({
+                    path: path,
+                    strokeColor: colors[index],
+                    strokeOpacity: 0.8,
+                    strokeWeight: 5,
+                    map: map
+                });
+                routeRenderers.push(polyline);
+            });
         } else {
             alert("経路を取得できませんでした: " + status);
         }
     });
 }
+
 
 // ============================
 // 📍 現在地に戻るボタン
