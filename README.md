@@ -75,6 +75,7 @@ https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=shari
 
 
 ## ディレクトリ構造
+```
 main/
 ├── index.html              # メインページ（地図表示・UI全体）
 ├── getReport.php           # DBから報告データを取得して返すAPI
@@ -104,3 +105,4 @@ main/
 │
 ├── LICENSE                 # ライセンス情報
 └── README.md               # プロジェクト概要・使い方・構成説明
+```
