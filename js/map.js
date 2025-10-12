@@ -8,6 +8,8 @@ let userMarker = null;
 let userCircle = null;
 let userPosition = null;
 let watchId = null;
+let routeRenderers = [];
+let routeButtons = [];
 
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
@@ -193,16 +195,35 @@ function showRouteToShelter(shelter) {
         origin: userPosition,
         destination: { lat: shelter.lat, lng: shelter.lng },
         travelMode: google.maps.TravelMode.WALKING,
+        provideRouteAlternatives: true
     };
 
     directionsService.route(request, (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-            directionsRenderer.setDirections(result);
+            // 既存のレンダラーを消す
+            routeRenderers.forEach(r => r.setMap(null));
+            routeRenderers = [];
+
+            const colors = ["#1976D2", "#43A047", "#E53935"];
+
+            result.routes.slice(0, 3).forEach((route, index) => {
+                // ルートの座標だけ取り出す
+                const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
+                const polyline = new google.maps.Polyline({
+                    path: path,
+                    strokeColor: colors[index],
+                    strokeOpacity: 0.8,
+                    strokeWeight: 5,
+                    map: map
+                });
+                routeRenderers.push(polyline);
+            });
         } else {
             alert("経路を取得できませんでした: " + status);
         }
     });
 }
+
 
 // ============================
 // 📍 現在地に戻るボタン
@@ -216,43 +237,61 @@ function recenterMap() {
     }
 }
 
-// ============================
-// 💬 報告関連関数（変更なし）
-// ============================
+// ✅ 報告追加（UIでタイプ選択 + コメント入力）
 function addReport(lat, lng) {
-    const status = prompt("この道は通れますか？（通れる or 通れない）");
-    const comment = prompt("コメントを入力してください（任意）");
+    // ラジオボタンで選択（HTML側で用意）
+    const statusRadio = document.querySelector('input[name="status"]:checked');
+    if (!statusRadio) {
+        alert("コメントタイプを選んでください");
+        return;
+    }
+    const statusValue = statusRadio.value; // pass / fail / step / comment
+    const comment = document.getElementById("comment").value;
 
-    if (!status) return;
+    // ステータスラベルとアイコン
+    let readableStatus;
+    switch(statusValue) {
+        case "pass": readableStatus = "通れる"; break;
+        case "fail": readableStatus = "通れない"; break;
+        case "step": readableStatus = "段差"; break;
+        case "comment": readableStatus = "コメント"; break;
+        default: readableStatus = statusValue; break;
+    }
 
-    const payload = { lat, lng, status, comment };
+    const payload = {
+        lat,
+        lng,
+        status: readableStatus,
+        comment
+    };
+
     console.log("送信データ:", payload);
 
     fetch("https://hinavi.sakura.ne.jp/sendReport.php", {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
     })
-        .then(async (res) => {
-            const text = await res.text();
-            console.log("サーバー応答:", text);
-            return JSON.parse(text);
-        })
-        .then((data) => {
-            if (data.success) {
-                alert("報告を送信しました！");
-                addReportMarker(lat, lng, status, comment, new Date().toLocaleString());
-            } else {
-                alert("送信に失敗しました: " + (data.error || "原因不明"));
-            }
-        })
-        .catch((err) => {
-            console.error("送信エラー:", err);
-            alert("通信エラー: " + err.message);
-        });
+    .then(async res => {
+        const text = await res.text();
+        console.log("サーバー応答:", text);
+        return JSON.parse(text);
+    })
+    .then(data => {
+        if (data.success) {
+            alert("報告を送信しました！");
+            addReportMarker(lat, lng, readableStatus, comment, new Date().toLocaleString());
+        } else {
+            alert("送信に失敗しました: " + (data.error || "原因不明"));
+        }
+    })
+    .catch(err => {
+        console.error("送信エラー:", err);
+        alert("通信エラー: " + err.message);
+    });
 }
 
-// ✅ DBから報告データを取得してマーカーを地図に表示
+// ✅ DBから報告データを取得してマーカー表示（4タイプ対応）
 function loadReports() {
     console.log("🟦 loadReports() 開始");
 
@@ -261,22 +300,13 @@ function loadReports() {
         .then(data => {
             if (data.success) {
                 data.reports.forEach(rep => {
-                    const iconUrl = rep.status === "通れる" ? "img/ok.svg" : "img/ng.svg";
-                    const marker = new google.maps.Marker({
-                        position: { lat: parseFloat(rep.lat), lng: parseFloat(rep.lng) },
-                        map: map,
-                        icon: {
-                            url: iconUrl,
-                            scaledSize: new google.maps.Size(24, 24),
-                            anchor: new google.maps.Point(12, 24)
-                        }
-                    });
-
-                    const info = new google.maps.InfoWindow({
-                        content: `<b>${rep.status}</b><br>${rep.comment || ""}<br><small>${rep.created_at}</small>`,
-                    });
-
-                    marker.addListener("click", () => info.open(map, marker));
+                    addReportMarker(
+                        parseFloat(rep.lat),
+                        parseFloat(rep.lng),
+                        rep.status,
+                        rep.comment,
+                        rep.created_at
+                    );
                 });
             }
         })
@@ -284,16 +314,26 @@ function loadReports() {
         .finally(() => console.log("🟫 loadReports() 完了"));
 }
 
-// ✅ 共通マーカー生成
+// ✅ 共通マーカー生成（4タイプアイコン対応）
 function addReportMarker(lat, lng, status, comment, created_at) {
-    const iconUrl = status === "通れる"
-        ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-        : "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+    let iconUrl;
+    switch(status) {
+        case "通れる": iconUrl = "img/ok.svg"; break;
+        case "通れない": iconUrl = "img/ng.svg"; break;
+        case "段差": iconUrl = "img/step.svg"; break;
+        case "コメント": iconUrl = "img/comment.svg"; break;
+        default: iconUrl = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; break;
+    }
 
     const marker = new google.maps.Marker({
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        position: { lat, lng },
         map,
-        icon: iconUrl,
+        icon: {
+            url: iconUrl,
+            scaledSize: new google.maps.Size(32, 32),  // ← ここでサイズを指定（幅32px、高さ32px）
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(16, 16)     // ← マーカーの中心を地図上の位置に合わせる
+        }
     });
 
     const info = new google.maps.InfoWindow({
