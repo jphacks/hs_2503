@@ -74,8 +74,10 @@ https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=shari
 ### 独自技術
 #### ハッカソンで開発した独自機能・技術
 
-- 地図上にコメントを追加する機能 -> https://github.com/jphacks/hs_2503/blob/main/js/report.js
-- DB上に情報が残り，随時地図上に更新されていく -> https://github.com/jphacks/hs_2503/blob/main/js/map.js#L296-L346
+- 地図上にコメントを追加する機能  
+  -> https://github.com/jphacks/hs_2503/blob/main/js/report.js
+- DB上に情報が残り，随時地図上に更新されていく  
+  -> https://github.com/jphacks/hs_2503/blob/main/js/map.js#L296-L346
 
 
 ## ディレクトリ構造
