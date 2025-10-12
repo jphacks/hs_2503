@@ -1,43 +1,68 @@
 let selectedLatLng;
 
-// ✅ マップクリック時に報告用UIを開く
+
+
+// ✅ 通れる／通れないを送信
+
 function openReportDialog(latLng) {
   selectedLatLng = latLng;
   document.getElementById("reportDialog").style.display = "block";
 }
 
-// ✅ 通れる／通れないを送信
-function submitReport(status) {
+function submitReport() {
+  // 選択中のタイプを取得
+  const statusRadio = document.querySelector('input[name="status"]:checked');
+  if (!statusRadio) {
+    alert("コメントタイプを選んでください");
+    return;
+  }
+  const status = statusRadio.value;
   const comment = document.getElementById("comment").value;
   document.getElementById("reportDialog").style.display = "none";
 
-  const readableStatus = status === "pass" ? "通れる" : "通れない";
+  // タイプごとに表示ラベルとアイコンを決定
+  let readableStatus, iconUrl;
+  switch (status) {
+    case "pass":
+      readableStatus = "通れる";
+      iconUrl = "img/ok.svg";
+      break;
+    case "fail":
+      readableStatus = "通れない";
+      iconUrl = "img/ng.svg";
+      break;
+    case "step":
+      readableStatus = "段差";
+      iconUrl = "img/step.svg"; // 新しいアイコンを用意
+      break;
+    case "comment":
+      readableStatus = "コメント";
+      iconUrl = "img/comment.svg"; // 新しいアイコンを用意
+      break;
+  }
 
   // --- 地図上にマーカーを追加 ---
-const iconUrl = status === "pass" ? "img/ok.svg" : "img/ng.svg";
-
-const marker = new google.maps.Marker({
-  position: selectedLatLng,
-  map: map,
-  icon: {
-    url: iconUrl,
-    scaledSize: new google.maps.Size(24, 24),  // 幅24px × 高さ24px
-    origin: new google.maps.Point(0, 0),
-    anchor: new google.maps.Point(12, 24)      // ピン先端を座標に合わせる
-  }
-});
-
+  const marker = new google.maps.Marker({
+    position: selectedLatLng,
+    map: map,
+    icon: {
+      url: iconUrl,
+      scaledSize: new google.maps.Size(24, 24),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(12, 24)
+    }
+  });
 
   const info = new google.maps.InfoWindow({
     content: `<b>${readableStatus}</b><br>${comment}`,
   });
   marker.addListener("click", () => info.open(map, marker));
 
-  // --- サーバーに送信 ---
+  // --- サーバー送信 ---
   const payload = {
     lat: selectedLatLng.lat(),
     lng: selectedLatLng.lng(),
-    status: readableStatus, // DB定義に合わせる
+    status: readableStatus,
     comment: comment,
   };
 
@@ -69,3 +94,4 @@ const marker = new google.maps.Marker({
       alert("通信エラー: " + err.message);
     });
 }
+

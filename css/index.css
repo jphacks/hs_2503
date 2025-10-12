@@ -229,5 +229,87 @@ body {
   border-color: #4285F4;
   box-shadow: 0 0 4px rgba(66, 133, 244, 0.5);
 }
+.report-dialog {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;        /* 左端から余白 */
+  right: 20px;       /* 右端から余白 */
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  width: auto;       /* 自動幅 */
+  max-width: 360px;  /* 最大幅 */
+  font-family: sans-serif;
+  z-index: 1000;
+}
 
+
+/* ステータスラジオを縦並びでもOK */
+.status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* ボタン風ラベル */
+.status-btn {
+  flex: 1 1 45%;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
+  user-select: none;
+  position: relative;
+}
+
+.status-btn input[type="radio"] {
+  display: none;
+}
+
+/* 色分け */
+.status-btn.pass { background: #4CAF50; }
+.status-btn.fail { background: #F44336; }
+.status-btn.step { background: #FF9800; }
+.status-btn.comment { background: #2196F3; }
+
+/* コメント入力 */
+#comment {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: sans-serif;
+}
+
+/* 送信ボタン */
+.report-dialog button {
+  width: 100%;
+  padding: 10px;
+  background: #673AB7;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.report-dialog button:hover {
+  background: #512DA8;
+}
+
+/* モバイル調整 */
+@media screen and (max-width: 400px) {
+  .status-btn {
+    flex: 1 1 100%;  /* 狭い画面では縦並び */
+  }
+}
  
