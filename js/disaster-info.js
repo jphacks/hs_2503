@@ -197,26 +197,45 @@ window.loadDisasterInfo = async function() {
         }
       }
 
-      // === 出力 ===
-      let html = `<h3>${T.location}: ${city}</h3>`;
-      html += `<h4>${T.warnTitle}</h4>`;
-      if (warningTexts.length > 0) html += `<ul>${warningTexts.map(w => `<li>${w}</li>`).join("")}</ul>`;
-      else html += `<p>${T.noWarn}</p>`;
+    // === 出力 ===
+    let html = `
+    <div id="disaster-info">
+    <!-- 左カラム：市名 -->
+    <div id="disaster-header">
+        <h3 id="city-name">${city}</h3>
+    </div>
 
-      html += `<h4>${T.quakeTitle}</h4>`;
-      if (localQuake) {
-        html += `
-          <p>${localQuake.title}</p>
-          <p>震源：${localQuake.hypocenter}</p>
-          <p>M${localQuake.magnitude}　最大震度：${localQuake.maxInt}</p>
-        `;
-      } else html += `<p>${T.noQuake(prefName)}</p>`;
+    <!-- 右カラム：警報 + 地震 -->
+    <div id="disaster-body">
+        <!-- 警報 -->
+        <div class="disaster-item">
+        <h4>警報・注意報</h4>
+        ${
+            warningTexts.length > 0
+            ? `<p>${warningTexts.join(", ")}</p>`
+            : `<p>現在、警報・注意報は発表されていません。</p>`
+        }
+        </div>
 
-      html += `
-        <p style="margin-top:10px; font-size:small; color:gray;">
-        ${T.source}<a href="https://www.jma.go.jp/" target="_blank">${T.jma}</a> |
-        <a href="https://www.jma.go.jp/bosai/" target="_blank">${T.portal}</a>
-        </p>
+        <!-- 地震 -->
+        <div class="disaster-item">
+        <h4>最新の地震情報</h4>
+        ${
+            localQuake
+            ? `<p>${localQuake.title}  震源：${localQuake.hypocenter}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+            : `<p>${prefName}周辺では最近の地震はありません。</p>`
+        }
+        </div>
+
+    </div>
+    <!-- 情報提供を下部に配置 -->
+    <div id="disaster-source">
+    情報提供：
+    <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
+    <a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
+    </div>
+    </div>
+
       `;
       output.innerHTML = html;
     } catch (err) {
