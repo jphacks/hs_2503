@@ -46,6 +46,8 @@
 - HTML
 - CSS
 - JavaScript
+- PHP
+- SQL
 
 #### デバイス
 - 
