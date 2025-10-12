@@ -423,37 +423,3 @@ body {
   }
 }
  
-/* ----------------- モバイル対応: 投票ボタン小さく & 隠せる ----------------- */
-@media (max-width: 768px) {
-    .status-btn {
-        padding: 6px 4px;       /* ボタンを小さく */
-        font-size: 12px;        /* 文字も小さく */
-    }
-}
-
-@media (max-width: 400px) {
-    .status-btn {
-        flex: 1 1 100%;         /* 狭い画面は縦並び */
-        padding: 5px 3px;
-        font-size: 11px;
-    }
-}
-
-/* ボタンを隠すクラス */
-.status-btn.hidden {
-    display: none !important;
-}
-
-/* オプション: 隠したボタン用アニメーション */
-.status-btn.slide-toggle {
-    transition: max-height 0.3s ease, opacity 0.3s ease;
-    overflow: hidden;
-    max-height: 50px;   /* 通常サイズ */
-    opacity: 1;
-}
-.status-btn.slide-toggle.hidden {
-    max-height: 0;
-    opacity: 0;
-    padding: 0;
-    margin: 0;
-}
