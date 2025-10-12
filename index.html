@@ -11,15 +11,17 @@
   <!-- ヘッダー -->
   <div id="header">
     <img src="img/logo1.png" alt="hinavi_logo" id="logo">
-    <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
+    <div id="header-right"></div>
+      <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
-    <!-- 🌐 言語設定セレクト -->
-    <select id="language-select" onchange="changeLanguage(this.value)">
-      <option value="ja">日本語</option>
-      <option value="en">English</option>
-      <option value="zh">中文</option>
-      <option value="es">Español</option>
-    </select>
+      <!-- 🌐 言語設定セレクト -->
+      <select id="language-select" onchange="changeLanguage(this.value)">
+        <option value="ja">日本語</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
   </div>
 
   <!-- 災害情報バー -->
