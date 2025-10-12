@@ -1,4 +1,4 @@
-# [**hinavi**](hinavi.sakura.ne.jp)　〜避難をナビする防災コミュニティ〜
+# 📍hinavi　〜避難をナビする防災コミュニティ〜
 <p align="center">
   <a href="https://hinavi.sakura.ne.jp" target="_blank">
     <img src="https://github.com/user-attachments/assets/94130da6-b698-4b3f-a309-d0f6f5a68d44" 
