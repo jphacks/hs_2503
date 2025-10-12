@@ -56,7 +56,7 @@
   <a href="https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=sharing" target="_blank">
     <img src="https://github.com/user-attachments/assets/910d54e9-c986-47e7-9fd1-e094e568ddd8" 
          alt="動画サムネイル" 
-         style="width:800px; height:auto;">
+         style="width:612px; height:auto;">
   </a>
   <br>
   <strong> ▶️画像を押すとデモ動画に飛びます</strong>
