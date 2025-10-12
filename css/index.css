@@ -318,17 +318,19 @@ body {
     #container {
         flex-direction: column;  /* 横並びから縦並びに変更 */
     }
- 
+
+    #map {
+        order: 1;
+        height: 70vh;           /* 高さを画面の70%に */
+        width: 100%;
+    }
+
     #shelter-list {
+        order: 2;
         width: 100%;            /* 横幅いっぱい */
         height: 30vh;           /* 高さを画面に対して調整 */
         border-right: none;
         border-bottom: 1px solid #ccc;
-    }
- 
-    #map {
-        height: 70vh;           /* 高さを画面の70%に */
-        width: 100%;
     }
  
     .shelter-card {
