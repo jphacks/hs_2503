@@ -95,9 +95,50 @@ window.loadDisasterInfo = async function() {
       const geoData = await geoRes.json();
 
       const city = geoData.address.city || geoData.address.town || geoData.address.village || "不明な地域";
-      const cityCodeMap = { "広島市": "3410000", "呉市": "3420200", "東広島市": "3421200", "福山市": "3420700", "掛川市":"2221300" };
-      const matchedKey = Object.keys(cityCodeMap).find((key) => city.includes(key));
-      const CLASS_AREA_CODE = matchedKey ? cityCodeMap[matchedKey] : null;
+      // === 市町村名 → コード変換 ===
+        async function getCityCode(city) {
+            try {
+                // CSVファイルをUTF-8としてfetch
+                const res = await fetch("/csv/city_code.csv");
+                if (!res.ok) {
+                    throw new Error(`CSVファイルの取得に失敗 (${res.status})`);
+                }
+
+                // UTF-8でデコード
+                const buffer = await res.arrayBuffer();
+                const decoder = new TextDecoder("utf-8"); // 文字コード固定
+                const lines = decoder.decode(buffer);
+
+                // === CSVをオブジェクト化 ===
+                const linesArray = lines.split(/\r?\n/); // 改行で分割
+                const cityCodeMap = {};
+                for (const line of linesArray) {
+                    if (!line.trim()) continue;
+                    const parts = line.trim().split(/[\s,]+/);
+                    if (parts.length < 2) continue;
+
+                    let code = parts[0].replace(/^"|"$/g, "").trim();
+                    let name = parts[1].replace(/^"|"$/g, "").trim();
+                    if (name && code) {
+                        cityCodeMap[name] = code;
+                    }
+                }
+                // 部分一致で市町村名検索
+                const matchedKey = Object.keys(cityCodeMap).find(key => city.includes(key));
+                if (matchedKey) {
+                    console.log(`市町村名一致: ${matchedKey} → コード ${cityCodeMap[matchedKey]}`);
+                    return cityCodeMap[matchedKey];
+                } else {
+                    console.warn(`"${city}" に一致する市町村名が見つかりません`);
+                    return null;
+                }
+
+            } catch (err) {
+                console.error("CSVから市町村コードの取得に失敗:", err);
+                return null;
+            }
+        }
+        const CLASS_AREA_CODE = await getCityCode(city);
 
       if (!CLASS_AREA_CODE) {
         output.innerHTML = `<p>${city} の市町村コードが見つかりません。</p>`;
@@ -156,26 +197,45 @@ window.loadDisasterInfo = async function() {
         }
       }
 
-      // === 出力 ===
-      let html = `<h3>${T.location}: ${city}</h3>`;
-      html += `<h4>${T.warnTitle}</h4>`;
-      if (warningTexts.length > 0) html += `<ul>${warningTexts.map(w => `<li>${w}</li>`).join("")}</ul>`;
-      else html += `<p>${T.noWarn}</p>`;
+    // === 出力 ===
+    let html = `
+    <div id="disaster-info">
+    <!-- 左カラム：市名 -->
+    <div id="disaster-header">
+        <h3 id="city-name">${city}</h3>
+    </div>
 
-      html += `<h4>${T.quakeTitle}</h4>`;
-      if (localQuake) {
-        html += `
-          <p>${localQuake.title}</p>
-          <p>震源：${localQuake.hypocenter}</p>
-          <p>M${localQuake.magnitude}　最大震度：${localQuake.maxInt}</p>
-        `;
-      } else html += `<p>${T.noQuake(prefName)}</p>`;
+    <!-- 右カラム：警報 + 地震 -->
+    <div id="disaster-body">
+        <!-- 警報 -->
+        <div class="disaster-item">
+        <h4>警報・注意報</h4>
+        ${
+            warningTexts.length > 0
+            ? `<p>${warningTexts.join(", ")}</p>`
+            : `<p>現在、警報・注意報は発表されていません。</p>`
+        }
+        </div>
 
-      html += `
-        <p style="margin-top:10px; font-size:small; color:gray;">
-        ${T.source}<a href="https://www.jma.go.jp/" target="_blank">${T.jma}</a> |
-        <a href="https://www.jma.go.jp/bosai/" target="_blank">${T.portal}</a>
-        </p>
+        <!-- 地震 -->
+        <div class="disaster-item">
+        <h4>最新の地震情報</h4>
+        ${
+            localQuake
+            ? `<p>${localQuake.title}  震源：${localQuake.hypocenter}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+            : `<p>${prefName}周辺では最近の地震はありません。</p>`
+        }
+        </div>
+
+    </div>
+    <!-- 情報提供を下部に配置 -->
+    <div id="disaster-source">
+    情報提供：
+    <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
+    <a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
+    </div>
+    </div>
+
       `;
       output.innerHTML = html;
     } catch (err) {
