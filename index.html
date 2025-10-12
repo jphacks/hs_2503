@@ -28,13 +28,30 @@
   <!-- メインコンテナ -->
   <div id="container">
     <!-- ✅ 通行報告フォーム -->
-    <div id="reportDialog"
-        style="display:none; position:fixed; bottom:20px; left:20px; background:white; padding:10px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:9999;">
-      <p data-i18n="question">この地点は？</p>
-      <button onclick="submitReport('pass')" data-i18n="pass">✅ 通れる</button>
-      <button onclick="submitReport('blocked')" data-i18n="blocked">🚫 通れない</button><br>
-      <textarea id="comment" data-i18n-placeholder="comment" placeholder="補足コメント..." style="width:200px; height:50px; margin-top:5px;"></textarea>
+  <div id="reportDialog" class="report-dialog">
+    <div class="status-options">
+      <label class="status-btn pass">
+        <input type="radio" name="status" value="pass">
+        通れる
+      </label>
+      <label class="status-btn fail">
+        <input type="radio" name="status" value="fail">
+        通れない
+      </label>
+      <label class="status-btn step">
+        <input type="radio" name="status" value="step">
+        段差
+      </label>
+      <label class="status-btn comment">
+        <input type="radio" name="status" value="comment">
+        コメント
+      </label>
     </div>
+
+    <textarea id="comment" placeholder="コメントを入力"></textarea>
+    <button onclick="submitReport()">送信</button>
+  </div>
+
 
     <!-- 避難所カードリスト -->
     <div id="shelter-list"></div>
