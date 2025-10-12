@@ -1,5 +1,6 @@
 # hinavi 　〜避難をナビする防災コミュニティ〜
-<img width="911" height="511" alt="Image" src="https://github.com/user-attachments/assets/b0587c86-47d2-4cde-b547-b1eeb5f65821" />
+<img width="2400" height="1350" alt="image" src="https://github.com/user-attachments/assets/fcd0312b-6c30-4ac0-bdf8-2c8a1550991f" />
+
   
 ## 製品概要
 **地理情報弱者**でも災害・避難所情報を理解できて、迅速な避難を可能にする
