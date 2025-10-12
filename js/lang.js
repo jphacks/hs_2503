@@ -49,7 +49,7 @@ function changeLanguage(lang) {
   const recenterBtn = document.getElementById("recenter-btn");
   if (recenterBtn && t["recenter"]) recenterBtn.textContent = t["recenter"];
 
-  // フッター
-  const footer = document.getElementById("footer");
-  if (footer && t["footer"]) footer.textContent = t["footer"];
+  // フッター左側のみ更新
+  const footerLeft = document.getElementById("footer-left");
+  if (footerLeft && t["footer"]) footerLeft.textContent = t["footer"];
 }
