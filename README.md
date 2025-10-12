@@ -1,5 +1,6 @@
 # [**hinavi**](hinavi.sakura.ne.jp)　〜避難をナビする防災コミュニティ〜
-<img width="2400" height="1350" alt="image" src="https://github.com/user-attachments/assets/fcd0312b-6c30-4ac0-bdf8-2c8a1550991f" />
+<img width="2400" height="1350" alt="image" src="https://github.com/user-attachments/assets/94130da6-b698-4b3f-a309-d0f6f5a68d44" />
+
 <div align="center">
 🎉 <strong>JPHACKS 2025 Hack Day（@広島会場）</strong> 🎉<br>
 🥇 <strong>「Best Hackday Award」受賞！</strong> 🥇<br>
