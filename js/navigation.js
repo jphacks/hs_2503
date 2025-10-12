@@ -1,4 +1,5 @@
 let watchId;
+let userMarker;
 
 function startWalkingNavigation(shelter) {
   if (!navigator.geolocation) {
@@ -6,6 +7,7 @@ function startWalkingNavigation(shelter) {
     return;
   }
 
+  // 既存の追跡を解除
   if (watchId) navigator.geolocation.clearWatch(watchId);
 
   watchId = navigator.geolocation.watchPosition(
@@ -15,7 +17,7 @@ function startWalkingNavigation(shelter) {
         lng: position.coords.longitude
       };
 
-      // 現在地マーカー
+      // 現在地マーカー更新
       if (!userMarker) {
         userMarker = new google.maps.Marker({
           position: userLocation,
@@ -27,12 +29,15 @@ function startWalkingNavigation(shelter) {
         userMarker.setPosition(userLocation);
       }
 
-      // 徒歩ルート表示
+      // 地図中心を現在地に追従
+      map.panTo(userLocation);
+
+      // 徒歩ルート更新
       directionsService.route(
         {
           origin: userLocation,
           destination: { lat: shelter.lat, lng: shelter.lng },
-          travelMode: 'WALKING'
+          travelMode: google.maps.TravelMode.WALKING
         },
         (result, status) => {
           if (status === 'OK') {
@@ -43,7 +48,15 @@ function startWalkingNavigation(shelter) {
         }
       );
 
-      map.setCenter(userLocation);
+      // 到着判定（20m以内で通知）
+      const distanceToShelter = google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(userLocation.lat, userLocation.lng),
+        new google.maps.LatLng(shelter.lat, shelter.lng)
+      );
+      if (distanceToShelter < 20) {
+        alert(`${shelter.name}に到着しました！`);
+        stopNavigation();
+      }
     },
     error => {
       alert('位置情報取得に失敗しました。位置情報の利用を許可してください。');
@@ -54,4 +67,13 @@ function startWalkingNavigation(shelter) {
       timeout: 5000
     }
   );
+}
+
+// ナビ終了関数
+function stopNavigation() {
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    alert("ナビを終了しました。");
+  }
 }
