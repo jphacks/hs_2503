@@ -92,54 +92,51 @@
     </script>
     -->
 
+
     <script>
         const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
-        let currentLang = "ja";
+        // ✅ 言語はグローバルで管理
+        window.currentLang = "ja";
         let currentScript = null;
 
-        // ✅ 最新の位置情報を保持
+        // 最新位置を保持（グローバルにも反映）
         let latestPosition = null;
-
-        // ✅ 外部から map.js 内の変数にアクセスできるように
-        window.setLatestPosition = (pos) => { latestPosition = pos; };
+        window.setLatestPosition = (pos) => {
+            latestPosition = pos;
+            window.userLat = pos?.lat;
+            window.userLng = pos?.lng;
+            // 位置更新のたびに避難所を再読込（マップがあれば）
+            if (window.map && window.reloadShelters) {
+            reloadShelters(); // shelter.js 側の関数（グローバル公開しておく）
+            }
+        };
         window.getLatestPosition = () => latestPosition;
 
-        // ✅ Google Maps APIロード関数
         function loadGoogleMaps(lang = "ja") {
-        console.log(`🌐 言語切り替え → ${lang}`);
+            console.log(`🌐 言語切り替え → ${lang}`);
+            // ✅ 言語を“唯一の真実”に反映
+            window.currentLang = lang;
 
-        // 古い位置追跡を停止
-        if (window.stopTracking) {
-            console.log("🛑 stopTracking() 実行");
-            window.stopTracking();
+            if (window.stopTracking) window.stopTracking();
+
+            if (currentScript) { currentScript.remove(); currentScript = null; }
+            document.getElementById("map").innerHTML = "";
+
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
+            script.defer = true;
+            script.async = true;
+            document.head.appendChild(script);
+            currentScript = script;
         }
 
-        // 古いスクリプト削除
-        if (currentScript) {
-            currentScript.remove();
-            currentScript = null;
-        }
-
-        // mapを初期化（ちらつきを抑える）
-        document.getElementById("map").innerHTML = "";
-
-        // 新しい言語でAPIを再ロード
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
-        script.defer = true;
-        script.async = true;
-        document.head.appendChild(script);
-        currentScript = script;
-        }
-
-        // ✅ 言語変更イベント
+        // 言語セレクト
         document.getElementById("language-select").addEventListener("change", (e) => {
-        currentLang = e.target.value;
-        loadGoogleMaps(currentLang);
+            loadGoogleMaps(e.target.value);  // ← ここで window.currentLang も更新済み
         });
 
-        // ✅ 初回読み込み
-        loadGoogleMaps(currentLang);
+        // 初回
+        loadGoogleMaps(window.currentLang);
     </script>
 
   <!-- 機能スクリプト -->
