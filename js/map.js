@@ -328,7 +328,12 @@ function addReportMarker(lat, lng, status, comment, created_at) {
     const marker = new google.maps.Marker({
         position: { lat, lng },
         map,
-        icon: iconUrl
+        icon: {
+            url: iconUrl,
+            scaledSize: new google.maps.Size(32, 32),  // ← ここでサイズを指定（幅32px、高さ32px）
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(16, 16)     // ← マーカーの中心を地図上の位置に合わせる
+        }
     });
 
     const info = new google.maps.InfoWindow({
