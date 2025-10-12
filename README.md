@@ -73,8 +73,6 @@ https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=shari
 
 ### 独自技術
 #### ハッカソンで開発した独自機能・技術
-* 独自で開発したものの内容をこちらに記載してください
-* 特に力を入れた部分をファイルリンク、またはcommit_idを記載してください。
 
 - 地図上にコメントを追加する機能 -> https://github.com/jphacks/hs_2503/blob/main/js/report.js
 - DB上に情報が残り，随時地図上に更新されていく -> https://github.com/jphacks/hs_2503/blob/main/js/map.js#L296-L346
