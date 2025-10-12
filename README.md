@@ -1,5 +1,5 @@
 # hinavi 　〜避難をナビする防災コミュニティ〜
-<img width="892" height="496" alt="Image" src="https://github.com/user-attachments/assets/b02c6915-1bee-45ee-a8c5-c1cc79f80681" />
+<img width="911" height="511" alt="Image" src="https://github.com/user-attachments/assets/b0587c86-47d2-4cde-b547-b1eeb5f65821" />
   
 ## 製品概要
 **地理情報弱者**でも災害・避難所情報を理解できて、迅速な避難を可能にする
@@ -23,6 +23,7 @@
 - 現在地から近隣避難所までの経路をリアルタイムで案内・追跡
 - 避難所情報の閲覧
 - 災害情報の閲覧
+- 多言語対応
 - Google Mapsでは補えない道路の通行可能・通行不可能かをユーザーによって追加できる機能
 
 ### 解決出来ること (新規性)
