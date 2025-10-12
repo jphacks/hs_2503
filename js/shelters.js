@@ -95,26 +95,48 @@ function toggleCard(card, shelter, onClickCallback) {
 
 // --- 展開 ---
 function expandCard(card, shelter) {
+    const lang = window.currentLang || "ja";
+
+    // 🌏 多言語ラベル辞書
+    const labels = {
+        ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
+        zh: { distance: "直线距离", elevation: "海拔", hazard: "适用灾害类型" },
+        en: { distance: "Distance", elevation: "Elevation", hazard: "Applicable hazards" },
+        es: { distance: "Distancia en línea recta", elevation: "Altitud", hazard: "Tipos de desastres aplicables" },
+    };
+    const L = labels[lang] || labels.ja;
+
     card.classList.add('expanded');
     card.innerHTML = `
         <strong>${shelter.name}</strong><br>
         <small>
         ${shelter.address}<br>
-        直線距離: ${shelter.distance.toFixed(2)} km<br>
-        標高: <br>
-        対象となる災害種別: <br>
+        ${L.distance}: ${shelter.distance.toFixed(2)} km<br>
+        ${L.elevation}: <br>
+        ${L.hazard}: <br>
         </small>
     `;
 }
 
 // --- 収縮 ---
 function collapseCard(card, shelter) {
+    const lang = window.currentLang || "ja";
+
+    // 🌏 多言語ラベル辞書（同じものを使用）
+    const labels = {
+        ja: { distance: "直線距離" },
+        zh: { distance: "直线距离" },
+        en: { distance: "Distance" },
+        es: { distance: "Distancia en línea recta" },
+    };
+    const L = labels[lang] || labels.ja;
+
     card.classList.remove('expanded');
     card.innerHTML = `
         <strong>${shelter.name}</strong><br>
         <small>
         ${shelter.address}<br>
-        直線距離: ${shelter.distance.toFixed(2)} km<br>
+        ${L.distance}: ${shelter.distance.toFixed(2)} km<br>
         </small>
     `;
 }
@@ -141,9 +163,9 @@ async function initShelterCards(map, userLat, userLng, onClickCallback) {
         const lang = window.currentLang || "ja";
         const csvMap = {
             ja: "./csv/shelter_japan.csv",
-            en: "./csv/shelter_hiroshima_english.csv",
+            // en: "./csv/shelter_hiroshima_english.csv",
             zh: "./csv/shelter_hiroshima_chinese.csv",
-            es: "./csv/shelter_hiroshima_spanish.csv",
+            // es: "./csv/shelter_hiroshima_spanish.csv",
         };
 
         // 対応言語がなければ日本語をデフォルトに
