@@ -91,6 +91,13 @@ https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=shari
 
 ### 活用した技術
 
+#### サーバ
+- さくらのレンタルサーバ（スタンダードプラン）を使用
+- Webサーバ: Apache
+- PHP 8.2
+- データベース: MySQL 8
+- 公開URL: https://hinavi.sakura.ne.jp
+
 #### API・データ
 - Google Maps API
 - 気象庁API
