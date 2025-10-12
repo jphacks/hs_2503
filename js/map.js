@@ -14,6 +14,7 @@ let routeButtons = [];
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
 window.stopTracking = stopTracking;
+YOUR_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
 
 // ============================
 // 🗺️ 初期化
@@ -32,6 +33,7 @@ async function initMap() {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: true,
+        gestureHandling: "greedy"//
     });
 
     directionsService = new google.maps.DirectionsService();
@@ -328,7 +330,12 @@ function addReportMarker(lat, lng, status, comment, created_at) {
     const marker = new google.maps.Marker({
         position: { lat, lng },
         map,
-        icon: iconUrl
+        icon: {
+            url: iconUrl,
+            scaledSize: new google.maps.Size(32, 32),  // ← ここでサイズを指定（幅32px、高さ32px）
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(16, 16)     // ← マーカーの中心を地図上の位置に合わせる
+        }
     });
 
     const info = new google.maps.InfoWindow({
@@ -337,3 +344,60 @@ function addReportMarker(lat, lng, status, comment, created_at) {
 
     marker.addListener("click", () => info.open(map, marker));
 }
+// ============================
+// 🌐 言語変更に対応（Google Maps再読み込み）
+// ============================
+let currentLang = localStorage.getItem("selectedLanguage") || "ja";
+let currentMapScript = null;
+
+window.changeLanguage = function (lang) {
+    console.log(`🌍 言語変更: ${lang}`);
+    localStorage.setItem("selectedLanguage", lang);
+    currentLang = lang;
+
+    // 現在の位置を保持（言語切替後に再利用）
+    const latestPos = userPosition || (window.getLatestPosition ? window.getLatestPosition() : null);
+    if (typeof window.setLatestPosition === "function" && latestPos) {
+        window.setLatestPosition(latestPos);
+    }
+
+    // 現在の追跡を停止
+    if (typeof window.stopTracking === "function") stopTracking();
+
+    // 既存のマップスクリプトを削除
+    if (currentMapScript) {
+        currentMapScript.remove();
+        currentMapScript = null;
+    }
+
+    // 地図の中身を一旦リセット
+    const mapContainer = document.getElementById("map");
+    if (mapContainer) mapContainer.innerHTML = "";
+
+    // 新しい言語でGoogle Mapsを再ロード
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${lang}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    currentMapScript = script;
+
+    // 災害情報など他のUIも即時再描画したい場合
+    if (typeof window.onload === "function") window.onload();
+};
+
+// ============================
+// 🏁 初回ロード時（言語設定ありなら反映）
+// ============================
+window.addEventListener("load", () => {
+    const savedLang = localStorage.getItem("selectedLanguage") || "ja";
+    currentLang = savedLang;
+
+    // Google Maps APIを動的に読み込み
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${savedLang}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    currentMapScript = script;
+});

@@ -16,23 +16,30 @@ body {
     background-color: #07ae6e;
     display: flex;
     align-items: center;
-    padding-left: 20px;  /* ロゴと左端の間隔 */
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
- 
-/* ロゴ画像 */
+
+/* ロゴの左余白 */
 #logo {
-    height: 9vh;  /* ロゴの高さを調整 */
-    width: auto;   /* 高さに合わせて幅を自動調整 */
+    height: 9vh;
+    width: auto;
+    margin-left: 20px;  /* 左端からの距離 */
 }
- 
-/* === 現在地に戻るボタン === */
+
+/* 右側ボタングループ */
+#header-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: auto;    /* 左側を空けて右端に寄せる */
+}
+
+/* 現在地に戻るボタン */
 #recenter-btn {
-  margin-left: auto;            /* ✅ 右端へ移動 */
-  margin-right: 20px;
   background: white;
   color: #07ae6e;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   border: none;
   border-radius: 6px;
   padding: 6px 12px;
@@ -40,12 +47,39 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
+  margin-right: 10px;
 }
- 
+
 #recenter-btn:hover {
-  background: #eafff4;
+  transform: scale(1.02);
 }
- 
+
+/* 言語選択 */
+#language-select {
+  padding: 6px 10px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+#language-select:hover {
+  transform: scale(1.02);
+}
+
+/* 言語選択 */
+#language-select {
+  padding: 6px 10px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+#language-select:hover {
+  transform: scale(1.02);
+}
+
 /* コンテナ */
 #container {
     display: flex;
@@ -86,7 +120,6 @@ body {
 }
  
  
- 
 /* マップ */
 #map {
     flex: 1;
@@ -94,11 +127,11 @@ body {
  
 /* フッター */
 #footer {
-    height: 30px;
+    height: 25px;
     text-align: center;
-    line-height: 30px;
+    line-height: 25px;
     background-color: #f0f0f0;
-    font-size: 14px;
+    font-size: 12px;
     color: #555;
 }
  
@@ -115,40 +148,7 @@ body {
   font-family: sans-serif;
   z-index: 9999;        /* 他の要素より前面 */
 }
-/* -----------------------------
-   モバイル対応
------------------------------ */
-@media (max-width: 768px) {
-    #container {
-        flex-direction: column;  /* 横並びから縦並びに変更 */
-    }
- 
-    #shelter-list {
-        width: 100%;            /* 横幅いっぱい */
-        height: 30vh;           /* 高さを画面に対して調整 */
-        border-right: none;
-        border-bottom: 1px solid #ccc;
-    }
- 
-    #map {
-        height: 70vh;           /* 高さを画面の70%に */
-        width: 100%;
-    }
- 
-    .shelter-card {
-        font-size: 14px;
-        padding: 12px;
-    }
- 
-    #header {
-        font-size: 20px;
-        padding-left: 10px;
-    }
- 
-    #footer {
-        font-size: 12px;
-    }
-}
+
  
 /* 報告ダイアログ */
 #reportDialog {
@@ -309,6 +309,41 @@ body {
 .status-btn.selected {
   box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.6);
   transform: translateY(-2px);
+}
+
+/* -----------------------------
+   モバイル対応
+----------------------------- */
+@media (max-width: 768px) {
+    #container {
+        flex-direction: column;  /* 横並びから縦並びに変更 */
+    }
+ 
+    #shelter-list {
+        width: 100%;            /* 横幅いっぱい */
+        height: 30vh;           /* 高さを画面に対して調整 */
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+    }
+ 
+    #map {
+        height: 70vh;           /* 高さを画面の70%に */
+        width: 100%;
+    }
+ 
+    .shelter-card {
+        font-size: 14px;
+        padding: 12px;
+    }
+ 
+    #header {
+        font-size: 20px;
+        padding-left: 10px;
+    }
+ 
+    #footer {
+        font-size: 12px;
+    }
 }
 
 /* モバイル調整 */

@@ -101,12 +101,23 @@ function submitReport() {
         }
     })
     .then((data) => {
-        if (data.success) {
-            alert("報告を送信しました！");
-        } else {
-            alert("送信に失敗しました: " + (data.error || "原因不明"));
-        }
-    })
+    if (data.success) {
+        alert("報告を送信しました！");
+
+        // コメント欄をクリア
+        document.getElementById("comment").value = "";
+
+        // ラジオボタンの選択を解除
+        document.querySelectorAll('input[name="status"]').forEach(r => r.checked = false);
+
+        // ボタンのハイライトも解除
+        document.querySelectorAll('.status-btn').forEach(l => l.classList.remove('selected'));
+    } else {
+        alert("送信に失敗しました: " + (data.error || "原因不明"));
+    }
+})
+
+
     .catch((err) => {
         console.error("送信エラー:", err);
         alert("通信エラー: " + err.message);
