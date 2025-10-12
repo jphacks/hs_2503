@@ -24,8 +24,7 @@
 
 #### 現状の課題
 - 平常時でさえ多くの人が道に迷う  
-  → 株式会社ゼンリン「地図利用実態調査2016」によると、18歳以上の大人2万人に対してにうち82.9%が「大人になっても迷った経験がある」と回答している
-  [[1]](https://www.zenrin.co.jp/product/article/research503/pdf/material05.pdf)
+  → 株式会社ゼンリン「地図利用実態調査2016」によると、18歳以上の大人2万人に対してにうち82.9%が「大人になっても迷った経験がある」と回答している[^1]
 - 災害時は周囲の混乱や情報不足により、さらに困難に…
   
 #### 既存アプリの問題点
@@ -54,8 +53,18 @@
 - 災害時の避難や避難所に関するコメントで情報共有ができる
 
 <p align="center">
-<img width="800" height="450" alt="画像 (1)" src="https://github.com/user-attachments/assets/0bc12dc2-5ebb-4f84-af9e-f662b5edc109" />
+  <a href="https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=sharing" target="_blank">
+    <img src="https://github.com/user-attachments/assets/910d54e9-c986-47e7-9fd1-e094e568ddd8" 
+         alt="動画サムネイル" 
+         style="width:800px; height:auto;">
+  </a>
+  <br>
+  <strong> ▶️画像を押すとデモ動画に飛びます</strong>
 </p>
+
+
+
+
 
 #### 今後の展望・実装課題
 - モバイル対応（最低限は使えるが、見た目が少し残念...）
@@ -77,7 +86,7 @@ https://drive.google.com/file/d/1tCF61xSyztlCRNxtlMuggq-MODYDm20a/view?usp=shari
 #### API・データ
 - Google Maps API
 - 気象庁API
-- 指定緊急避難場所・指定避難所データ（国土地理院）
+- 指定緊急避難場所・指定避難所データ（国土地理院）[^2]
 
 #### フレームワーク・ライブラリ・モジュール
 - Git
@@ -134,3 +143,6 @@ main/
 ├── LICENSE                 # ライセンス情報
 └── README.md               # プロジェクト概要・使い方・構成説明
 ```
+### 参考文献
+[^1]:https://www.zenrin.co.jp/product/article/research503/pdf/material05.pdf
+[^2]:https://www.gsi.go.jp/bousaichiri/hinanbasho.html
