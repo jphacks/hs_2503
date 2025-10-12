@@ -5,7 +5,7 @@ body {
     flex-direction: column;
     height: 100vh;
 }
-
+ 
 /* ヘッダー */
 #header {
     position: fixed;
@@ -14,15 +14,127 @@ body {
     width: 100%;
     height: 60px;
     background-color: #07ae6e;
-    color: white;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding-left: 20px;
-    font-size: 24px;
-    font-weight: bold;
+    justify-content: space-between; /* 左・中央・右に分散 */
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* ロゴの左余白 */
+#logo {
+    height: 60px;
+    width: auto;
+    margin-left: 20px;  /* 左端からの距離 */
+    align-items: center;
+}
+
+/* 災害情報 */
+#disaster-info {
+  display: flex;
+  gap: 2vw;         /* 左右要素間の隙間 */
+  flex: 0 1 auto;   /* 残りスペースを取らない */
+  min-width: 0;     /* テキスト折り返し対応 */
+  margin-left: 20px;
+}
+
+#disaster-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  margin-right: 8px; /* 元は余白なしなら削除 */
+}
+
+#city-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#disaster-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* 高さ中央に揃える */
+  align-items: center;
+}
+
+.disaster-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap; 
+}
+
+.disaster-item h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap; 
+}
+
+.disaster-item p {
+  margin: 0;
+  font-size: 12px;
+  white-space: nowrap;      /* 長い文字列は折り返さず省略も可能 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#disaster-source {
+  margin-top: auto;
+  margin-left: 4px;
+  font-size: small;
+  color: rgb(71, 71, 71);
+  font-size: 12px;
+  white-space: nowrap; 
+}
+
+#disaster-body p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* 右側ボタングループ */
+#header-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 0 0 auto;   /* 固定幅で縮まらない */
+  margin-left: auto; 
+  margin-right: auto; 
+}
+
+
+/* 現在地に戻るボタン */
+#recenter-btn {
+  background: white;
+  color: #07ae6e;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-right: 10px;
+  white-space: nowrap; 
+}
+
+#recenter-btn:hover {
+  transform: scale(1.02);
+}
+
+/* 言語選択 */
+#language-select {
+  padding: 6px 10px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
 /* コンテナ */
@@ -31,7 +143,7 @@ body {
     flex: 1;
     padding-top: 60px;
 }
-
+ 
 /* 避難所カード */
 #shelter-list {
     width: 300px;
@@ -41,7 +153,7 @@ body {
     box-sizing: border-box;
     background-color: #f9f9f9;
 }
-
+ 
 .shelter-card {
     background: white;
     padding: 10px;
@@ -49,26 +161,222 @@ body {
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     cursor: pointer;
-    transition: transform 0.1s;
+    transition: all 0.3s ease;  /* 高さや背景色などの変化を滑らかに */
+    overflow: hidden;
 }
-
+ 
+/* クリックで開いた状態のカード */
+.shelter-card.expanded {
+    background-color: #ebffe7;
+    padding-bottom: 20px;  /* 詳細分の余白を追加 */
+}
+ 
+ 
 .shelter-card:hover {
     transform: scale(1.02);
 }
-
+ 
+ 
 /* マップ */
 #map {
     flex: 1;
 }
-
+ 
 /* フッター */
 #footer {
-    height: 30px;
-    text-align: center;
-    line-height: 30px;
-    background-color: #f0f0f0;
-    font-size: 14px;
-    color: #555;
+  display: flex;            /* 左右に分ける */
+  justify-content: space-between; /* 左右に寄せる */
+  align-items: center;      /* 縦中央揃え */
+  padding: 0 20px;          /* 左右に余白 */
+  height: 25px;
+  font-size: 12px;
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+#footer-left {
+  /* 左側は特に追加スタイル不要。必要に応じて文字色やフォントを指定 */
+  font-size: 12px;
+}
+
+#footer-right {
+  font-size: 12px;
+  color: #555;
+}
+ 
+/* 報告ダイアログ */
+#reportDialog {
+  display: none; /* 初期非表示 */
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 250px; /* 幅調整 */
+  background-color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  font-family: 'Arial', sans-serif;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* 開いたときのアニメーション */
+#reportDialog.show {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ダイアログのタイトル */
+#reportDialog p {
+  margin: 0 0 8px 0;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ボタン共通 */
+#reportDialog button {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* ✅ 通れるボタン */
+#reportDialog button:nth-of-type(1) {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+/* 🚫 通れないボタン */
+#reportDialog button:nth-of-type(2) {
+  background-color: #F44336;
+  color: #fff;
+}
+
+/* ボタンホバー時 */
+#reportDialog button:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* テキストエリア */
+#reportDialog textarea {
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 13px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* テキストエリアフォーカス */
+#reportDialog textarea:focus {
+  outline: none;
+  border-color: #4285F4;
+  box-shadow: 0 0 4px rgba(66, 133, 244, 0.5);
+}
+.report-dialog {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;        /* 左端から余白 */
+  right: 20px;       /* 右端から余白 */
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  width: auto;       /* 自動幅 */
+  max-width: 360px;  /* 最大幅 */
+  font-family: sans-serif;
+  z-index: 1000;
+}
+
+
+/* ステータスラジオを縦並びでもOK */
+.status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* ボタン風ラベル */
+.status-btn {
+  flex: 1 1 45%;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
+  user-select: none;
+  position: relative;
+}
+
+.status-btn input[type="radio"] {
+  display: none;
+}
+
+/* 色分け */
+.status-btn.pass { 
+  background: #4CAF50; 
+}
+.status-btn.fail { 
+  background: #F44336; 
+}
+.status-btn.step { 
+  background: rgb(159, 6, 236);
+}
+.status-btn.comment { 
+  background: #e5cb05; 
+}
+
+.status-btn:hover {
+  transform: scale(1.02);
+}
+
+/* コメント入力 */
+#comment {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+/* 送信ボタン */
+.report-dialog button {
+  width: 100%;
+  padding: 10px;
+  background: #4CAF50;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  transform: scale(1.02);
+}
+
+.report-dialog button:hover {
+  background: #512DA8;
+}
+
+.status-btn.selected {
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.6);
+  transform: translateY(-2px);
 }
 
 /* -----------------------------
@@ -79,50 +387,39 @@ body {
         flex-direction: column;  /* 横並びから縦並びに変更 */
     }
 
+    #map {
+        order: 1;
+        height: 70vh;           /* 高さを画面の70%に */
+        width: 100%;
+    }
+
     #shelter-list {
+        order: 2;
         width: 100%;            /* 横幅いっぱい */
         height: 30vh;           /* 高さを画面に対して調整 */
         border-right: none;
         border-bottom: 1px solid #ccc;
     }
-
-    #map {
-        height: 70vh;           /* 高さを画面の70%に */
-        width: 100%;
-    }
-
+ 
     .shelter-card {
         font-size: 14px;
         padding: 12px;
     }
-
+ 
     #header {
         font-size: 20px;
         padding-left: 10px;
     }
-
+ 
     #footer {
         font-size: 12px;
     }
 }
-.shelter-detail {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-height: 50%;
-  background: #fff;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-  overflow-y: auto;
-  padding: 10px;
-  z-index: 1000;
+
+/* モバイル調整 */
+@media screen and (max-width: 400px) {
+  .status-btn {
+    flex: 1 1 100%;  /* 狭い画面では縦並び */
+  }
 }
-#close-detail {
-  float: right;
-  background: #07ae6e;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-}
+ 

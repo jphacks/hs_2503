@@ -1,42 +1,128 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hinavi 災害情報マップ</title>
-    <link rel="icon" href="images/icon.png" type="image/png">
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hinavi 災害情報マップ</title>
+  <link rel="icon" href="images/icon.png" type="image/png">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<!-- ヘッダー -->
-<div id="header">hinavi</div>
-<!-- メインコンテナ -->
-<div id="container">
-<div id="shelter-list"></div>
-<div id="shelter-detail" class="shelter-detail" style="display:none;">
-    <button id="close-detail">閉じる</button>
-    <div id="detail-content"></div>
-</div>
-<div id="map"></div>
-</div>
+  <!-- ヘッダー -->
+  <div id="header">
+    <!-- 左側：ロゴ -->
+    <img src="img/logo1.png" alt="hinavi_logo" id="logo">
 
-<!-- コピーライト -->
-<div id="footer">© hinavi 2025 all rights reserved.</div>
+    <!-- 中央：災害情報 -->
+    <div id="disaster-info" data-i18n="loading">読み込み中...</div>
 
-<!-- APIキー -->
-<script>
-    const GOOGLE_MAPS_API_KEY = "hogehoge";
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.defer = true;
-    script.async = true;
-    document.head.appendChild(script);
-</script>
+    <!-- 右側：現在地に戻る + 言語選択 -->
+    <div id="header-right"></div>
+      <!-- 現在地に戻る -->
+      <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
+    <!-- 🌐 言語設定セレクト -->
+    <select id="language-select">
+      <option value="ja">日本語</option>
+      <option value="zh">中文</option>
+    </select>
+  </div>
 
-<!-- 各機能JS -->
-<script src="js/shelters.js"></script>
-<script src="js/map.js"></script>
-<script src="js/navigation.js"></script>
+  <!-- メインコンテナ -->
+  <div id="container">
+    <!-- ✅ 通行報告フォーム -->
+    <div id="reportDialog" class="report-dialog">
+      <p data-i18n="question">この地点は？</p>
+
+      <div class="status-options">
+        <label class="status-btn pass">
+          <input type="radio" name="status" value="pass">
+          <span data-i18n="pass">✅ 通れる</span>
+        </label>
+        <label class="status-btn fail">
+          <input type="radio" name="status" value="blocked">
+          <span data-i18n="blocked">🚫 通れない</span>
+        </label>
+        <label class="status-btn step">
+          <input type="radio" name="status" value="step">
+          <span data-i18n="step">⚠️ 段差</span>
+        </label>
+        <label class="status-btn comment">
+          <input type="radio" name="status" value="comment">
+          <span data-i18n="comment_label">💬 コメント</span>
+        </label>
+      </div>
+
+      <textarea id="comment" data-i18n-placeholder="comment" placeholder="コメントを入力"></textarea>
+      <button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
+    </div>
+
+    <!-- 避難所カードリスト -->
+    <div id="shelter-list"></div>
+
+    <!-- Google Map -->
+    <div id="map"></div>
+  </div>
+
+  <!-- フッター -->
+  <footer id="footer" data-i18n="footer">
+    <span id="footer-left">© hinavi 2025 all rights reserved.</span>
+    <div id="footer-right">
+      情報提供：
+      <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
+      <a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
+    </div>
+  </footer>
+
+  <!-- メインスクリプト -->
+  <script>
+    const GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
+    window.currentLang = "ja";
+    let currentScript = null;
+
+    // 最新位置管理
+    let latestPosition = null;
+    window.setLatestPosition = (pos) => {
+      latestPosition = pos;
+      window.userLat = pos?.lat;
+      window.userLng = pos?.lng;
+      if (window.map && window.reloadShelters) reloadShelters();
+    };
+    window.getLatestPosition = () => latestPosition;
+
+    function loadGoogleMaps(lang = "ja") {
+      console.log(`🌐 言語切り替え → ${lang}`);
+      window.currentLang = lang;
+      if (window.stopTracking) window.stopTracking();
+      if (currentScript) { currentScript.remove(); currentScript = null; }
+      document.getElementById("map").innerHTML = "";
+
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
+      script.defer = true;
+      script.async = true;
+      document.head.appendChild(script);
+      currentScript = script;
+    }
+
+    // 言語切り替えイベント
+    document.getElementById("language-select").addEventListener("change", (e) => {
+      const newLang = e.target.value;
+      loadGoogleMaps(newLang);
+      if (window.loadDisasterInfo) window.loadDisasterInfo();
+      if (window.changeLanguage) changeLanguage(newLang); // ✅ UIテキストも切替
+    });
+
+    // 初回
+    loadGoogleMaps(window.currentLang);
+  </script>
+
+  <!-- 各種スクリプト -->
+  <script src="js/shelters.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/disaster-info.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/lang.js"></script>
 </body>
 </html>
