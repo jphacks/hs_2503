@@ -82,6 +82,8 @@ function submitReport() {
     });
     marker.addListener("click", () => info.open(map, marker));
 
+
+
     // --- サーバー送信 ---
     const payload = { lat, lng, status: readableStatus, comment };
     console.log("送信データ:", payload);
