@@ -186,8 +186,7 @@ window.loadDisasterInfo = async function() {
                             "27": "その他の注意報"
                         };
                         const kindName = warningKindMap[w.code] || w.name || w.code;
-                        const status = w.status || "不明な状態";
-                        return `${status}: ${kindName}`;
+                        return ` ${kindName}`;
                     });
             }
             // === ⑤ 地震情報 ===
@@ -221,11 +220,21 @@ window.loadDisasterInfo = async function() {
                         title,
                         region: quakeRegion,
                         originTime:detailXml.querySelector("OriginTime")?.textContent || "不明",
-                        mag: detailXml.getElementsByTagName("jmx_eb:Magnitude")[0]?.textContent || "―",
+                        magnitude: detailXml.getElementsByTagName("jmx_eb:Magnitude")[0]?.textContent || "―",
                         maxInt: detailXml.querySelector("MaxInt")?.textContent ||
                                 detailXml.querySelector("jmx_eb\\:MaxInt")?.textContent ||"―",
                         updated: e.getElementsByTagName("updated")[0]?.textContent ?? ""
                     };
+                    if (localQuake) {
+                        const originDate = new Date(localQuake.originTime);
+                        const formattedOrigin = originDate.toLocaleString("ja-JP", {
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        });
+                        localQuake.originTime=formattedOrigin;
+                    } 
                     break;
                 }
             }
@@ -234,7 +243,7 @@ window.loadDisasterInfo = async function() {
     <div id="disaster-info">
     <!-- 左カラム：市名 -->
     <div id="disaster-header">
-        <h3 id="city-name">${city}</h3>
+        <h3 id="city-name">${fullName}</h3>
     </div>
 
     <!-- 右カラム：警報 + 地震 -->
@@ -254,7 +263,7 @@ window.loadDisasterInfo = async function() {
         <h4>${localQuake ? localQuake.title : T.quakeTitle}</h4>
         ${
             localQuake
-            ? `<p>震源：${localQuake.hypocenter}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+            ? `<p>${localQuake.originTime}　震源：${localQuake.region}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
             : `<p>${T.noQuake(prefName)}</p>`
         }
         </div>
