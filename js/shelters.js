@@ -1,4 +1,6 @@
 let expandedCard = null;
+let cachedShelters = null; // キャッシュ用
+
 
 function getElevation(lat, lng) {
   return new Promise((resolve, reject) => {
@@ -206,43 +208,39 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 // --- メイン処理 ---
 // 現在地 lat, lng は map.js 側で取得し渡す
+// --- メイン処理 ---
 async function initShelterCards(map, userLat, userLng, onClickCallback) {
     try {
-        // ✅ 言語ごとに読み込むCSVを切り替え
         const lang = window.currentLang || "ja";
         const csvMap = {
             ja: "./csv/shelter_japan.csv",
-            // en: "./csv/shelter_hiroshima_english.csv",
             zh: "./csv/shelter_hiroshima_chinese.csv",
-            // es: "./csv/shelter_hiroshima_spanish.csv",
         };
-
-        // 対応言語がなければ日本語をデフォルトに
         const csvPath = csvMap[lang] || csvMap["ja"];
-        console.log(`📄 避難所CSV読込: ${csvPath}`);
 
-        const shelters = await loadSheltersFromCSV(csvPath);
+        // 📄 一度だけ読み込む
+        if (!cachedShelters) {
+            console.log(`📄 避難所CSV読込: ${csvPath}`);
+            cachedShelters = await loadSheltersFromCSV(csvPath);
+        }
+
+        const shelters = cachedShelters;
 
         // 各避難所との距離を計算
         shelters.forEach(s => {
             s.distance = calculateDistance(userLat, userLng, s.lat, s.lng);
         });
 
-        // 近い順にソートして5件だけ取得
         const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
 
-        // カード表示
         createShelterCards(nearest, onClickCallback);
-
-        // マーカー表示
         addShelterMarkers(map, nearest, onClickCallback);
 
-        // 🌍 裏で標高を事前取得
         nearest.forEach(async s => {
-        if (s.elevation === undefined) {
-            const e = await getElevation(s.lat, s.lng);
-            s.elevation = e.toFixed(1);
-        }
+            if (s.elevation === undefined) {
+                const e = await getElevation(s.lat, s.lng);
+                s.elevation = e.toFixed(1);
+            }
         });
 
     } catch (error) {
