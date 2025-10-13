@@ -1,3 +1,4 @@
+// map.js
 // ============================
 // 🌏 グローバル変数
 // ============================
@@ -14,7 +15,7 @@ let routeButtons = [];
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
 window.stopTracking = stopTracking;
-YOUR_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0";
+// ❌ 削除: YOUR_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
 
 // ============================
 // 🗺️ 初期化
@@ -376,7 +377,8 @@ window.changeLanguage = function (lang) {
 
     // 新しい言語でGoogle Mapsを再ロード
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${lang}&callback=initMap`;
+    // 💡 修正点: window.GOOGLE_MAPS_API_KEY を参照
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
@@ -389,15 +391,16 @@ window.changeLanguage = function (lang) {
 // ============================
 // 🏁 初回ロード時（言語設定ありなら反映）
 // ============================
-window.addEventListener("load", () => {
-    const savedLang = localStorage.getItem("selectedLanguage") || "ja";
-    currentLang = savedLang;
+// ❌ 削除: index.htmlで一括してAPIキーを管理・読み込みするため、このブロックは不要になります。
+// window.addEventListener("load", () => {
+//     const savedLang = localStorage.getItem("selectedLanguage") || "ja";
+//     currentLang = savedLang;
 
-    // Google Maps APIを動的に読み込み
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${savedLang}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-    currentMapScript = script;
-});
+//     // Google Maps APIを動的に読み込み
+//     const script = document.createElement("script");
+//     script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${savedLang}&callback=initMap`;
+//     script.async = true;
+//     script.defer = true;
+//     document.head.appendChild(script);
+//     currentMapScript = script;
+// });
