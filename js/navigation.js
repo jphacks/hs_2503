@@ -1,5 +1,5 @@
 //let watchId;
-let userMarker;
+//let userMarker;
 
 function startWalkingNavigation(shelter) {
   if (!navigator.geolocation) {
