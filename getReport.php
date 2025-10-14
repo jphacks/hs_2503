@@ -15,7 +15,7 @@ try {
 }
 
 // データ取得
-$sql = "SELECT id, lat, lng, status, comment, created_at FROM reports ORDER BY created_at DESC";
+$sql = "SELECT id, lat, lng, status, comment, likes_count, created_at FROM reports ORDER BY created_at DESC";
 $stmt = $pdo->query($sql);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

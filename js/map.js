@@ -11,6 +11,7 @@ let userPosition = null;
 let watchId = null;
 let routeRenderers = [];
 let routeButtons = [];
+let isManuallyPanning = false; // 💡 NEW: ユーザーが手動で地図を動かしたか
 
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
@@ -36,11 +37,17 @@ async function initMap() {
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: true,
-        gestureHandling: "greedy"//
+        gestureHandling: "greedy"
     });
 
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer({ map });
+
+    // 💡 NEW: 地図ドラッグ開始時にフラグを立てる (自動追尾制御)
+    map.addListener("dragstart", () => {
+        console.log("🗺️ 手動操作開始: 自動追尾を一時停止");
+        isManuallyPanning = true;
+    });
 
     // 💬 言語切替直後にも現在地と仮の円を描画
     if (latest) {
@@ -48,19 +55,15 @@ async function initMap() {
         userPosition = latest;
 
         // マーカー再生成
-        // ❌ 以前: google.maps.Marker を使用していた
-        // userMarker = new google.maps.Marker({ ... });
-
-        // ✅ 修正: AdvancedMarkerElement を使用 (PinElementで円形を再現)
         userMarker = new google.maps.marker.AdvancedMarkerElement({
             position: userPosition,
             map,
             title: "あなたの現在地",
             content: new google.maps.marker.PinElement({
-                background: "#4285F4", // fillcolor
-                borderColor: "white",  // strokecolor
-                glyph: "●", // 内部テキスト (ここでは小さな円の絵文字で表現)
-                glyphColor: "#4285F4", // 背景色と同色にして目立たなくする
+                background: "#4285F4",
+                borderColor: "white",
+                glyph: "●",
+                glyphColor: "#4285F4",
             }).element,
         });
 
@@ -118,12 +121,8 @@ function startTracking() {
                 window.setLatestPosition(userPosition);
             }
 
-            // マーカーがなければ作成
+            // マーカーがなければ作成、あれば更新
             if (!userMarker) {
-                // ❌ 以前: google.maps.Marker を使用していた
-                // userMarker = new google.maps.Marker({ ... });
-
-                // ✅ 修正: AdvancedMarkerElement を使用
                 userMarker = new google.maps.marker.AdvancedMarkerElement({
                     position: userPosition,
                     map,
@@ -136,10 +135,6 @@ function startTracking() {
                     }).element,
                 });
             } else {
-                // ❌ 以前: setPosition() を使用していた
-                // userMarker.setPosition(userPosition);
-                
-                // ✅ 修正: AdvancedMarkerElement は .position プロパティを直接設定
                 userMarker.position = userPosition;
             }
 
@@ -156,16 +151,17 @@ function startTracking() {
                     strokeWeight: 1,
                 });
             } else {
-                // 言語切替後、mapが変わるため map を再指定して強制再描画
                 userCircle.setMap(map);
                 userCircle.setCenter(userPosition);
                 userCircle.setRadius(accuracy / 16);
             }
 
-            // ✅ 初回のみ中心移動
-            if (!map.getBounds() || !map.getBounds().contains(userPosition)) {
-                map.setCenter(userPosition);
-                map.setZoom(16);
+            // ✅ 初回のみ中心移動 (自動追尾制御を適用)
+            if (!isManuallyPanning) {
+                if (!map.getBounds() || !map.getBounds().contains(userPosition)) {
+                    map.setCenter(userPosition);
+                    map.setZoom(16);
+                }
             }
 
             if (typeof initShelterCards === "function") {
@@ -186,7 +182,6 @@ function startTracking() {
 
 // ============================
 // 🛑 追跡停止
-// ... (変更なし) ...
 // ============================
 function stopTracking() {
     if (watchId !== null) {
@@ -198,7 +193,6 @@ function stopTracking() {
 
 // ============================
 // 🚶 経路表示
-// ... (変更なし) ...
 // ============================
 function showRouteToShelter(shelter) {
     if (!userPosition) {
@@ -242,74 +236,25 @@ function showRouteToShelter(shelter) {
 
 // ============================
 // 📍 現在地に戻るボタン
-// ... (変更なし) ...
 // ============================
 function recenterMap() {
     if (userPosition && map) {
         map.panTo(userPosition);
         map.setZoom(16);
+        // 💡 NEW: 現在地に戻ったら、自動追尾を再開する
+        isManuallyPanning = false; 
     } else {
         alert("現在地がまだ取得されていません。");
     }
 }
 
 // ✅ 報告追加（UIでタイプ選択 + コメント入力）
-// ... (変更なし) ...
-function addReport(lat, lng) {
-    // ラジオボタンで選択（HTML側で用意）
-    const statusRadio = document.querySelector('input[name="status"]:checked');
-    if (!statusRadio) {
-        alert("コメントタイプを選んでください");
-        return;
-    }
-    const statusValue = statusRadio.value; // pass / fail / step / comment
-    const comment = document.getElementById("comment").value;
+// ※ この関数は report.js の submitReport にロジックを移動したため、削除推奨
+// ※ 便宜上、元のコードをコメントアウト
+// function addReport(lat, lng) { ... }
 
-    // ステータスラベルとアイコン
-    let readableStatus;
-    switch(statusValue) {
-        case "pass": readableStatus = "通れる"; break;
-        case "fail": readableStatus = "通れない"; break;
-        case "step": readableStatus = "段差"; break;
-        case "comment": readableStatus = "コメント"; break;
-        default: readableStatus = statusValue; break;
-    }
-
-    const payload = {
-        lat,
-        lng,
-        status: readableStatus,
-        comment
-    };
-
-    console.log("送信データ:", payload);
-
-    fetch("https://hinavi.sakura.ne.jp/sendReport.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify(payload)
-    })
-    .then(async res => {
-        const text = await res.text();
-        console.log("サーバー応答:", text);
-        return JSON.parse(text);
-    })
-    .then(data => {
-        if (data.success) {
-            alert("報告を送信しました！");
-            addReportMarker(lat, lng, readableStatus, comment, new Date().toLocaleString());
-        } else {
-            alert("送信に失敗しました: " + (data.error || "原因不明"));
-        }
-    })
-    .catch(err => {
-        console.error("送信エラー:", err);
-        alert("通信エラー: " + err.message);
-    });
-}
 
 // ✅ DBから報告データを取得してマーカー表示（4タイプ対応）
-// ... (変更なし) ...
 function loadReports() {
     console.log("🟦 loadReports() 開始");
 
@@ -319,11 +264,13 @@ function loadReports() {
             if (data.success) {
                 data.reports.forEach(rep => {
                     addReportMarker(
+                        parseInt(rep.id), // 💡 ID
                         parseFloat(rep.lat),
                         parseFloat(rep.lng),
                         rep.status,
                         rep.comment,
-                        rep.created_at
+                        rep.created_at,
+                        parseInt(rep.likes_count) // 💡 likes_count
                     );
                 });
             }
@@ -332,8 +279,8 @@ function loadReports() {
         .finally(() => console.log("🟫 loadReports() 完了"));
 }
 
-// ✅ 共通マーカー生成（4タイプアイコン対応）
-function addReportMarker(lat, lng, status, comment, created_at) {
+// ✅ 共通マーカー生成（4タイプアイコン対応 + いいね表示）
+function addReportMarker(id, lat, lng, status, comment, created_at, likes_count) {
     let iconUrl;
     switch(status) {
         case "通れる": iconUrl = "img/ok.svg"; break;
@@ -343,25 +290,13 @@ function addReportMarker(lat, lng, status, comment, created_at) {
         default: iconUrl = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; break;
     }
 
-    // ❌ 以前: google.maps.Marker を使用していた
-    // const marker = new google.maps.Marker({
-    //     position: { lat, lng },
-    //     map,
-    //     icon: {
-    //         url: iconUrl,
-    //         scaledSize: new google.maps.Size(32, 32),
-    //         origin: new google.maps.Point(0, 0),
-    //         anchor: new google.maps.Point(16, 16)
-    //     }
-    // });
-
-    // ✅ 修正: AdvancedMarkerElement を使用
     // 1. カスタムアイコン用のDOM要素を作成 (<img> タグ)
     const iconElement = document.createElement('img');
     iconElement.src = iconUrl;
-    iconElement.style.width = '32px'; // サイズをCSSで指定
+    iconElement.style.width = '32px';
     iconElement.style.height = '32px';
-    // 2. AdvancedMarkerElement を作成し、content に要素を渡す
+    
+    // 2. AdvancedMarkerElement を作成
     const marker = new google.maps.marker.AdvancedMarkerElement({
         position: { lat, lng },
         map,
@@ -369,8 +304,19 @@ function addReportMarker(lat, lng, status, comment, created_at) {
         title: status
     });
 
+    // 💡 NEW: 情報ウィンドウの内容にいいねボタンとカウントを追加
+    const infoContent = `
+        <div data-report-id="${id}" class="report-info-window">
+            <b>${status}</b><br>
+            ${comment || ""}<br>
+            <small>${created_at}</small><br>
+            <button class="like-btn" onclick="likeReport(${id})">👍</button>
+            <span class="likes-count" id="likes-count-${id}">${likes_count || 0}</span>
+        </div>
+    `;
+
     const info = new google.maps.InfoWindow({
-        content: `<b>${status}</b><br>${comment || ""}<br><small>${created_at}</small>`,
+        content: infoContent,
     });
 
     marker.addListener("click", () => info.open(map, marker));
@@ -419,21 +365,4 @@ window.changeLanguage = function (lang) {
     // 災害情報など他のUIも即時再描画したい場合
     if (typeof window.onload === "function") window.onload();
 };
-
-// ============================
-// 🏁 初回ロード時（言語設定ありなら反映）
-// ... (変更なし) ...
-// ============================
-// ❌ 削除: index.htmlで一括してAPIキーを管理・読み込みするため、このブロックは不要になります。
-// window.addEventListener("load", () => {
-//     const savedLang = localStorage.getItem("selectedLanguage") || "ja";
-//     currentLang = savedLang;
-
-//     // Google Maps APIを動的に読み込み
-//     const script = document.createElement("script");
-//     script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${savedLang}&callback=initMap`;
-//     script.async = true;
-//     script.defer = true;
-//     document.head.appendChild(script);
-//     currentMapScript = script;
-// });
+// ... (初回ロード時のコードは index.html に移動済みのため削除)
