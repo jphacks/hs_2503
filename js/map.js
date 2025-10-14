@@ -55,29 +55,15 @@ async function initMap() {
         userPosition = latest;
 
         // マーカー再生成
-<<<<<<< HEAD
-        // ❌ 以前: google.maps.Marker を使用していた
-        // userMarker = new google.maps.Marker({ ... });
-
-        // ✅ 修正: AdvancedMarkerElement を使用 (PinElementで円形を再現)
-=======
->>>>>>> kotaro/test
         userMarker = new google.maps.marker.AdvancedMarkerElement({
             position: userPosition,
             map,
             title: "あなたの現在地",
             content: new google.maps.marker.PinElement({
-<<<<<<< HEAD
-                background: "#4285F4", // fillcolor
-                borderColor: "white",  // strokecolor
-                glyph: "●", // 内部テキスト (ここでは小さな円の絵文字で表現)
-                glyphColor: "#4285F4", // 背景色と同色にして目立たなくする
-=======
                 background: "#4285F4",
                 borderColor: "white",
                 glyph: "●",
                 glyphColor: "#4285F4",
->>>>>>> kotaro/test
             }).element,
         });
 
@@ -137,13 +123,6 @@ function startTracking() {
 
             // マーカーがなければ作成、あれば更新
             if (!userMarker) {
-<<<<<<< HEAD
-                // ❌ 以前: google.maps.Marker を使用していた
-                // userMarker = new google.maps.Marker({ ... });
-
-                // ✅ 修正: AdvancedMarkerElement を使用
-=======
->>>>>>> kotaro/test
                 userMarker = new google.maps.marker.AdvancedMarkerElement({
                     position: userPosition,
                     map,
@@ -156,13 +135,6 @@ function startTracking() {
                     }).element,
                 });
             } else {
-<<<<<<< HEAD
-                // ❌ 以前: setPosition() を使用していた
-                // userMarker.setPosition(userPosition);
-                
-                // ✅ 修正: AdvancedMarkerElement は .position プロパティを直接設定
-=======
->>>>>>> kotaro/test
                 userMarker.position = userPosition;
             }
 
@@ -280,22 +252,9 @@ function recenterMap() {
 }
 
 // ✅ 報告追加（UIでタイプ選択 + コメント入力）
-<<<<<<< HEAD
-// ... (変更なし) ...
-function addReport(lat, lng) {
-    // ラジオボタンで選択（HTML側で用意）
-    const statusRadio = document.querySelector('input[name="status"]:checked');
-    if (!statusRadio) {
-        alert("コメントタイプを選んでください");
-        return;
-    }
-    const statusValue = statusRadio.value; // pass / fail / step / comment
-    const comment = document.getElementById("comment").value;
-=======
 // ※ この関数は report.js の submitReport にロジックを移動したため、削除推奨
 // ※ 便宜上、元のコードをコメントアウト
 // function addReport(lat, lng) { ... }
->>>>>>> kotaro/test
 
 
 // ✅ DBから報告データを取得してマーカー表示（4タイプ対応）
@@ -335,27 +294,6 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likes_count)
         default: iconUrl = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; break;
     }
 
-<<<<<<< HEAD
-    // ❌ 以前: google.maps.Marker を使用していた
-    // const marker = new google.maps.Marker({
-    //     position: { lat, lng },
-    //     map,
-    //     icon: {
-    //         url: iconUrl,
-    //         scaledSize: new google.maps.Size(32, 32),
-    //         origin: new google.maps.Point(0, 0),
-    //         anchor: new google.maps.Point(16, 16)
-    //     }
-    // });
-
-    // ✅ 修正: AdvancedMarkerElement を使用
-    // 1. カスタムアイコン用のDOM要素を作成 (<img> タグ)
-    const iconElement = document.createElement('img');
-    iconElement.src = iconUrl;
-    iconElement.style.width = '32px'; // サイズをCSSで指定
-    iconElement.style.height = '32px';
-    // 2. AdvancedMarkerElement を作成し、content に要素を渡す
-=======
     // 1. カスタムアイコン用のDOM要素を作成 (<img> タグ)
     const iconElement = document.createElement('img');
     iconElement.src = iconUrl;
@@ -363,7 +301,6 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likes_count)
     iconElement.style.height = '32px';
     
     // 2. AdvancedMarkerElement を作成
->>>>>>> kotaro/test
     const marker = new google.maps.marker.AdvancedMarkerElement({
         position: { lat, lng },
         map,
@@ -432,25 +369,4 @@ window.changeLanguage = function (lang) {
     // 災害情報など他のUIも即時再描画したい場合
     if (typeof window.onload === "function") window.onload();
 };
-<<<<<<< HEAD
-
-// ============================
-// 🏁 初回ロード時（言語設定ありなら反映）
-// ... (変更なし) ...
-// ============================
-// ❌ 削除: index.htmlで一括してAPIキーを管理・読み込みするため、このブロックは不要になります。
-// window.addEventListener("load", () => {
-//     const savedLang = localStorage.getItem("selectedLanguage") || "ja";
-//     currentLang = savedLang;
-
-//     // Google Maps APIを動的に読み込み
-//     const script = document.createElement("script");
-//     script.src = `https://maps.googleapis.com/maps/api/js?key=${YOUR_API_KEY}&language=${savedLang}&callback=initMap`;
-//     script.async = true;
-//     script.defer = true;
-//     document.head.appendChild(script);
-//     currentMapScript = script;
-// });
-=======
 // ... (初回ロード時のコードは index.html に移動済みのため削除)
->>>>>>> kotaro/test
