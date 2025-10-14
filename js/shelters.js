@@ -1,16 +1,30 @@
+// shelters.js
+// ============================
+// 🌏 グローバル変数とデバウンス管理
+// ============================
 let expandedCard = null;
-let cachedShelters = null; // キャッシュ用
+let currentMarkers = []; // 既存マーカーを管理する配列
+let apiTimeout;          // 💡 デバウンス用のタイマーID
+
+// ユーザーの現在地を保持する変数（map.jsから更新される）
+// 💡 NEW: initMap() または startTracking() 成功時に正確な値に更新される
+let currentLat = 0; 
+let currentLng = 0;
+// 💡 NEW: 避難所検索の半径（キロメートル）
+const SEARCH_RADIUS_KM = 5; 
 
 
+// ============================
+// ⛰️ 標高取得 (変更なし)
+// ============================
 function getElevation(lat, lng) {
-// ... (getElevation 関数は変更なし) ...
   return new Promise((resolve, reject) => {
     const elevator = new google.maps.ElevationService();
     elevator.getElevationForLocations(
       { locations: [{ lat: lat, lng: lng }] },
       (results, status) => {
         if (status === "OK" && results[0]) {
-          console.log("標高:", results[0].elevation);
+          console.log("標高:", results[0].elevation.toFixed(1) + 'm');
           resolve(results[0].elevation);
         } else {
           console.error("Elevation取得失敗:", status);
@@ -22,66 +36,61 @@ function getElevation(lat, lng) {
 }
 
 
-// --- CSVファイルを読み込む関数 ---
-// ... (loadSheltersFromCSV 関数は変更なし) ...
-async function loadSheltersFromCSV(csvPath) {
-    const response = await fetch(csvPath);
-    const text = await response.text();
-
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',');
-
-    const nameIndex = headers.indexOf('施設・場所名');
-    const addressIndex = headers.indexOf('住所');
-    const latIndex = headers.indexOf('緯度');
-    const lngIndex = headers.indexOf('経度');
-
-    // 災害列インデックス
-    const disasterCols = [
-        '洪水',
-        '崖崩れ、土石流及び地滑り',
-        '高潮',
-        '地震',
-        '津波',
-        '大規模な火事',
-        '内水氾濫',
-        '火山現象'
-    ].map(col => headers.indexOf(col));
-
-    const shelters = lines.slice(1).map(line => {
-        const cols = line.split(',');
-
-        // 災害種別リスト作成
-        const disasters = disasterCols
-            .map((idx, i) => (cols[idx] === '1' ? headers[disasterCols[i]] : null))
-            .filter(d => d); // 1のものだけ残す
-
-        return {
-            name: cols[nameIndex]?.trim(),
-            address: cols[addressIndex]?.trim(),
-            lat: parseFloat(cols[latIndex]),
-            lng: parseFloat(cols[lngIndex]),
-            disasterType: disasters.join(', ') // 文字列化してカードで表示
-        };
-    }).filter(s => s.name && !isNaN(s.lat) && !isNaN(s.lng));
-
-    return shelters;
+// ============================
+// 📡 APIデータ取得 (現在地中心に変更)
+// ============================
+// 💡 修正: mapのBoundsではなく、中心座標と半径でデータを取得する
+async function loadSheltersFromAPI(lat, lng, radiusKm) {
+    
+    // 1. 座標が有効かチェック
+    if (lat === 0 && lng === 0) {
+        console.warn("⚠️ 現在地の座標が未設定のため、APIリクエストをスキップします。");
+        return []; 
+    }
+    
+    // 2. PHP APIへのリクエストURLを構築 (サーバー側もこのパラメータに対応が必要です)
+    const params = new URLSearchParams({
+        lat: lat,
+        lng: lng,
+        radius: radiusKm // サーバー側でこの半径内のデータをフィルタリング
+    });
+    
+    const apiUrl = `getShelters.php?${params.toString()}`;
+    
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`APIリクエスト失敗: ${response.status} ${response.statusText}`);
+        }
+        
+        // 3. JSONデータを受け取る
+        const shelters = await response.json(); 
+        
+        return shelters;
+        
+    } catch (error) {
+        console.error("避難所データのロード中にエラーが発生しました:", error);
+        document.getElementById("shelter-list").innerHTML = "<li>❌ 避難所データの取得中にエラーが発生しました。</li>";
+        return [];
+    }
 }
 
-// --- 多言語ラベルを返す ---
-// ... (getLabels 関数は変更なし) ...
+
+// ============================
+// 📄 UI生成ヘルパー (変更なし)
+// ============================
 function getLabels(lang = "ja") {
+    // ... (変更なし) ...
     const labels = {
         ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
         zh: { distance: "直线距离", elevation: "海拔", hazard: "适用灾害类型" },
         en: { distance: "Distance", elevation: "Elevation", hazard: "Applicable hazards" },
         es: { distance: "Distancia en línea recta", elevation: "Altitud", hazard: "Tipos de desastres aplicables" },
     };
-    return labels[lang] || labels.ja;
+    const langKey = window.currentLang || "ja";
+    return labels[langKey] || labels.ja;
 }
 
-// --- カードHTMLを生成する共通関数 ---
-// ... (getShelterCardHTML 関数は変更なし) ...
 function getShelterCardHTML(shelter, expanded = false, labels = getLabels()) {
     let extraInfo = "";
 
@@ -96,22 +105,28 @@ function getShelterCardHTML(shelter, expanded = false, labels = getLabels()) {
         <strong>${shelter.name}</strong><br>
         <small>
         ${shelter.address}<br>
-        ${labels.distance}: ${shelter.distance.toFixed(2)} km<br>
+        ${shelter.distance !== undefined ? `${labels.distance}: ${shelter.distance.toFixed(2)} km<br>` : ''}
         ${extraInfo}
         </small>
     `;
 }
 
-// --- 避難所カード生成 ---
-// ... (createShelterCards 関数は変更なし) ...
 function createShelterCards(shelters, onClickCallback) {
     const listDiv = document.getElementById("shelter-list");
     listDiv.innerHTML = "";
 
-    shelters.forEach(shelter => {
+    // 💡 修正: 距離でソートし、上位5件を表示
+    const sortedShelters = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
+    
+    if (sortedShelters.length === 0) {
+        listDiv.innerHTML = "<li>指定範囲内に避難所は見つかりませんでした。</li>";
+        return;
+    }
+
+    sortedShelters.forEach(shelter => {
         const card = document.createElement('div');
         card.className = 'shelter-card';
-        card.innerHTML = getShelterCardHTML(shelter, false);
+        card.innerHTML = getShelterCardHTML(shelter, false); 
 
         card.onclick = () => {
             toggleCard(card, shelter, onClickCallback);
@@ -121,56 +136,40 @@ function createShelterCards(shelters, onClickCallback) {
     });
 }
 
-// --- 避難所マーカー表示 ---
 function addShelterMarkers(map, shelters, onClickCallback) {
+    // 既存マーカーを削除
+    currentMarkers.forEach(marker => marker.setMap(null));
+    currentMarkers = [];
+
     shelters.forEach(shelter => {
         
-        // 1. カスタムアイコン用のDOM要素を作成
         const iconElement = document.createElement('img');
-        iconElement.src = 'img/pin1.png'; // アイコン画像のURL
-        iconElement.style.width = '80px'; 
-        iconElement.style.height = '80px';
-        // Note: anchor は AdvancedMarkerElement では CSS または PinElement で調整するのが一般的
+        iconElement.src = 'img/pin1.png'; 
+        iconElement.style.width = '96px'; 
+        iconElement.style.height = '96px';
         
-        // ❌ 以前: google.maps.Marker を使用していた
-        // const marker = new google.maps.Marker({
-        //     position: { lat: shelter.lat, lng: shelter.lng },
-        //     map: map,
-        //     title: shelter.name,
-        //     icon: {
-        //         url: 'img/pin1.png',       
-        //         scaledSize: new google.maps.Size(80, 80), 
-        //         origin: new google.maps.Point(0, 0),      
-        //         anchor: new google.maps.Point(40, 80)     
-        //     }
-        // });
-
-        // ✅ 修正: AdvancedMarkerElement を使用
         const marker = new google.maps.marker.AdvancedMarkerElement({
             position: { lat: shelter.lat, lng: shelter.lng },
             map: map,
             title: shelter.name,
-            content: iconElement, // DOM要素を content に渡す
-            // 💡 Advanced Marker の anchor は 'bottom' (画像の下端中央) がデフォルトです。
-            // 以前の anchor: new google.maps.Point(40, 80) は、
-            // 80x80px の画像の (中央, 下端) を指しているので、デフォルトに近い動作です。
+            content: iconElement, 
         });
 
         marker.addListener("click", () => {
-            // カードを探して展開
-            const cards = document.querySelectorAll('.shelter-card');
-            const card = Array.from(cards).find(c => c.querySelector('strong').textContent === shelter.name);
+            // カードを見つけて展開
+            const card = Array.from(document.querySelectorAll('.shelter-card')).find(c => c.querySelector('strong')?.textContent === shelter.name);
             if (card) toggleCard(card, shelter, onClickCallback);
+            else onClickCallback(shelter); 
         });
 
         marker.addListener("dblclick", () => {
-            onClickCallback(shelter); // 経路表示
+            onClickCallback(shelter); 
         });
+        
+        currentMarkers.push(marker);
     });
 }
 
-// --- カードの展開・収縮共通関数 ---
-// ... (toggleCard, expandCard, collapseCard 関数は変更なし) ...
 function toggleCard(card, shelter, onClickCallback) {
     if (expandedCard && expandedCard !== card) collapseCard(expandedCard, expandedCard.shelterData);
 
@@ -180,12 +179,12 @@ function toggleCard(card, shelter, onClickCallback) {
     } else {
         expandCard(card, shelter);
         expandedCard = card;
-        card.shelterData = shelter; // クリックされたカードに shelter 情報を保持
-        onClickCallback(shelter);
+        card.shelterData = shelter; 
+        // 経路表示をトリガー
+        onClickCallback(shelter); 
     }
 }
 
-// --- 展開 ---
 async function expandCard(card, shelter) {
     const lang = window.currentLang || "ja";
     const labels = getLabels(lang);
@@ -205,11 +204,14 @@ async function expandCard(card, shelter) {
             }
         } catch (err) {
             console.error("標高取得失敗:", err);
+            shelter.elevation = "取得失敗";
+            if (expandedCard === card) {
+                card.innerHTML = getShelterCardHTML(shelter, true, labels);
+            }
         }
     }
 }
 
-// --- 収縮 ---
 function collapseCard(card, shelter) {
     const lang = window.currentLang || "ja";
     const labels = getLabels(lang);
@@ -218,11 +220,9 @@ function collapseCard(card, shelter) {
     card.innerHTML = getShelterCardHTML(shelter, false, labels);
 }
 
-
-// --- 2点間の距離を計算（ハーサイン公式） ---
-// ... (calculateDistance 関数は変更なし) ...
+// --- 2点間の距離を計算（ハーサイン公式） --- (変更なし)
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // 地球の半径 (km)
+    const R = 6371; 
     const toRad = x => (x * Math.PI) / 180;
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
@@ -233,43 +233,96 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-// --- メイン処理 ---
-// ... (initShelterCards 関数は変更なし) ...
-async function initShelterCards(map, userLat, userLng, onClickCallback) {
-    try {
-        const lang = window.currentLang || "ja";
-        const csvMap = {
-            ja: "./csv/shelter_japan.csv",
-            zh: "./csv/shelter_hiroshima_chinese.csv",
-        };
-        const csvPath = csvMap[lang] || csvMap["ja"];
 
-        // 📄 一度だけ読み込む
-        if (!cachedShelters) {
-            console.log(`📄 避難所CSV読込: ${csvPath}`);
-            cachedShelters = await loadSheltersFromCSV(csvPath);
+// ============================
+// 🎯 メイン処理 (現在地中心のデータ取得に対応)
+// ============================
+async function initShelterCards(map, onClickCallback) {
+    
+    // 💡 修正: 現在地が未設定の場合は、地図の中心をフォールバックとして使用
+    let latToUse = currentLat;
+    let lngToUse = currentLng;
+
+    if (latToUse === 0 && lngToUse === 0) {
+        const center = map.getCenter();
+        latToUse = center.lat();
+        lngToUse = center.lng();
+        console.warn("⚠️ 現在地がまだ取得できていないため、地図の中心を現在地として距離と検索を行います。");
+    }
+
+    try {
+        // 1. APIから現在地中心の避難所データを取得
+        console.log(`📡 APIから避難所データを取得中... (Lat:${latToUse.toFixed(4)}, Lng:${lngToUse.toFixed(4)})`);
+        // 💡 修正: 現在地と固定半径を渡す
+        const shelters = await loadSheltersFromAPI(latToUse, lngToUse, SEARCH_RADIUS_KM);
+        
+        if (shelters.length === 0) {
+            console.log("検索範囲内に避難所データはありません。");
+            document.getElementById("shelter-list").innerHTML = "<li>指定範囲内に避難所は見つかりませんでした。</li>";
+            addShelterMarkers(map, [], onClickCallback); 
+            return;
         }
 
-        const shelters = cachedShelters;
-
-        // 各避難所との距離を計算
+        // 2. ユーザー現在地からの距離を計算
         shelters.forEach(s => {
-            s.distance = calculateDistance(userLat, userLng, s.lat, s.lng);
+            s.distance = calculateDistance(latToUse, lngToUse, s.lat, s.lng);
         });
 
-        const nearest = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
-
-        createShelterCards(nearest, onClickCallback);
-        addShelterMarkers(map, nearest, onClickCallback);
-
-        nearest.forEach(async s => {
-            if (s.elevation === undefined) {
-                const e = await getElevation(s.lat, s.lng);
-                s.elevation = e.toFixed(1);
-            }
-        });
+        // 3. マーカーとカードを表示 (カードは距離でソートされた上位5件)
+        addShelterMarkers(map, shelters, onClickCallback); 
+        createShelterCards(shelters, onClickCallback); 
 
     } catch (error) {
-        console.error("避難所データの読み込みに失敗しました:", error);
+        console.error("避難所データの最終処理に失敗しました:", error);
     }
+}
+
+
+// ============================
+// 🌟 最終的な地図イベントリスナーの設定
+// ============================
+// 💡 map.jsのコールバックで、現在の位置情報を更新するためにグローバルな関数を定義
+// map.jsは updateSheltersPosition(pos) を通じてこれを呼び出す
+if (typeof window.setSheltersPosition === "undefined") {
+    window.setSheltersPosition = (pos) => {
+        currentLat = pos.lat;
+        currentLng = pos.lng;
+        // 💡 NEW: 現在地が更新されたら、避難所データを再ロードする（デバウンス適用）
+        clearTimeout(apiTimeout);
+        apiTimeout = setTimeout(() => {
+            console.log("📍 位置情報更新: 避難所データ再ロード (デバウンス後)");
+            // mapオブジェクトはグローバル変数 map.jsで保持されていると仮定
+            if (window.map) {
+                initShelterCards(window.map, window.showRouteToShelter);
+            }
+        }, 500); // 500ms待機
+    }
+}
+
+function setupMapListeners(map, initialLat, initialLng, onClickCallback) {
+    currentLat = initialLat;
+    currentLng = initialLng;
+    
+    // 💡 NEW: mapオブジェクトをグローバルに保持（map.jsが実行しない場合のため）
+    window.map = map;
+    window.showRouteToShelter = onClickCallback; // map.jsの関数を保存
+
+    // 最初に一度だけデータをロードする処理 (map.getBounds()に依存しないため、初回idleで実行)
+    let firstLoadListener = map.addListener('idle', function firstLoad() {
+        console.log("🗺️ 初回 idle: 避難所データロード開始");
+        
+        // 初回ロードを実行
+        initShelterCards(map, onClickCallback);
+        
+        // 初回ロードが終わったら、このリスナーは削除し、継続的なロードを設定
+        google.maps.event.removeListener(firstLoadListener); 
+        
+        // 💡 修正: 地図の移動・ズームによる継続的なロードは、**現在地中心**の検索では**不要**または**地図の中心が変わった時のみ**に限定すべきです。
+        // 現在地追跡中に地図を動かしても現在地は変わらないため、APIコールは不要です。
+        // 地図の移動によるデータ再取得は廃止します。位置情報更新時（上記 window.setSheltersPosition 内）のみ再取得します。
+        
+        // map.addListener('idle', () => { ... デバウンス処理 ... }); // <-- 削除
+
+        console.log("⚠️ 注意: 地図移動による避難所データ再ロードは廃止しました。再ロードは位置情報更新時のみ行われます。");
+    });
 }
