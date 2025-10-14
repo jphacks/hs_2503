@@ -124,44 +124,58 @@ function submitReport() {
 }
 
 // ----------------------------------------------------
-// 💡 NEW: いいね送信機能
-// ----------------------------------------------------
-// ✅ グローバルに公開
-window.likeReport = function (reportId) {
-    console.log(`👍 いいねを送信: ID ${reportId}`);
+// report.js または map.js (既存の likeReport の代わりに定義)
 
-    fetch("https://hinavi.sakura.ne.jp/likeReport.php", {
+/**
+ * Local Storageからブラウザ固有のUUIDを取得または新規生成する（以前の定義を再利用）
+ */
+function getBrowserUUID() {
+    let uuid = localStorage.getItem('browser_uuid');
+    if (!uuid) {
+        uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+        localStorage.setItem('browser_uuid', uuid);
+    }
+    return uuid;
+}
+
+
+window.sendEvaluation = function (reportId, evaluationType) { // 💡 タイプを引数に追加
+    const browserUUID = getBrowserUUID();
+
+    const payload = { 
+        id: reportId,
+        browser_uuid: browserUUID,
+        evaluation_type: evaluationType // 💡 評価タイプ (good or bad) を送信
+    };
+
+    fetch("https://hinavi.sakura.ne.jp/evaluateReport.php", { // 💡 APIファイル名を変更推奨
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify({ id: reportId })
+        body: JSON.stringify(payload)
     })
-    .then(async res => {
-        const text = await res.text();
-        try {
-            return JSON.parse(text);
-        } catch {
-            throw new Error("サーバーがJSONを返しませんでした: " + text);
-        }
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log(`いいね成功! 新しいカウント: ${data.new_likes_count}`);
+            // 💡 成功時: UIを更新
+            document.getElementById(`likes-count-${reportId}`).textContent = data.new_likes_count;
+            document.getElementById(`dislikes-count-${reportId}`).textContent = data.new_dislikes_count;
             
-            // 画面上のいいね数を更新 (情報ウィンドウは閉じない)
-            const countElement = document.getElementById(`likes-count-${reportId}`);
-            if (countElement) {
-                countElement.textContent = data.new_likes_count;
+            // 💡 既に評価済みの場合、ボタンを非アクティブ化 (CSSの active クラスを適用)
+            if (data.status === 'evaluated') {
+                // UI更新ロジックをここに記述
+                alert(`この報告には既に評価済みです。`);
+            } else {
+                // 新規評価の場合はボタンのスタイルを変更するロジックをここに記述
             }
         } else {
-            alert("いいねの送信に失敗しました: " + (data.error || "原因不明"));
+            console.error("評価失敗:", data.error);
         }
     })
-    .catch(err => {
-        console.error("いいね送信エラー:", err);
-        alert("通信エラー: " + err.message);
-    });
+    .catch(error => console.error('通信エラー:', error));
 }
-// ----------------------------------------------------
 
 
 // ページロード時にラベルクリックで選択ハイライト
