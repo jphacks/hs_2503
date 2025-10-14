@@ -31,6 +31,8 @@ async function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: defaultPos,
         zoom: 15,
+        mapId: '58be1157ad609efe356c49f6', 
+
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: true,
