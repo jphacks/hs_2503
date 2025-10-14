@@ -15,7 +15,7 @@ let routeButtons = [];
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
 window.stopTracking = stopTracking;
-// ❌ 削除: YOUR_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
+
 
 // ============================
 // 🗺️ 初期化
