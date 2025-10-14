@@ -314,8 +314,8 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likes_count)
             <b>${status}</b><br>
             ${comment || ""}<br>
             <small>${created_at}</small><br>
-            <button class="like-btn" onclick="likeReport(${id})">👍</button>
-            <span class="likes-count" id="likes-count-${id}">${likes_count || 0}</span>
+            <button class="like-btn" onclick="likeReport(${id})">👍役立った</button>
+            <span class="likes-count" id="likes-count-${id}">${likes_count}</span>
         </div>
     `;
 
