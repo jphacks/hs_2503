@@ -1,5 +1,5 @@
-//let watchId;
-//let userMarker;
+//let watchId; // (コメントアウトのままとする)
+//let userMarker; // (コメントアウトのままとする。map.jsのグローバル変数を使用していると想定)
 
 function startWalkingNavigation(shelter) {
   if (!navigator.geolocation) {
@@ -19,14 +19,34 @@ function startWalkingNavigation(shelter) {
 
       // 現在地マーカー更新
       if (!userMarker) {
-        userMarker = new google.maps.Marker({
-          position: userLocation,
-          map: map,
-          title: "現在地",
-          icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        // ❌ 以前: google.maps.Marker を使用していた
+        // userMarker = new google.maps.Marker({
+        //   position: userLocation,
+        //   map: map,
+        //   title: "現在地",
+        //   icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        // });
+
+        // ✅ 修正: AdvancedMarkerElement を使用 (map.jsとアイコンを統一)
+        userMarker = new google.maps.marker.AdvancedMarkerElement({
+            position: userLocation,
+            map: map,
+            title: "現在地",
+            // PinElementを使用して、以前の丸いアイコンを表現
+            content: new google.maps.marker.PinElement({
+                background: "#4285F4", 
+                borderColor: "white", 
+                glyph: "●", 
+                glyphColor: "#4285F4", 
+            }).element,
         });
+        
       } else {
-        userMarker.setPosition(userLocation);
+        // ❌ 以前: setPosition() を使用していた
+        // userMarker.setPosition(userLocation);
+        
+        // ✅ 修正: AdvancedMarkerElement は .position プロパティを直接設定
+        userMarker.position = userLocation;
       }
 
       // 地図中心を現在地に追従
