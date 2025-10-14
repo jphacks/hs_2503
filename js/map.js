@@ -251,14 +251,9 @@ function recenterMap() {
     }
 }
 
-// ✅ 報告追加（UIでタイプ選択 + コメント入力）
-// ※ この関数は report.js の submitReport にロジックを移動したため、削除推奨
-// ※ 便宜上、元のコードをコメントアウト
-// function addReport(lat, lng) { ... }
-
-
+// ============================
 // ✅ DBから報告データを取得してマーカー表示（4タイプ対応）
-// ... (変更なし) ...
+// ============================
 function loadReports() {
     console.log("🟦 loadReports() 開始");
 
@@ -267,14 +262,19 @@ function loadReports() {
         .then(data => {
             if (data.success) {
                 data.reports.forEach(rep => {
+                    // 💡 修正 1: likes_count と dislikes_count を両方取得し、数値変換とフォールバック処理を行う
+                    const likesCount = parseInt(rep.likes_count) || 0;
+                    const dislikesCount = parseInt(rep.dislikes_count) || 0;
+                    
                     addReportMarker(
-                        parseInt(rep.id), // 💡 ID
+                        parseInt(rep.id),
                         parseFloat(rep.lat),
                         parseFloat(rep.lng),
                         rep.status,
                         rep.comment,
                         rep.created_at,
-                        parseInt(rep.likes_count) // 💡 likes_count
+                        likesCount,    // 💡 likesCount を渡す
+                        dislikesCount  // 💡 dislikesCount を渡す
                     );
                 });
             }
@@ -283,8 +283,11 @@ function loadReports() {
         .finally(() => console.log("🟫 loadReports() 完了"));
 }
 
+// ============================
 // ✅ 共通マーカー生成（4タイプアイコン対応 + いいね表示）
-function addReportMarker(id, lat, lng, status, comment, created_at, likes_count) {
+// ============================
+// 💡 修正 2: likesCount と dislikesCount を引数として受け取るように関数定義を修正
+function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, dislikesCount) {
     let iconUrl;
     switch(status) {
         case "通れる": iconUrl = "img/ok.svg"; break;
@@ -308,14 +311,30 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likes_count)
         title: status
     });
 
-    // 💡 NEW: 情報ウィンドウの内容にいいねボタンとカウントを追加
+    // 💡 情報ウィンドウの内容に Good/Bad ボタンとカウントを追加
     const infoContent = `
         <div data-report-id="${id}" class="report-info-window">
             <b>${status}</b><br>
             ${comment || ""}<br>
             <small>${created_at}</small><br>
-            <button class="like-btn" onclick="likeReport(${id})">👍役立った</button>
-            <span class="likes-count" id="likes-count-${id}">${likes_count}</span>
+            
+            <div class="evaluation-container" style="display:flex; gap:10px; margin-top: 8px;">
+
+                <div class="like-group">
+                    <button class="good-btn" onclick="sendEvaluation(${id}, 'good')">
+                        👍 役立った
+                    </button>
+                    <span class="count-badge" id="likes-count-${id}">${likesCount || 0}</span>
+                </div>
+                
+                <div class="dislike-group">
+                    <button class="bad-btn" onclick="sendEvaluation(${id}, 'bad')">
+                        👎 役に立たない
+                    </button>
+                    <span class="count-badge" id="dislikes-count-${id}">${dislikesCount || 0}</span>
+                </div>
+            </div>
+            
         </div>
     `;
 
@@ -369,4 +388,3 @@ window.changeLanguage = function (lang) {
     // 災害情報など他のUIも即時再描画したい場合
     if (typeof window.onload === "function") window.onload();
 };
-// ... (初回ロード時のコードは index.html に移動済みのため削除)

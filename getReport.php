@@ -17,18 +17,19 @@ try {
 }
 
 // データ取得
-$sql = "SELECT id, lat, lng, status, comment, likes_count, created_at FROM reports ORDER BY created_at DESC";
+// getReport.php
+// ...
+// 💡 dislikes_count も取得
+$sql = "SELECT id, lat, lng, status, comment, likes_count, dislikes_count, created_at FROM reports ORDER BY created_at DESC";
 $stmt = $pdo->query($sql);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 💡 NEW: likes_count を確実に数値型に変換する処理
+// 💡 NEW: dislikes_count も強制的に数値型に変換
 $processed_rows = array_map(function($row) {
-    // データベースから取得した likes_count を整数型に強制キャスト
-    // これにより、JSONに "likes_count": 1 のように数値として出力されます
-    $row['likes_count'] = (int) $row['likes_count'];
+    $row['likes_count'] = (int) ($row['likes_count'] ?? 0);
+    $row['dislikes_count'] = (int) ($row['dislikes_count'] ?? 0); // 💡 追加
     return $row;
 }, $rows);
 
-// 💡 修正: 処理済みの配列をエンコード
 echo json_encode(["success" => true, "reports" => $processed_rows]);
 ?>
