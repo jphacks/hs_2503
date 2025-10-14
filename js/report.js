@@ -1,5 +1,5 @@
 let selectedLatLng;
-let tempMarker = null; // 仮ピン
+let tempMarker = null; // 仮ピン (AdvancedMarkerElement に変わる)
  
 // ✅ 報告フォームを開く（仮ピン設置）
 function openReportDialog(latLng) {
@@ -7,21 +7,32 @@ function openReportDialog(latLng) {
  
     // 既存の仮ピンがあれば削除
     if (tempMarker) {
-        tempMarker.setMap(null);
+        // ❌ 以前: setMap(null) を使用
+        // tempMarker.setMap(null); 
+        // ✅ 修正: AdvancedMarkerElement は map プロパティを null に設定
+        tempMarker.map = null;
     }
- 
-    // 仮ピンを作成（ドラッグ可能）
-    tempMarker = new google.maps.Marker({
+    
+    // 1. 仮ピンのカスタムアイコン用のDOM要素を作成
+    const tempIconElement = document.createElement('img');
+    tempIconElement.src = "img/temp-pin.svg"; // 仮ピン用のアイコン
+    tempIconElement.style.width = '30px'; 
+    tempIconElement.style.height = '30px';
+    tempIconElement.style.opacity = '0.7'; // opacity は CSS で設定
+    
+    // 2. 仮ピンを作成（ドラッグ可能）
+    // ❌ 以前: google.maps.Marker を使用していた
+    // tempMarker = new google.maps.Marker({ ... });
+    
+    // ✅ 修正: AdvancedMarkerElement を使用
+    tempMarker = new google.maps.marker.AdvancedMarkerElement({
         position: selectedLatLng,
         map: map,
-        icon: {
-            url: "img/temp-pin.svg", // 仮ピン用のアイコン
-            scaledSize: new google.maps.Size(30, 30),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(15, 30)
-        },
+        title: "報告地点 (ドラッグ可能)",
+        content: tempIconElement, // カスタムDOM要素を content に渡す
         draggable: true, // ドラッグ可能
-        opacity: 0.7     // 仮ピン感
+        // Advanced Marker Element のアンカーポイントは自動調整されるが、
+        // カスタム要素の場合は CSS で調整することも検討
     });
  
     // フォーム表示
@@ -62,19 +73,28 @@ function submitReport() {
     }
  
     // 仮ピンの位置を取得
-    const lat = tempMarker.getPosition().lat();
-    const lng = tempMarker.getPosition().lng();
+    // AdvancedMarkerElement でも getPosition().lat() は利用可能
+    const lat = tempMarker.position.lat; 
+    const lng = tempMarker.position.lng;
  
     // --- 地図上に確定マーカーを追加 ---
-    const marker = new google.maps.Marker({
+    
+    // 1. 確定マーカーのカスタムアイコン用のDOM要素を作成
+    const iconElement = document.createElement('img');
+    iconElement.src = iconUrl;
+    iconElement.style.width = '24px';
+    iconElement.style.height = '24px';
+ 
+    // 2. 確定マーカーを AdvancedMarkerElement で作成
+    // ❌ 以前: google.maps.Marker を使用していた
+    // const marker = new google.maps.Marker({ ... });
+    
+    // ✅ 修正: AdvancedMarkerElement を使用
+    const marker = new google.maps.marker.AdvancedMarkerElement({
         position: { lat, lng },
         map: map,
-        icon: {
-            url: iconUrl,
-            scaledSize: new google.maps.Size(24, 24),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(12, 24)
-        }
+        content: iconElement, // カスタムDOM要素を content に渡す
+        title: readableStatus
     });
  
     const info = new google.maps.InfoWindow({
@@ -93,6 +113,7 @@ function submitReport() {
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify(payload),
     })
+    // ... (送信後の処理はそのまま) ...
     .then(async (res) => {
         const text = await res.text();
         console.log("サーバー応答:", text);
@@ -128,7 +149,10 @@ function submitReport() {
     // フォーム非表示 & 仮ピン削除
     document.getElementById("reportDialog").style.display = "none";
     if (tempMarker) {
-        tempMarker.setMap(null);
+        // ❌ 以前: setMap(null) を使用
+        // tempMarker.setMap(null);
+        // ✅ 修正: Advanced Marker Element の削除方法
+        tempMarker.map = null;
         tempMarker = null;
     }
 }
@@ -151,7 +175,10 @@ document.getElementById("close-report").addEventListener("click", () => {
  
   // 仮ピンを削除
   if (tempMarker) {
-    tempMarker.setMap(null);
+    // ❌ 以前: setMap(null) を使用
+    // tempMarker.setMap(null);
+    // ✅ 修正: Advanced Marker Element の削除方法
+    tempMarker.map = null;
     tempMarker = null;
   }
  
@@ -160,5 +187,3 @@ document.getElementById("close-report").addEventListener("click", () => {
   document.querySelectorAll('input[name="status"]').forEach(r => r.checked = false);
   document.querySelectorAll('.status-btn').forEach(l => l.classList.remove('selected'));
 });
- 
- 

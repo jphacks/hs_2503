@@ -5,7 +5,7 @@
 let map;
 let directionsService;
 let directionsRenderer;
-let userMarker = null;
+let userMarker = null; // AdvancedMarkerElement に変わる
 let userCircle = null;
 let userPosition = null;
 let watchId = null;
@@ -46,18 +46,20 @@ async function initMap() {
         userPosition = latest;
 
         // マーカー再生成
-        userMarker = new google.maps.Marker({
+        // ❌ 以前: google.maps.Marker を使用していた
+        // userMarker = new google.maps.Marker({ ... });
+
+        // ✅ 修正: AdvancedMarkerElement を使用 (PinElementで円形を再現)
+        userMarker = new google.maps.marker.AdvancedMarkerElement({
             position: userPosition,
             map,
             title: "あなたの現在地",
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 8,
-                fillColor: "#4285F4",
-                fillOpacity: 1,
-                strokeColor: "white",
-                strokeWeight: 2,
-            },
+            content: new google.maps.marker.PinElement({
+                background: "#4285F4", // fillcolor
+                borderColor: "white",  // strokecolor
+                glyph: "●", // 内部テキスト (ここでは小さな円の絵文字で表現)
+                glyphColor: "#4285F4", // 背景色と同色にして目立たなくする
+            }).element,
         });
 
         // 💬 既に userCircle があっても map を再設定して描画復活
@@ -116,21 +118,27 @@ function startTracking() {
 
             // マーカーがなければ作成
             if (!userMarker) {
-                userMarker = new google.maps.Marker({
+                // ❌ 以前: google.maps.Marker を使用していた
+                // userMarker = new google.maps.Marker({ ... });
+
+                // ✅ 修正: AdvancedMarkerElement を使用
+                userMarker = new google.maps.marker.AdvancedMarkerElement({
                     position: userPosition,
                     map,
                     title: "あなたの現在地",
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 8,
-                        fillColor: "#4285F4",
-                        fillOpacity: 1,
-                        strokeColor: "white",
-                        strokeWeight: 2,
-                    },
+                    content: new google.maps.marker.PinElement({
+                        background: "#4285F4",
+                        borderColor: "white",
+                        glyph: "●",
+                        glyphColor: "#4285F4",
+                    }).element,
                 });
             } else {
-                userMarker.setPosition(userPosition);
+                // ❌ 以前: setPosition() を使用していた
+                // userMarker.setPosition(userPosition);
+                
+                // ✅ 修正: AdvancedMarkerElement は .position プロパティを直接設定
+                userMarker.position = userPosition;
             }
 
             // 💬 円がなければ新規作成、あれば再設定
@@ -176,6 +184,7 @@ function startTracking() {
 
 // ============================
 // 🛑 追跡停止
+// ... (変更なし) ...
 // ============================
 function stopTracking() {
     if (watchId !== null) {
@@ -187,6 +196,7 @@ function stopTracking() {
 
 // ============================
 // 🚶 経路表示
+// ... (変更なし) ...
 // ============================
 function showRouteToShelter(shelter) {
     if (!userPosition) {
@@ -230,6 +240,7 @@ function showRouteToShelter(shelter) {
 
 // ============================
 // 📍 現在地に戻るボタン
+// ... (変更なし) ...
 // ============================
 function recenterMap() {
     if (userPosition && map) {
@@ -241,6 +252,7 @@ function recenterMap() {
 }
 
 // ✅ 報告追加（UIでタイプ選択 + コメント入力）
+// ... (変更なし) ...
 function addReport(lat, lng) {
     // ラジオボタンで選択（HTML側で用意）
     const statusRadio = document.querySelector('input[name="status"]:checked');
@@ -295,6 +307,7 @@ function addReport(lat, lng) {
 }
 
 // ✅ DBから報告データを取得してマーカー表示（4タイプ対応）
+// ... (変更なし) ...
 function loadReports() {
     console.log("🟦 loadReports() 開始");
 
@@ -328,15 +341,30 @@ function addReportMarker(lat, lng, status, comment, created_at) {
         default: iconUrl = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; break;
     }
 
-    const marker = new google.maps.Marker({
+    // ❌ 以前: google.maps.Marker を使用していた
+    // const marker = new google.maps.Marker({
+    //     position: { lat, lng },
+    //     map,
+    //     icon: {
+    //         url: iconUrl,
+    //         scaledSize: new google.maps.Size(32, 32),
+    //         origin: new google.maps.Point(0, 0),
+    //         anchor: new google.maps.Point(16, 16)
+    //     }
+    // });
+
+    // ✅ 修正: AdvancedMarkerElement を使用
+    // 1. カスタムアイコン用のDOM要素を作成 (<img> タグ)
+    const iconElement = document.createElement('img');
+    iconElement.src = iconUrl;
+    iconElement.style.width = '32px'; // サイズをCSSで指定
+    iconElement.style.height = '32px';
+    // 2. AdvancedMarkerElement を作成し、content に要素を渡す
+    const marker = new google.maps.marker.AdvancedMarkerElement({
         position: { lat, lng },
         map,
-        icon: {
-            url: iconUrl,
-            scaledSize: new google.maps.Size(32, 32),  // ← ここでサイズを指定（幅32px、高さ32px）
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(16, 16)     // ← マーカーの中心を地図上の位置に合わせる
-        }
+        content: iconElement, 
+        title: status
     });
 
     const info = new google.maps.InfoWindow({
@@ -377,8 +405,10 @@ window.changeLanguage = function (lang) {
 
     // 新しい言語でGoogle Mapsを再ロード
     const script = document.createElement("script");
-    // 💡 修正点: window.GOOGLE_MAPS_API_KEY を参照
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&callback=initMap`;
+    
+    // 💡 修正点: '&libraries=marker' を追加
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&libraries=marker&callback=initMap`;
+    
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
@@ -390,6 +420,7 @@ window.changeLanguage = function (lang) {
 
 // ============================
 // 🏁 初回ロード時（言語設定ありなら反映）
+// ... (変更なし) ...
 // ============================
 // ❌ 削除: index.htmlで一括してAPIキーを管理・読み込みするため、このブロックは不要になります。
 // window.addEventListener("load", () => {

@@ -3,6 +3,7 @@ let cachedShelters = null; // キャッシュ用
 
 
 function getElevation(lat, lng) {
+// ... (getElevation 関数は変更なし) ...
   return new Promise((resolve, reject) => {
     const elevator = new google.maps.ElevationService();
     elevator.getElevationForLocations(
@@ -22,6 +23,7 @@ function getElevation(lat, lng) {
 
 
 // --- CSVファイルを読み込む関数 ---
+// ... (loadSheltersFromCSV 関数は変更なし) ...
 async function loadSheltersFromCSV(csvPath) {
     const response = await fetch(csvPath);
     const text = await response.text();
@@ -67,6 +69,7 @@ async function loadSheltersFromCSV(csvPath) {
 }
 
 // --- 多言語ラベルを返す ---
+// ... (getLabels 関数は変更なし) ...
 function getLabels(lang = "ja") {
     const labels = {
         ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
@@ -78,6 +81,7 @@ function getLabels(lang = "ja") {
 }
 
 // --- カードHTMLを生成する共通関数 ---
+// ... (getShelterCardHTML 関数は変更なし) ...
 function getShelterCardHTML(shelter, expanded = false, labels = getLabels()) {
     let extraInfo = "";
 
@@ -99,6 +103,7 @@ function getShelterCardHTML(shelter, expanded = false, labels = getLabels()) {
 }
 
 // --- 避難所カード生成 ---
+// ... (createShelterCards 関数は変更なし) ...
 function createShelterCards(shelters, onClickCallback) {
     const listDiv = document.getElementById("shelter-list");
     listDiv.innerHTML = "";
@@ -119,16 +124,36 @@ function createShelterCards(shelters, onClickCallback) {
 // --- 避難所マーカー表示 ---
 function addShelterMarkers(map, shelters, onClickCallback) {
     shelters.forEach(shelter => {
-        const marker = new google.maps.Marker({
+        
+        // 1. カスタムアイコン用のDOM要素を作成
+        const iconElement = document.createElement('img');
+        iconElement.src = 'img/pin1.png'; // アイコン画像のURL
+        iconElement.style.width = '80px'; 
+        iconElement.style.height = '80px';
+        // Note: anchor は AdvancedMarkerElement では CSS または PinElement で調整するのが一般的
+        
+        // ❌ 以前: google.maps.Marker を使用していた
+        // const marker = new google.maps.Marker({
+        //     position: { lat: shelter.lat, lng: shelter.lng },
+        //     map: map,
+        //     title: shelter.name,
+        //     icon: {
+        //         url: 'img/pin1.png',       
+        //         scaledSize: new google.maps.Size(80, 80), 
+        //         origin: new google.maps.Point(0, 0),      
+        //         anchor: new google.maps.Point(40, 80)     
+        //     }
+        // });
+
+        // ✅ 修正: AdvancedMarkerElement を使用
+        const marker = new google.maps.marker.AdvancedMarkerElement({
             position: { lat: shelter.lat, lng: shelter.lng },
             map: map,
             title: shelter.name,
-            icon: {
-                url: 'img/pin1.png',       // アイコン画像のURL
-                scaledSize: new google.maps.Size(80, 80), // 幅40px × 高さ40pxにリサイズ
-                origin: new google.maps.Point(0, 0),      // 画像の起点
-                anchor: new google.maps.Point(40, 80)     // アイコンの先端位置をマーカー位置に合わせる
-            }
+            content: iconElement, // DOM要素を content に渡す
+            // 💡 Advanced Marker の anchor は 'bottom' (画像の下端中央) がデフォルトです。
+            // 以前の anchor: new google.maps.Point(40, 80) は、
+            // 80x80px の画像の (中央, 下端) を指しているので、デフォルトに近い動作です。
         });
 
         marker.addListener("click", () => {
@@ -145,6 +170,7 @@ function addShelterMarkers(map, shelters, onClickCallback) {
 }
 
 // --- カードの展開・収縮共通関数 ---
+// ... (toggleCard, expandCard, collapseCard 関数は変更なし) ...
 function toggleCard(card, shelter, onClickCallback) {
     if (expandedCard && expandedCard !== card) collapseCard(expandedCard, expandedCard.shelterData);
 
@@ -194,6 +220,7 @@ function collapseCard(card, shelter) {
 
 
 // --- 2点間の距離を計算（ハーサイン公式） ---
+// ... (calculateDistance 関数は変更なし) ...
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // 地球の半径 (km)
     const toRad = x => (x * Math.PI) / 180;
@@ -207,8 +234,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 // --- メイン処理 ---
-// 現在地 lat, lng は map.js 側で取得し渡す
-// --- メイン処理 ---
+// ... (initShelterCards 関数は変更なし) ...
 async function initShelterCards(map, userLat, userLng, onClickCallback) {
     try {
         const lang = window.currentLang || "ja";
