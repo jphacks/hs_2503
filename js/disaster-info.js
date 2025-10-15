@@ -264,7 +264,7 @@ window.loadDisasterInfo = async function() {
         ${
             localQuake
             ? `<p>${localQuake.originTime}　震源：${localQuake.region}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
-            : `<p>${T.noQuake(prefName)}</p>`
+            : `<p>${T.noQuake(fullName)}</p>`
         }
         </div>
 
