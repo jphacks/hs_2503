@@ -14,6 +14,7 @@ window.loadDisasterInfo = async function() {
       testWarnTitle: "警報・注意報",
       testWarnText: "大雨警報（土砂災害）・洪水注意報が発表中です。",
       testEqTitle: "最新の地震情報",
+      EqTiltle:"震源・震度に関する情報",
       testEqText: "10月11日 09時23分ごろ、広島県北部で震度4の地震がありました。",
       testNote: "(※これはテスト表示です。実際の災害ではありません)",
       noWarn: "現在、警報・注意報は発表されていません。",
@@ -23,7 +24,9 @@ window.loadDisasterInfo = async function() {
       quakeTitle: "最新の地震情報",
       source: "情報提供：",
       jma: "気象庁",
-      portal: "防災情報ポータル"
+      portal: "防災情報ポータル",
+      epicenter: "震源",
+      maximum_seismic_intensity: "最大震度"
     },
     zh: {
       loading: "正在获取位置信息...",
@@ -32,6 +35,7 @@ window.loadDisasterInfo = async function() {
       testWarnTitle: "警报・注意信息",
       testWarnText: "目前发布了大雨警报（土砂灾害）和洪水注意信息。",
       testEqTitle: "最新地震信息",
+      EqTiltle:"震源・震度相关信息",
       testEqText: "10月11日 09:23左右，在广岛县北部发生了震度4的地震。",
       testNote: "（※此为测试显示，非真实灾害。）",
       noWarn: "当前没有发布任何警报或注意信息。",
@@ -41,7 +45,9 @@ window.loadDisasterInfo = async function() {
       quakeTitle: "最新地震信息",
       source: "信息来源：",
       jma: "日本气象厅",
-      portal: "防灾信息门户"
+      portal: "防灾信息门户",
+      epicenter: "震源",
+      maximum_seismic_intensity: "最大震度"
     },
     en: {
       loading: "Retrieving location...",
@@ -50,6 +56,7 @@ window.loadDisasterInfo = async function() {
       testWarnTitle: "Warnings & Advisories",
       testWarnText: "Heavy rain warning (landslide) and flood advisory in effect.",
       testEqTitle: "Latest Earthquake Information",
+      EqTiltle:"Information on Epicenter and Seismic Intensity",
       testEqText: "At around 09:23 on Oct 11, a magnitude 4 earthquake occurred in northern Hiroshima Prefecture.",
       testNote: "(※ This is a test display, not a real disaster.)",
       noWarn: "No warnings or advisories are currently issued.",
@@ -59,7 +66,9 @@ window.loadDisasterInfo = async function() {
       quakeTitle: "Latest Earthquake Info",
       source: "Source:",
       jma: "Japan Meteorological Agency",
-      portal: "Disaster Info Portal"
+      portal: "Disaster Info Portal",
+      epicenter: "Epicenter",
+      maximum_seismic_intensity: "Maximum Seismic Intensity"
     }
   };
 
@@ -260,10 +269,11 @@ window.loadDisasterInfo = async function() {
 
         <!-- 地震 -->
         <div class="disaster-item">
-        <h4>${localQuake ? localQuake.title : T.quakeTitle}</h4>
+        <h4>${T.EqTiltle}</h4>
         ${
             localQuake
-            ? `<p>${localQuake.originTime}　震源：${localQuake.region}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+            ? `<p>${localQuake.originTime} ${T.epicenter}：${localQuake.region}  M${localQuake.magnitude} ${T.maximum_seismic_intensity}：${localQuake.maxInt}</p>`
+            
             : `<p>${T.noQuake(fullName)}</p>`
         }
         </div>
