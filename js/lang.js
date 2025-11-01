@@ -25,6 +25,18 @@ const translations = {
     "send": "发送",
     "footer": "© hinavi 2025 版权所有。",
     "recenter": "返回当前位置"
+  },
+  en: {
+    "loading": "Loading...",
+    "question": "What is the situation at this location?",
+    "pass": "✅ Passable",
+    "blocked": "🚫 Blocked",
+    "step": "⚠️ Step",
+    "comment_label": "💬 Comment",
+    "comment": "Enter your comment",
+    "send": "Send",
+    "footer": "© hinavi 2025 All rights reserved.",
+    "recenter": "Recenter"
   }
 };
 
