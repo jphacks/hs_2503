@@ -7,58 +7,49 @@ const translations = {
     "question": "この地点は？",
     "pass": "✅ 通れる",
     "blocked": "🚫 通れない",
-    "comment": "補足コメント...",
+    "step": "⚠️ 段差",
+    "comment_label": "💬 コメント",
+    "comment": "コメントを入力",
+    "send": "送信",
     "footer": "© hinavi 2025 all rights reserved.",
     "recenter": "現在地に戻る",
-  },
-  en: {
-    "loading": "Loading...",
-    "question": "What's the condition here?",
-    "pass": "✅ Passable",
-    "blocked": "🚫 Not passable",
-    "comment": "Additional comments...",
-    "footer": "© hinavi 2025 all rights reserved.",
-    "recenter": "Recenter Map"
   },
   zh: {
     "loading": "加载中...",
     "question": "这个地点情况如何？",
     "pass": "✅ 可通行",
     "blocked": "🚫 不可通行",
-    "comment": "补充说明...",
+    "step": "⚠️ 台阶 / 路障",
+    "comment_label": "💬 评论",
+    "comment": "输入评论",
+    "send": "发送",
     "footer": "© hinavi 2025 版权所有。",
     "recenter": "返回当前位置"
-  },
-  es: {
-    "loading": "Cargando...",
-    "question": "¿Cuál es la condición aquí?",
-    "pass": "✅ Transitable",
-    "blocked": "🚫 No transitable",
-    "comment": "Comentarios adicionales...",
-    "footer": "© hinavi 2025 todos los derechos reservados.",
-    "recenter": "Volver a ubicación actual"
   }
 };
-
 
 // 言語変更処理
 function changeLanguage(lang) {
   document.documentElement.lang = lang;
-  const t = translations[lang];
+  const t = translations[lang] || translations["ja"];
 
   // 通常テキスト
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
-    el.textContent = t[key];
+    if (t[key]) el.textContent = t[key];
   });
 
   // プレースホルダー
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
     const key = el.getAttribute("data-i18n-placeholder");
-    el.placeholder = t[key];
+    if (t[key]) el.placeholder = t[key];
   });
 
-  // ボタンの文言
+  // ボタン
   const recenterBtn = document.getElementById("recenter-btn");
-  if (recenterBtn) recenterBtn.textContent = t["recenter"];
+  if (recenterBtn && t["recenter"]) recenterBtn.textContent = t["recenter"];
+
+  // フッター左側のみ更新
+  const footerLeft = document.getElementById("footer-left");
+  if (footerLeft && t["footer"]) footerLeft.textContent = t["footer"];
 }
