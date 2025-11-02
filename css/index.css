@@ -109,6 +109,7 @@ body {
 
 
 /* 現在地に戻るボタン */
+#loginBtn,
 #recenter-btn {
   background: white;
   color: #07ae6e;
