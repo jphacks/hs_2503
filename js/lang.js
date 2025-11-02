@@ -70,7 +70,29 @@ function changeLanguage(lang) {
   const recenterBtn = document.getElementById("recenter-btn");
   if (recenterBtn && t["recenter"]) recenterBtn.textContent = t["recenter"];
 
-  // フッター左側のみ更新
-  const footerLeft = document.getElementById("footer-left");
-  if (footerLeft && t["footer"]) footerLeft.textContent = t["footer"];
+  // // フッター左側のみ更新
+  // const footerLeft = document.getElementById("footer-left");
+  // if (footerLeft && t["footer"]) footerLeft.textContent = t["footer"];
+
+  // // フッター右側のみ更新
+  // const footerRight = document.getElementById("footer-right");
+  // if (footerRight) {
+  //   footerRight.innerHTML = `
+  //     <a href="https://www.jma.go.jp/" target="_blank" data-i18n="Japan Meteorological Agency">気象庁</a> |
+  //     <a href="https://www.jma.go.jp/bosai/" target="_blank" data-i18n="Disaster Information Portal">防災情報ポータル</a>
+  //   `;
+  // }
+
+  // フッター
+  const footer = document.getElementById("footer");
+  if (footer) {
+    footer.innerHTML = `
+      <span id="footer-left">${t["footer"]}</span>
+      <div id="footer-right">
+        <span data-i18n="Information provided by">${t["Information provided by"]}</span>
+        <a href="https://www.jma.go.jp/" target="_blank" data-i18n="Japan Meteorological Agency">${t["Japan Meteorological Agency"]}</a> |
+        <a href="https://www.jma.go.jp/bosai/" target="_blank" data-i18n="Disaster Information Portal">${t["Disaster Information Portal"]}</a>
+      </div>
+    `;
+  }
 }
