@@ -13,6 +13,9 @@ const translations = {
     "send": "送信",
     "footer": "© hinavi 2025 all rights reserved.",
     "recenter": "現在地に戻る",
+    "Information provided by": "情報提供：",
+    "Japan Meteorological Agency": "気象庁",
+    "Disaster Information Portal": "防災情報ポータル"
   },
   zh: {
     "loading": "加载中...",
@@ -24,7 +27,10 @@ const translations = {
     "comment": "输入评论",
     "send": "发送",
     "footer": "© hinavi 2025 版权所有。",
-    "recenter": "返回当前位置"
+    "recenter": "返回当前位置",
+    "Information provided by": "信息提供：",
+    "Japan Meteorological Agency": "日本气象厅",
+    "Disaster Information Portal": "防灾信息门户"
   },
   en: {
     "loading": "Loading...",
@@ -36,7 +42,10 @@ const translations = {
     "comment": "Enter your comment",
     "send": "Send",
     "footer": "© hinavi 2025 All rights reserved.",
-    "recenter": "Recenter"
+    "recenter": "Recenter",
+    "Information provided by": "Information provided by:",
+    "Japan Meteorological Agency": "Japan Meteorological Agency",
+    "Disaster Information Portal": "Disaster Information Portal"
   }
 };
 
