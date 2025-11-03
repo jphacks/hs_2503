@@ -107,7 +107,7 @@ function drawUserLocation(pos, mapInstance) {
             content: new google.maps.marker.PinElement({
                 background: "#4285F4",
                 borderColor: "white",
-                glyph: "●",
+                glyphText: "●",
                 glyphColor: "#4285F4",
             }).element,
         });
