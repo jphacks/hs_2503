@@ -114,6 +114,10 @@ function applyTranslations(lang) {
   // 個別ボタン（必要に応じて）
   const recenterBtn = document.getElementById("recenter-btn");
   if (recenterBtn) setOwnText(recenterBtn, t("recenter", lang));
+  const loginBtn = document.getElementById("loginBtn");
+  if (loginBtn) setOwnText(loginBtn, t("login", lang));
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) setOwnText(logoutBtn, t("logout", lang));
 }
 
 // ===== 公開API：言語変更 =====
