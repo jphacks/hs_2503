@@ -34,6 +34,10 @@ window.recenterMap = recenterMap; // HTML側から呼び出せるように公開
 async function initMap() {
     console.log("🗺️ initMap() 実行");
 
+      // 言語切替直後の安全策：旧インスタンスを確実に無効化
+    userMarker = null;
+    userCircle = null;
+
     // ✅ 最新の位置情報があれば利用 (initial.jsが管理)
     const latest = window.getLatestPosition ? window.getLatestPosition() : null;
     // 💡 修正: 初期値の緯度経度を設定（例: 東広島）
@@ -68,12 +72,21 @@ async function initMap() {
     });
     
     // 💬 言語切替直後にも現在地と仮の円を描画
+    // ここの部分を追加しました
     if (latest) {
         console.log("🟦 最新位置から仮マーカーと円を描画");
         userPosition = latest;
         drawUserLocation(latest, map); // 描画処理を関数化
 
         // 💡 修正: shelters.js にも最新位置情報を通知 (初期距離計算のため)
+        updateSheltersPosition(latest);
+    }
+    // 言語切替直後にも現在地と仮の円を描画
+    if (latest) {
+        console.log("🟦 最新位置から仮マーカーと円を描画");
+        userPosition = latest;
+        drawUserLocation(latest, map);
+        // shelters.js にも最新位置情報を通知 (初期距離計算のため)
         updateSheltersPosition(latest);
     }
 
