@@ -49,8 +49,7 @@ if (!$report_id || !$browser_uuid || !in_array($evaluation_type, ['good', 'bad']
 try {
     // 1. report_likes テーブルに記録 (重複は無視)
     // ... (以下略) ...
-    $sql_insert = "INSERT IGNORE INTO report_likes (report_id, browser_uuid, evaluation_type)
-                   VALUES (:report_id, :browser_uuid, :evaluation_type)";
+    $sql_insert = "INSERT IGNORE INTO report_likes (report_id, browser_uuid, evaluation_type)VALUES (:report_id, :browser_uuid, :evaluation_type)";
     $stmt_insert = $pdo->prepare($sql_insert);
     $stmt_insert->execute([
         ":report_id" => $report_id, 
