@@ -88,6 +88,41 @@
       <a href="https://www.jma.go.jp/bosai/" target="_blank" data-i18n="Disaster Information Portal">防災情報ポータル</a>
 </div>
 </footer>
+
+<script>
+  // jmaについては「英語」・「中国語」に対応したリンクに変更する
+document.addEventListener("DOMContentLoaded", function () {
+  const languageSelect = document.getElementById("language-select");
+  const jmaLink = document.querySelector('a[data-i18n="Japan Meteorological Agency"]');
+  const bosaiLink = document.querySelector('a[data-i18n="Disaster Information Portal"]');
+
+  // 言語ごとのURL定義
+  const urls = {
+    ja: {
+      jma: "https://www.jma.go.jp/",
+      bosai: "https://www.jma.go.jp/bosai/"
+    },
+    en: {
+      jma: "https://www.jma.go.jp/jma/indexe.html",
+      bosai: "https://www.jma.go.jp/bosai/"
+    },
+    zh: {
+      jma: "https://www.data.jma.go.jp/multi/index.html?lang=cn_zs",
+      bosai: "https://www.jma.go.jp/bosai/"
+    }
+  };
+
+  // 言語変更時にリンク更新
+  languageSelect.addEventListener("change", function () {
+    const lang = this.value;
+    if (urls[lang]) {
+      jmaLink.href = urls[lang].jma;
+      bosaiLink.href = urls[lang].bosai;
+    }
+  });
+});
+</script>
+
  
   <script>
     // 💡 関数定義は避け、設定値のみをグローバルに定義
