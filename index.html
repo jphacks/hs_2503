@@ -15,28 +15,36 @@
     <div id="disaster-body"></div>
 
     <div id="header-right">
-      <button id="loginBtn" class="login-btn">ログイン</button>
+    <button id="loginBtn" class="login-btn">ログイン</button>
 
-      <button id="help-btn">
-        <img src="img/help.png" alt="Help">
+    <button id="help-btn">
+      <img src="img/help.png" alt="Help">
+    </button>
+
+    <div id="language-wrapper">
+      <button id="language-btn">
+        <img src="img/language.png" alt="Language" />
       </button>
 
-      <div id="language-wrapper">
-        <button id="language-btn">
-          <img src="img/language.png" alt="Language" />
-        </button>
+      <select id="language-select">
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
 
-        <select id="language-select">
-          <option value="ja">日本語</option>
-          <option value="zh">中文</option>
-        </select>
-      </div>
-
+    <!-- メニュー -->
+    <div id="menu-container">
       <button id="menu-btn">
         <img src="img/menu.png" alt="Menu">
       </button>
-
+      <ul id="menu-list" class="hidden">
+        <li id="menu-mypage"><a href="html/mypage.html">マイページ</a></li>
+        <li id="menu-mypage"><a href="html/purpose.html">hinaviとは</a></li>
+        <li id="menu-settings"><a href="html/settings.html">設定</a></li>
+      </ul>
     </div>
+</div>
+
   </div>
 
   <div id="container">
@@ -84,16 +92,16 @@
     <span id="footer-left">© hinavi 2025</span>
     <div id="footer-right">
       情報提供：
-<a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
-<a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
-</div>
-</footer>
+      <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
+      <a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
+    </div>
+  </footer>
  
   <script>
-    // 💡 関数定義は避け、設定値のみをグローバルに定義
+    // グローバル設定
     window.GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
     window.currentLang = localStorage.getItem("selectedLanguage") || "ja";
-    // 最新位置管理（関数定義は残るが、データ管理用のため許容）
+
     let latestPosition = null;
     window.setLatestPosition = (pos) => {
       latestPosition = pos;
@@ -102,14 +110,30 @@
       if (window.map && window.reloadShelters) reloadShelters();
     };
     window.getLatestPosition = () => latestPosition;
+  </script>
+
+  <!-- 各種機能の JS -->
+  <script src="js/init.js" defer></script>
+  <script src="js/shelters.js" defer></script>
+  <script src="js/map.js" defer></script>
+  <script src="js/navigation.js" defer></script>
+  <script src="js/disaster-info.js" defer></script>
+  <script src="js/report.js" defer></script>
+  <script src="js/lang.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/menu.js" defer></script>
+
+
+  <!-- ログイン状態反映用のモジュール -->
+<script type="module">
+  import { initAuthStatus } from './js/authStatus.js';
+  import { initLoginForm } from './js/auth.js';
+  document.addEventListener("DOMContentLoaded", () => {
+    initAuthStatus();
+    initLoginForm();
+  });
 </script>
-<script src="js/init.js" defer></script>
-<script src="js/shelters.js" defer></script>
-<script src="js/map.js" defer></script>
-<script src="js/navigation.js" defer></script>
-<script src="js/disaster-info.js" defer></script>
-<script src="js/report.js" defer></script>
-<script src="js/lang.js" defer></script>
-<script src="js/main.js" defer></script>
+
+
 </body>
 </html>

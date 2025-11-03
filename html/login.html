@@ -16,6 +16,12 @@
     </form>
   </div>
   
-  <script src="../js/auth.js"></script>
+  <!-- モジュールとして読み込む -->
+  <script type="module">
+    import { initLoginForm } from '../js/auth.js';
+    document.addEventListener("DOMContentLoaded", () => {
+      initLoginForm();
+    });
+  </script>
 </body>
 </html>

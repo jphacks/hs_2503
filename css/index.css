@@ -569,4 +569,80 @@ body {
   }
 
 }
- 
+
+/* menu-container */
+#menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* メニューボタン */
+#menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  outline: none;
+}
+
+#menu-btn img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s ease;
+}
+
+#menu-btn:hover img {
+  transform: rotate(90deg);
+}
+
+/* メニューリスト */
+#menu-list {
+  position: absolute;
+  right: 0; /* ボタン右端に表示 */
+  top: 40px; /* ボタン下に表示 */
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 140px;
+  z-index: 1000;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none; /* 非表示時にクリック不可 */
+}
+
+/* メニュー表示 */
+#menu-list.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* メニュー項目 */
+#menu-list li {
+  border-bottom: 1px solid #eee;
+}
+
+#menu-list li:last-child {
+  border-bottom: none;
+}
+
+#menu-list li a {
+  display: block;
+  padding: 10px 15px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#menu-list li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 6px;
+}
+
