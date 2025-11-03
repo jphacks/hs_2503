@@ -15,7 +15,14 @@ const translations = {
     "logout": "ログアウト",
     "Information provided by": "情報提供：",
     "Japan Meteorological Agency": "気象庁",
-    "Disaster Information Portal": "防災情報ポータル"
+    "Disaster Information Portal": "防災情報ポータル",
+
+    // 追加キー
+    "distance": "直線距離",
+    "elevation": "標高",
+    "hazard": "対象となる災害種別",
+    "no_results": "指定範囲内に避難所は見つかりませんでした。",
+    "fetch_error": "❌ 避難所データの取得中にエラーが発生しました。"
   },
   zh: {
     "loading": "加载中...",
@@ -32,7 +39,14 @@ const translations = {
     "logout": "登出",
     "Information provided by": "信息提供：",
     "Japan Meteorological Agency": "日本气象厅",
-    "Disaster Information Portal": "防灾信息门户"
+    "Disaster Information Portal": "防灾信息门户",
+
+    // 追加キー
+    "distance": "直线距离",
+    "elevation": "海拔",
+    "hazard": "适用灾害类型",
+    "no_results": "指定范围内未找到避难所。",
+    "fetch_error": "❌ 获取避难所数据时发生错误。"
   },
   en: {
     "loading": "Loading...",
@@ -49,7 +63,14 @@ const translations = {
     "logout": "Logout",
     "Information provided by": "Information provided by:",
     "Japan Meteorological Agency": "Japan Meteorological Agency",
-    "Disaster Information Portal": "Disaster Information Portal"
+    "Disaster Information Portal": "Disaster Information Portal",
+
+    // 追加キー
+    "distance": "Distance",
+    "elevation": "Elevation",
+    "hazard": "Applicable hazards",
+    "no_results": "No shelters found within the specified range.",
+    "fetch_error": "❌ An error occurred while fetching shelter data."
   }
 };
 
@@ -77,16 +98,13 @@ function setOwnText(el, text) {
     el.placeholder = text;
     return;
   }
-  // 先頭の非空テキストノードを探す
   const textNode = Array.from(el.childNodes)
     .find(n => n.nodeType === Node.TEXT_NODE && n.nodeValue.trim() !== "");
   if (textNode) {
     textNode.nodeValue = text;
   } else if (el.childNodes.length === 0) {
-    // 純テキスト要素ならそのまま
     el.textContent = text;
   } else {
-    // テキストノードがない場合は先頭に追加
     el.prepend(document.createTextNode(text));
   }
 }
@@ -120,11 +138,17 @@ function applyTranslations(lang) {
   if (logoutBtn) setOwnText(logoutBtn, t("logout", lang));
 }
 
+// ===== 現在の言語を一元取得 =====
+function getCurrentLang() {
+  return getSavedLang() || window.currentLang || "ja";
+}
+
 // ===== 公開API：言語変更 =====
 function changeLanguage(lang) {
   saveLang(lang);
   applyTranslations(lang);
-  // 他ファイルが必要ならここで再描画を呼ぶ：
+  window.currentLang = lang; // init.js と同期させる
+  // 必要に応じて再描画を呼ぶ:
   // if (window.loadDisasterInfo) window.loadDisasterInfo();
   // if (window.loadGoogleMaps) window.loadGoogleMaps(lang);
 }
@@ -143,5 +167,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // グローバルに公開（他ファイルから呼べるように）
+window.translations = translations;
+window.t = t;
 window.changeLanguage = changeLanguage;
 window.applyTranslations = applyTranslations;
+window.getCurrentLang = getCurrentLang;
