@@ -133,5 +133,3 @@ if (($handle = fopen($csv_file, "r")) !== FALSE) {
 
 echo json_encode($shelters_with_distance);
 ?>
-
-
