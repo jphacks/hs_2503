@@ -49,7 +49,7 @@ function calculateDistance($lat1, $lon1, $lat2, $lon2) {
 // 3. CSVファイルの読み込みとフィルタリング
 // ----------------------------------------------------
 // 📄 ここは、あなたの実際のCSVファイルのパスに合わせてください
-$csv_file = './csv/shelter_japan.csv'; 
+$csv_file = __DIR__ . '/../csv/shelter_japan.csv'; // ← 修正ポイント
 
 // 災害関連のヘッダー名
 $disaster_headers = [
@@ -133,3 +133,5 @@ if (($handle = fopen($csv_file, "r")) !== FALSE) {
 
 echo json_encode($shelters_with_distance);
 ?>
+
+
