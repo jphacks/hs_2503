@@ -294,7 +294,7 @@ function loadReports() {
     reportMarkers = []; // 配列をリセット
 
     // NOTE: レポート取得APIは変更なしと仮定
-    fetch("https://hinavi.sakura.ne.jp/getReport.php")
+    fetch("https://hinavi.sakura.ne.jp/php/getReport.php")
         .then(res => res.json())
         .then(data => {
             if (data.success) {
