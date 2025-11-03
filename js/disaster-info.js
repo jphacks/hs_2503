@@ -91,16 +91,24 @@ window.loadDisasterInfo = async function () {
   }
 
   if (!navigator.geolocation) {
-    output.textContent = T.noGeo;
+    output_header.textContent = T.noGeo;
     return;
+  } else {
+    output_header.textContent = T.loading;
   }
 
+<<<<<<< HEAD
   output.textContent = T.loading;
 
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
+=======
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+>>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
 
       try {
         // === ① 現在地の市町村名取得（表示用 + 照合用の2回） ===
@@ -238,6 +246,7 @@ window.loadDisasterInfo = async function () {
           }
         }
 
+<<<<<<< HEAD
         // === 出力 ===
         output.innerHTML = `
           <div id="disaster-info">
@@ -274,6 +283,176 @@ window.loadDisasterInfo = async function () {
       output.textContent = T.geoError;
     }
   );
+=======
+            console.log("取得した市町村名:", fullName);
+
+            // === ② area.json から市町村コードを取得 ===
+            const AREA_URL = "https://www.jma.go.jp/bosai/common/const/area.json";
+            const areaRes = await fetch(AREA_URL);
+            const areaData = await areaRes.json();
+
+            const cityEntry = Object.entries(areaData.class20s).find(([code, info]) => fullName.includes(info.name));
+            const CLASS_AREA_CODE = cityEntry ? cityEntry[0] : null;
+
+            if (!CLASS_AREA_CODE) {
+                output_header.innerHTML = `<p>${fullName} の市町村コードが見つかりません。</p>`;
+                return;
+            }
+
+            const class20Info = areaData.class20s[CLASS_AREA_CODE];
+            const class15 = class20Info.parent;
+            const class10 = areaData.class15s[class15]?.parent;
+            const officeCode = areaData.class10s[class10]?.parent;
+
+            console.log("地方気象台コード:", officeCode);
+
+            // === ③ 警報JSON取得 ===
+            const warningRes = await fetch(`https://www.jma.go.jp/bosai/warning/data/warning/${officeCode}.json`);
+            const warningData = await warningRes.json();
+
+            // === ④ 現在地の警報情報抽出 ===
+            let targetArea = null;
+            for (const type of warningData.areaTypes) {
+                targetArea = type.areas.find(a => a.code === CLASS_AREA_CODE || fullName.includes(a.name));
+                if (targetArea) break;
+            }
+
+            let warningTexts = [];
+            if (targetArea && targetArea.warnings) {
+                warningTexts = targetArea.warnings
+                    .filter(w=>  w.status !== "解除"&& w.status !== "発表警報・注意報はなし")
+                    .map(w => {
+                        const warningKindMap = {
+                            "32": "暴風雪特別警報",
+                            "33": "大雨特別警報",
+                            "35": "暴風特別警報",
+                            "36": "大雪特別警報",
+                            "37": "波浪特別警報",
+                            "38": "高潮特別警報",
+                            "02": "暴風雪警報",
+                            "03": "大雨警報",
+                            "04": "洪水警報",
+                            "05": "暴風警報",
+                            "06": "大雪警報",
+                            "07": "波浪警報",
+                            "08": "高潮警報",
+                            "10": "大雨注意報",
+                            "12": "大雪注意報",
+                            "13": "風雪注意報",
+                            "14": "雷注意報",
+                            "15": "強風注意報",
+                            "16": "波浪注意報",
+                            "17": "融雪注意報",
+                            "18": "洪水注意報",
+                            "19": "高潮注意報",
+                            "20": "濃霧注意報",
+                            "21": "乾燥注意報",
+                            "22": "なだれ注意報",
+                            "23": "低温注意報",
+                            "24": "霜注意報",
+                            "25": "着氷注意報",
+                            "26": "着雪注意報",
+                            "27": "その他の注意報"
+                        };
+                        const kindName = warningKindMap[w.code] || w.name || w.code;
+                        return ` ${kindName}`;
+                    });
+            }
+            // === ⑤ 地震情報 ===
+            const FEED_URL = "https://www.data.jma.go.jp/developer/xml/feed/eqvol.xml";
+            const PROXY = "https://corsproxy.io/?";
+            const res = await fetch(PROXY + encodeURIComponent(FEED_URL));
+            const xmlText = await res.text();
+            const xml = new DOMParser().parseFromString(xmlText, "application/xml");
+            const entries = xml.getElementsByTagName("entry");
+
+            let localQuake = null;
+            for (const e of entries) {
+                const title = e.getElementsByTagName("title")[0]?.textContent ?? "";
+                const link = e.getElementsByTagName("link")[0]?.getAttribute("href") ?? "";
+
+                if (!/地震|震源|緊急地震速報/.test(title)) continue;
+
+                const detailRes = await fetch(PROXY + encodeURIComponent(link));
+                const detailText = await detailRes.text();
+                const detailXml = new DOMParser().parseFromString(detailText, "application/xml");
+
+                const rawRegion = detailXml.getElementsByTagName("Hypocenter")[0]
+                    ?.getElementsByTagName("Area")[0]
+                    ?.getElementsByTagName("Name")[0]
+                    ?.textContent || "";
+                const quakeRegion = rawRegion.replace(/地方.*/, "地方"); 
+                console.log("地震発生地域:", quakeRegion);
+
+                if (quakeRegion) {
+                    localQuake = {
+                        title,
+                        region: quakeRegion,
+                        originTime:detailXml.querySelector("OriginTime")?.textContent || "不明",
+                        magnitude: detailXml.getElementsByTagName("jmx_eb:Magnitude")[0]?.textContent || "―",
+                        maxInt: detailXml.querySelector("MaxInt")?.textContent ||
+                                detailXml.querySelector("jmx_eb\\:MaxInt")?.textContent ||"―",
+                        updated: e.getElementsByTagName("updated")[0]?.textContent ?? ""
+                    };
+                    if (localQuake) {
+                        const originDate = new Date(localQuake.originTime);
+                        const formattedOrigin = originDate.toLocaleString("ja-JP", {
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        });
+                        localQuake.originTime=formattedOrigin;
+                    } 
+                    break;
+                }
+            }
+    // === 出力 ===
+    let html_header =`
+        <!-- 左/上段：市名 -->
+        <div id="disaster-header">
+          <h3 id="city-name">${fullName}</h3>
+        </div>
+    `;
+
+    let html_body = `
+      <!-- 右/下段：警報 + 地震 -->
+      <div id="disaster-body">
+        <!-- 警報 -->
+        <div class="disaster-item">
+          <h4>${T.warnTitle}</h4>
+          ${
+            warningTexts.length > 0
+              ? `<p>${warningTexts.join(", ")}</p>`
+              : `<p>${T.noWarn}</p>`
+          }
+        </div>
+
+        <!-- 地震 -->
+        <div class="disaster-item">
+          <h4>${localQuake ? localQuake.title : T.quakeTitle}</h4>
+          ${
+            localQuake
+              ? `<p>${localQuake.originTime}  震源：${localQuake.region}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+              : `<p>${T.noQuake(fullName)}</p>`
+          }
+        </div>
+      </div>
+    `;
+
+    output_header.innerHTML = html_header;
+    output_body.innerHTML = html_body;
+
+    } catch (err) {
+      console.error("エラー:", err);
+      output_body.textContent = "災害情報の取得に失敗しました。";
+    }
+  },
+  (err) => {
+    console.error("位置情報取得エラー:", err);
+    output_header.textContent = "位置情報の取得に失敗しました。";
+  });
+>>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
 };
 
 // ✅ ページ初期ロード時
