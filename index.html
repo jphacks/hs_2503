@@ -13,59 +13,73 @@
 
     <div id="disaster-header" data-i18n="loading"></div>
     <div id="disaster-body"></div>
-
-<<<<<<< HEAD
-    <div id="header-right"></div>
+    <div id="header-right">
       <button id="loginBtn" class="login-btn">ログイン</button>
-      <script>
-        document.getElementById("loginBtn").addEventListener("click", () => {
-          window.location.href = "html/login.html"; // ← 遷移先
-        });
-      </script>
-      <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
-    <select id="language-select">
-      <option value="ja">日本語</option>
-      <option value="zh">中文</option>
-      <option value="en">English</option>
-    </select>
+      <button id="help-btn">
+        <img src="img/help.png" alt="Help">
+      </button>
+
+      <div id="language-wrapper">
+        <button id="language-btn">
+          <img src="img/language.png" alt="Language" />
+        </button>
+
+        <select id="language-select">
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <button id="menu-btn">
+        <img src="img/menu.png" alt="Menu">
+      </button>
+
+    </div>
   </div>
 
   <div id="container">
-    <div id="reportDialog" class="report-dialog">
-      <div class="report-header">
-        <p data-i18n="question">この地点は？</p>
-        <button id="close-report">×</button>
-      </div>
-
+<div id="reportDialog" class="report-dialog">
+<div class="report-header">
+<p data-i18n="question">この地点は？</p>
+<button id="close-report">×</button>
+</div>
+ 
       <div class="status-options">
-        <label class="status-btn pass">
-          <input type="radio" name="status" value="pass">
-          <span data-i18n="pass">✅ 通れる</span>
-        </label>
-        <label class="status-btn fail">
-          <input type="radio" name="status" value="fail">
-          <span data-i18n="blocked">🚫 通れない</span>
-        </label>
-        <label class="status-btn step">
-          <input type="radio" name="status" value="step">
-          <span data-i18n="step">⚠️ 段差</span>
-        </label>
-        <label class="status-btn comment">
-          <input type="radio" name="status" value="comment">
-          <span data-i18n="comment_label">💬 コメント</span>
-        </label>
-      </div>
-
+<label class="status-btn pass">
+<input type="radio" name="status" value="pass">
+<span data-i18n="pass">✅ 通れる</span>
+</label>
+<label class="status-btn fail">
+<input type="radio" name="status" value="fail">
+<span data-i18n="blocked">🚫 通れない</span>
+</label>
+<label class="status-btn step">
+<input type="radio" name="status" value="step">
+<span data-i18n="step">⚠️ 段差</span>
+</label>
+<label class="status-btn comment">
+<input type="radio" name="status" value="comment">
+<span data-i18n="comment_label">💬 コメント</span>
+</label>
+</div>
+ 
       <textarea id="comment" data-i18n-placeholder="comment" placeholder="コメントを入力"></textarea>
-      <button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
-    </div>
-
+<button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
+</div>
+ 
     <div id="shelter-list"></div>
+ 
     <div id="map"></div>
+
+    <button id="recenter-btn" onclick="recenterMap()">
+      <img src="img/recenter.png" />
+    </button>
+
   </div>
 
-  <footer id="footer">
+  <footer>
     <span id="footer-left">© hinavi 2025 all rights reserved.</span>
     <div id="footer-right">
       <span data-i18n="Information provided by">情報提供：</span>
@@ -74,16 +88,7 @@
     </div>
   </footer>
 
-=======
-    <span id="footer-left">© hinavi 2025</span>
-    <div id="footer-right">
-      情報提供：
-<a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
-<a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
-</div>
-</footer>
  
->>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
   <script>
     // 💡 関数定義は避け、設定値のみをグローバルに定義
     window.GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
