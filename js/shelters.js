@@ -1,21 +1,21 @@
 // shelters.js
 // ============================
-// 🌏 グローバル変数とデバウンス管理
+// グローバル変数とデバウンス管理
 // ============================
 let expandedCard = null;
 let currentMarkers = []; // 既存マーカーを管理する配列
 let apiTimeout;          // 💡 デバウンス用のタイマーID
 
 // ユーザーの現在地を保持する変数（map.jsから更新される）
-// 💡 NEW: initMap() または startTracking() 成功時に正確な値に更新される
+// initMap() または startTracking() 成功時に正確な値に更新される
 let currentLat = 0; 
 let currentLng = 0;
-// 💡 NEW: 避難所検索の半径（キロメートル）
+// 避難所検索の半径（キロメートル）
 const SEARCH_RADIUS_KM = 5; 
 
 
 // ============================
-// ⛰️ 標高取得 (変更なし)
+// 標高取得
 // ============================
 function getElevation(lat, lng) {
   return new Promise((resolve, reject) => {
@@ -37,9 +37,9 @@ function getElevation(lat, lng) {
 
 
 // ============================
-// 📡 APIデータ取得 (現在地中心に変更)
+// APIデータ取得
 // ============================
-// 💡 修正: mapのBoundsではなく、中心座標と半径でデータを取得する
+// mapのBoundsではなく、中心座標と半径でデータを取得する
 async function loadSheltersFromAPI(lat, lng, radiusKm) {
     
     // 1. 座標が有効かチェック
@@ -78,10 +78,9 @@ async function loadSheltersFromAPI(lat, lng, radiusKm) {
 
 
 // ============================
-// 📄 UI生成ヘルパー (変更なし)
+// UI生成ヘルパー
 // ============================
 function getLabels(lang = "ja") {
-    // ... (変更なし) ...
     const labels = {
         ja: { distance: "直線距離", elevation: "標高", hazard: "対象となる災害種別" },
         zh: { distance: "直线距离", elevation: "海拔", hazard: "适用灾害类型" },
@@ -116,7 +115,7 @@ function createShelterCards(shelters, onClickCallback) {
     const listDiv = document.getElementById("shelter-list");
     listDiv.innerHTML = "";
 
-    // 💡 修正: 距離でソートし、上位5件を表示
+    // 距離でソートし、上位5件を表示
     const sortedShelters = shelters.sort((a, b) => a.distance - b.distance).slice(0, 5);
     
     if (sortedShelters.length === 0) {

@@ -2,14 +2,14 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 <title>hinavi 災害情報マップ</title>
 <link rel="icon" href="img/icon2.png" type="image/png">
 <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
   <div id="header">
-    <img src="img/logo1.png" alt="hinavi" id="logo">
+    <img src="img/logo2.png" alt="hinavi" id="logo">
 
     <div id="disaster-header" data-i18n="loading"></div>
     <div id="disaster-body"></div>
@@ -40,43 +40,44 @@
   </div>
 
   <div id="container">
-<div id="reportDialog" class="report-dialog">
-<div class="report-header">
-<p data-i18n="question">この地点は？</p>
-<button id="close-report">×</button>
-</div>
- 
+    <div id="reportDialog" class="report-dialog">
+      <div class="report-header">
+        <p data-i18n="question">この地点は？</p>
+        <button id="close-report">×</button>
+      </div>
+      
       <div class="status-options">
-<label class="status-btn pass">
-<input type="radio" name="status" value="pass">
-<span data-i18n="pass">✅ 通れる</span>
-</label>
-<label class="status-btn fail">
-<input type="radio" name="status" value="fail">
-<span data-i18n="blocked">🚫 通れない</span>
-</label>
-<label class="status-btn step">
-<input type="radio" name="status" value="step">
-<span data-i18n="step">⚠️ 段差</span>
-</label>
-<label class="status-btn comment">
-<input type="radio" name="status" value="comment">
-<span data-i18n="comment_label">💬 コメント</span>
-</label>
-</div>
- 
+        <label class="status-btn pass">
+          <input type="radio" name="status" value="pass">
+          <span data-i18n="pass">✅ 通れる</span>
+        </label>
+        <label class="status-btn fail">
+          <input type="radio" name="status" value="fail">
+          <span data-i18n="blocked">🚫 通れない</span>
+        </label>
+        <label class="status-btn step">
+          <input type="radio" name="status" value="step">
+          <span data-i18n="step">⚠️ 段差</span>
+        </label>
+        <label class="status-btn comment">
+          <input type="radio" name="status" value="comment">
+          <span data-i18n="comment_label">💬 コメント</span>
+        </label>
+      </div>   
       <textarea id="comment" data-i18n-placeholder="comment" placeholder="コメントを入力"></textarea>
-<button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
-</div>
+      <button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
+    </div>
  
-    <div id="shelter-list"></div>
+    <div id="shelter-wrapper">
+      <p id="shelter-text">近くの避難所はこちら</p>
+      <div id="shelter-list"></div>
+    </div>
  
     <div id="map"></div>
 
     <button id="recenter-btn" onclick="recenterMap()">
       <img src="img/recenter.png" />
     </button>
-
   </div>
 
   <footer id="footer" data-i18n="footer">
@@ -90,7 +91,7 @@
  
   <script>
     // 💡 関数定義は避け、設定値のみをグローバルに定義
-    window.GOOGLE_MAPS_API_KEY = "hogehoge"; 
+    window.GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
     window.currentLang = localStorage.getItem("selectedLanguage") || "ja";
     // 最新位置管理（関数定義は残るが、データ管理用のため許容）
     let latestPosition = null;

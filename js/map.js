@@ -99,6 +99,11 @@ async function initMap() {
     } else {
         console.error("🚨 エラー: setupMapListeners関数が定義されていません。shelters.jsが正しく読み込まれているか確認してください。");
     }
+
+    const recenterBtn = document.getElementById("recenter-btn");
+    if (recenterBtn) {
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(recenterBtn);
+    }
 }
 
 /**

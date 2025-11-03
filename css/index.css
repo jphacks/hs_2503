@@ -1,42 +1,50 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-    margin: 0;
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    min-width: 360px;
+  margin: 0;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 360px;
 }
  
 /* ヘッダー */
 #header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #07ae6e;
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* 左・中央・右に分散 */
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #07ae6e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 左・中央・右に分散 */
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 /* ロゴの左余白 */
 #logo {
-    height: 60px;
-    width: auto;
-    margin-left: 20px;  /* 左端からの距離 */
-    justify-content: center;
-    align-items: center;
+  height: 40px;
+  width: auto;
+  margin-left: 15px;  /* 左端からの距離 */
+  margin-right: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 災害情報 */
 #disaster-header {
   flex: 0 0 auto;
+  height: 45px;
+  background-color: #ebffe7;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  padding: 0 5px;
 }
 
 #city-name {
@@ -46,12 +54,15 @@ body {
 }
 
 #disaster-body {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
+  height: 45px;
+  background-color: #ebffe7;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
   justify-content: center;  /* 高さ中央に揃える */
   align-items: flex-start;
-  margin-left: 15px;
+  margin: 0 15px;
 }
 
 .disaster-item {
@@ -89,7 +100,7 @@ body {
 }
 
 
-/* ログインボタン,現在地に戻るボタン */
+/* ログインボタン */
 #loginBtn {
   background: white;
   color: #07ae6e;
@@ -136,8 +147,8 @@ body {
 
 #language-select {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 5px;
+  right: 10px;
   opacity: 0;
   width: 100%;
   height: 100%;
@@ -150,50 +161,61 @@ body {
     flex: 1;
     padding-top: 60px;
 }
- 
-/* 避難所カード */
+
+/* 避難所リスト, カード */
+#shelter-wrapper {
+  width: 300px;
+  flex-direction: column;
+  border-right: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+#shelter-text {
+  font-weight: bold;
+  font-size: 14px;
+  margin: 5px;
+  padding-top: 8px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #ccc;
+}
+
 #shelter-list {
-    width: 300px;
-    overflow-y: auto;
-    border-right: 1px solid #ccc;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
 }
  
 .shelter-card {
-    background: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    cursor: pointer;
-    transition: all 0.3s ease;  /* 高さや背景色などの変化を滑らかに */
-    overflow: hidden;
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;  /* 高さや背景色などの変化を滑らかに */
+  overflow: hidden;
 }
  
 /* クリックで開いた状態のカード */
 .shelter-card.expanded {
-    background-color: #ebffe7;
-    padding-bottom: 20px;  /* 詳細分の余白を追加 */
+  background-color: #ebffe7;
+  padding-bottom: 20px;  /* 詳細分の余白を追加 */
 }
  
 .shelter-card:hover {
-    transform: scale(1.02);
+  transform: scale(1.02);
 }
  
 /* マップ */
 #map {
   flex: 1;
-  position: relative;
 }
 
 /* 現在地に戻るボタン */
 #recenter-btn {
-  position: absolute;
-  bottom: 60px;        /* GoogleマップのUIにかぶらない位置 */
-  right: 30px;
-  z-index: 1001;       /* マップより前面 */
   background-color: white;
   border: none;
   border-radius: 50%;
@@ -205,6 +227,7 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin: 15px; /* 画面端に寄せすぎない */
 }
 
 #recenter-btn:hover {
@@ -212,10 +235,10 @@ body {
 }
 
 #recenter-btn img {
-  width: 24px;      /* 画像サイズ調整 */
+  width: 24px;
   height: 24px;
   object-fit: contain;
-  pointer-events: none;  /* クリックをボタンに通す（画像に当たってもOK） */
+  pointer-events: none;
 }
  
 /* フッター */
@@ -423,20 +446,19 @@ body {
   }
 
   #logo {
-    height: 46px;
+    height: 35px;
     justify-content: flex-start;
-    margin-top: 2px;
     margin-left: 3px;
+    padding: 2px;
     flex-shrink: 0; 
     flex-grow: 0; 
     order: 1;
   }
 
   #disaster-header {
-    flex: 0 0 auto;
+    height: 30px;
     flex-wrap: wrap;
     display: flex;
-    margin-left: 5px;
     order: 2;
   }
 
@@ -445,9 +467,8 @@ body {
   }
 
   #disaster-body {
-    background-color: #ebffe7;
+    height: 85px;
     width: 90%;
-    border-radius: 6px;
     margin: 2px 8px;
     order: 4;
   }
@@ -501,24 +522,29 @@ body {
   }
 
   #recenter-btn {
-    bottom: 250px;
+    bottom: 20px;
     right: 10px;
   }
 
   #map {
     order: 1;
     width: 100%;
-    height: 75vh;
+    height: 100%;
   }
-
-  #shelter-list {
+  
+  #shelter-wrapper {
     order: 2;
     width: 100%;
-    height: 25vh;
+    height: 30vh;
     border-right: none;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     padding: 8px;
+  }
+
+  #shelter-text {
+    font-size: 12px;
+    padding-top: 0;
   }
 
   .shelter-card {
