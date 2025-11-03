@@ -461,4 +461,3 @@ window.changeLanguage = function (lang) {
     // 災害情報など他のUIも即時再描画したい場合
     if (typeof window.onload === "function") window.onload();
 };
-

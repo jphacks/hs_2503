@@ -314,7 +314,3 @@ navigator.geolocation.getCurrentPosition(
 
 // ✅ ページ初期ロード時
 window.addEventListener("load", window.loadDisasterInfo);
-
-
-
-

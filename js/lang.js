@@ -1,3 +1,6 @@
+// js/lang.js
+
+// 翻訳データ
 // ===== 翻訳データ =====
 const translations = {
   ja: {
@@ -10,7 +13,7 @@ const translations = {
     "comment": "コメントを入力",
     "send": "送信",
     "footer": "© hinavi 2025 all rights reserved.",
-    "recenter": "現在地に戻る",
+    // "recenter": "現在地に戻る",
     "login": "ログイン",
     "logout": "ログアウト",
     "Information provided by": "情報提供：",
@@ -34,7 +37,7 @@ const translations = {
     "comment": "输入评论",
     "send": "发送",
     "footer": "© hinavi 2025 版权所有。",
-    "recenter": "返回当前位置",
+    // "recenter": "返回当前位置",
     "login": "登录",
     "logout": "登出",
     "Information provided by": "信息提供：",
@@ -58,7 +61,7 @@ const translations = {
     "comment": "Enter your comment",
     "send": "Send",
     "footer": "© hinavi 2025 All rights reserved.",
-    "recenter": "Recenter",
+    // "recenter": "Recenter",
     "login": "Login",
     "logout": "Logout",
     "Information provided by": "Information provided by:",
@@ -130,8 +133,8 @@ function applyTranslations(lang) {
   });
 
   // 個別ボタン（必要に応じて）
-  const recenterBtn = document.getElementById("recenter-btn");
-  if (recenterBtn) setOwnText(recenterBtn, t("recenter", lang));
+  // const recenterBtn = document.getElementById("recenter-btn");
+  // if (recenterBtn) setOwnText(recenterBtn, t("recenter", lang));
   const loginBtn = document.getElementById("loginBtn");
   if (loginBtn) setOwnText(loginBtn, t("login", lang));
   const logoutBtn = document.getElementById("logoutBtn");
@@ -172,3 +175,30 @@ window.t = t;
 window.changeLanguage = changeLanguage;
 window.applyTranslations = applyTranslations;
 window.getCurrentLang = getCurrentLang;
+
+
+// // 言語変更処理
+// function changeLanguage(lang) {
+//   document.documentElement.lang = lang;
+//   const t = translations[lang] || translations["ja"];
+
+//   // 通常テキスト
+//   document.querySelectorAll("[data-i18n]").forEach(el => {
+//     const key = el.getAttribute("data-i18n");
+//     if (t[key]) el.textContent = t[key];
+//   });
+
+//   // プレースホルダー
+//   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+//     const key = el.getAttribute("data-i18n-placeholder");
+//     if (t[key]) el.placeholder = t[key];
+//   });
+
+//   // ボタン
+//   const recenterBtn = document.getElementById("recenter-btn");
+//   if (recenterBtn && t["recenter"]) recenterBtn.textContent = t["recenter"];
+
+//   // フッター左側のみ更新
+//   const footerLeft = document.getElementById("footer-left");
+//   if (footerLeft && t["footer"]) footerLeft.textContent = t["footer"];
+// }
