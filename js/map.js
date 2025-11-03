@@ -107,7 +107,7 @@ function drawUserLocation(pos, mapInstance) {
             content: new google.maps.marker.PinElement({
                 background: "#4285F4",
                 borderColor: "white",
-                glyph: "●",
+                glyphText: "●",
                 glyphColor: "#4285F4",
             }).element,
         });
@@ -294,7 +294,7 @@ function loadReports() {
     reportMarkers = []; // 配列をリセット
 
     // NOTE: レポート取得APIは変更なしと仮定
-    fetch("https://hinavi.sakura.ne.jp/getReport.php")
+    fetch("https://hinavi.sakura.ne.jp/php/getReport.php")
         .then(res => res.json())
         .then(data => {
             if (data.success) {
