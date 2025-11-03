@@ -89,14 +89,8 @@ body {
 }
 
 
-<<<<<<< HEAD
-/* 現在地に戻るボタン */
-#loginBtn,
-#recenter-btn {
-=======
 /* ログインボタン,現在地に戻るボタン */
 #loginBtn {
->>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
   background: white;
   color: #07ae6e;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
