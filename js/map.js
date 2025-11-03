@@ -36,10 +36,32 @@ async function initMap() {
   userMarker = null;
   userCircle = null;
 
+<<<<<<< HEAD
   // ✅ 最新の位置情報があれば利用 (initial.jsが管理)
   const latest = window.getLatestPosition ? window.getLatestPosition() : null;
   // 💡 初期値（例: 東広島）
   const defaultPos = latest || { lat: 34.3948, lng: 132.7483 };
+=======
+    // 新しい地図を生成
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: defaultPos,
+        zoom: 15,
+        mapId: '58be1157ad609efe356c49f6', 
+
+        // --- 標準UIの表示／非表示 ---
+        // zoomControl: false,              // ズームコントロール（+−）
+        // mapTypeControl: true,          // 地図タイプ切替（地図／航空写真）
+        // scaleControl: false,             // スケールバー
+        // streetViewControl: true,       // ストリートビュー
+        // rotateControl: false,           // 回転ボタン
+        // fullscreenControl: false,        // 全画面ボタン
+
+        // --- 全UIを一括で消すなら ---
+        disableDefaultUI: true,
+
+        gestureHandling: "greedy"
+    });
+>>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
 
   // 新しい地図を生成
   map = new google.maps.Map(document.getElementById("map"), {
@@ -100,6 +122,7 @@ async function initMap() {
  * @param {google.maps.Map} mapInstance - マップインスタンス
  */
 function drawUserLocation(pos, mapInstance) {
+<<<<<<< HEAD
   // マーカーがなければ作成、あれば更新
   if (!userMarker) {
     userMarker = new google.maps.marker.AdvancedMarkerElement({
@@ -135,6 +158,44 @@ function drawUserLocation(pos, mapInstance) {
     userCircle.setRadius(pos.accuracy || 50);
     userCircle.setMap(mapInstance);
   }
+=======
+    // マーカーがなければ作成、あれば更新
+    if (!userMarker) {
+        userMarker = new google.maps.marker.AdvancedMarkerElement({
+            position: pos,
+            map: mapInstance,
+            title: "あなたの現在地",
+            content: new google.maps.marker.PinElement({
+                background: "#4285F4",
+                borderColor: "white",
+                glyphText: "●",
+                glyphColor: "#4285F4",
+            }).element,
+        });
+    } else {
+        userMarker.position = pos;
+        userMarker.map = mapInstance; 
+    }
+
+    // 💬 円がなければ新規作成、あれば再設定
+    if (!userCircle) {
+        userCircle = new google.maps.Circle({
+            map: mapInstance,
+            center: pos,
+            radius: pos.accuracy || 50, // 💡 精度(メートル)を設定
+            fillColor: "#4285F4",
+            fillOpacity: 0.2,
+            strokeColor: "#4285F4",
+            strokeOpacity: 0.5,
+            strokeWeight: 1,
+            clickable: false,
+        });
+    } else {
+        userCircle.setCenter(pos);
+        userCircle.setRadius(pos.accuracy || 50);
+        userCircle.setMap(mapInstance); 
+    }
+>>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
 }
 
 // ============================
@@ -279,6 +340,7 @@ function recenterMap() {
 function loadReports() {
   console.log("🟦 loadReports() 開始");
 
+<<<<<<< HEAD
   // 言語切替や再ロードに備えて、既存のマーカーを削除
   reportMarkers.forEach((marker) => {
     marker.setMap(null);
@@ -310,6 +372,32 @@ function loadReports() {
     })
     .catch((err) => console.error("🚨 通信エラー:", err))
     .finally(() => console.log("🟫 loadReports() 完了"));
+=======
+    // NOTE: レポート取得APIは変更なしと仮定
+    fetch("https://hinavi.sakura.ne.jp/php/getReport.php")
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                data.reports.forEach(rep => {
+                    const likesCount = parseInt(rep.likes_count) || 0;
+                    const dislikesCount = parseInt(rep.dislikes_count) || 0;
+                    
+                    addReportMarker(
+                        parseInt(rep.id),
+                        parseFloat(rep.lat),
+                        parseFloat(rep.lng),
+                        rep.status,
+                        rep.comment,
+                        rep.created_at,
+                        likesCount,    
+                        dislikesCount  
+                    );
+                });
+            }
+        })
+        .catch(err => console.error("🚨 通信エラー:", err))
+        .finally(() => console.log("🟫 loadReports() 完了"));
+>>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
 }
 
 // ============================
