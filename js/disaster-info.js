@@ -1,9 +1,16 @@
 const testMode = false;
 
 // 🌍 グローバル関数として公開（言語変更時に再実行可能）
+<<<<<<< HEAD
 window.loadDisasterInfo = async function () {
   const output = document.getElementById("disaster-info");
   const lang = window.currentLang || localStorage.getItem("selectedLang") || "ja";
+=======
+window.loadDisasterInfo = async function() {
+  const output_header = document.getElementById("disaster-header");
+  const output_body = document.getElementById("disaster-body");
+  const lang = window.currentLang || "ja";
+>>>>>>> 1f75d9a3bfe9c173a2986486e4c02cfee86c043c
 
   // 🌐 多言語辞書
   const langText = {
