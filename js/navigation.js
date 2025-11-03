@@ -36,8 +36,8 @@ function startWalkingNavigation(shelter) {
             content: new google.maps.marker.PinElement({
                 background: "#4285F4", 
                 borderColor: "white", 
-                glyph: "●", 
-                glyphColor: "#4285F4", 
+                glyphText: "●",    // ← glyph を glyphText に変更
+                glyphColor: "#4285F4", // glyphColor はそのまま使用可能
             }).element,
         });
         
