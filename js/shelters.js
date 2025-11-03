@@ -55,7 +55,8 @@ async function loadSheltersFromAPI(lat, lng, radiusKm) {
         radius: radiusKm // サーバー側でこの半径内のデータをフィルタリング
     });
     
-    const apiUrl = `getShelters.php?${params.toString()}`;
+    const apiUrl = `php/getShelters.php?${params.toString()}`;
+
     
     try {
         const response = await fetch(apiUrl);

@@ -1,0 +1,7 @@
+# PHP ファイルへの直接アクセスを禁止
+<Files "*.php">
+    Require all denied
+</Files>
+
+# ディレクトリインデックスの非表示
+Options -Indexes
