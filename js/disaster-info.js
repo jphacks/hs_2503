@@ -2,7 +2,8 @@ const testMode = false;
 
 // 🌍 グローバル関数として公開（言語変更時に再実行可能）
 window.loadDisasterInfo = async function() {
-  const output = document.getElementById("disaster-info");
+  const output_header = document.getElementById("disaster-header");
+  const output_body = document.getElementById("disaster-body");
   const lang = window.currentLang || "ja";
 
   // 🌐 多言語辞書
@@ -79,11 +80,11 @@ window.loadDisasterInfo = async function() {
   }
 
   if (!navigator.geolocation) {
-    output.textContent = T.noGeo;
+    output_header.textContent = T.noGeo;
     return;
+  } else {
+    output_header.textContent = T.loading;
   }
-
-  output.textContent = T.loading;
 
     navigator.geolocation.getCurrentPosition(async (pos) => {
         const lat = pos.coords.latitude;
@@ -126,7 +127,7 @@ window.loadDisasterInfo = async function() {
             const CLASS_AREA_CODE = cityEntry ? cityEntry[0] : null;
 
             if (!CLASS_AREA_CODE) {
-                output.innerHTML = `<p>${fullName} の市町村コードが見つかりません。</p>`;
+                output_header.innerHTML = `<p>${fullName} の市町村コードが見つかりません。</p>`;
                 return;
             }
 
@@ -239,48 +240,49 @@ window.loadDisasterInfo = async function() {
                 }
             }
     // === 出力 ===
-    let html = `
-    <div id="disaster-info">
-    <!-- 左カラム：市名 -->
-    <div id="disaster-header">
-        <h3 id="city-name">${fullName}</h3>
-    </div>
+    let html_header =`
+        <!-- 左/上段：市名 -->
+        <div id="disaster-header">
+          <h3 id="city-name">${fullName}</h3>
+        </div>
+    `;
 
-    <!-- 右カラム：警報 + 地震 -->
-    <div id="disaster-body">
+    let html_body = `
+      <!-- 右/下段：警報 + 地震 -->
+      <div id="disaster-body">
         <!-- 警報 -->
         <div class="disaster-item">
-        <h4>${T.warnTitle}</h4>
-        ${
+          <h4>${T.warnTitle}</h4>
+          ${
             warningTexts.length > 0
-            ? `<p>${warningTexts.join(", ")}</p>`
-            : `<p>${T.noWarn}</p>`
-        }
+              ? `<p>${warningTexts.join(", ")}</p>`
+              : `<p>${T.noWarn}</p>`
+          }
         </div>
 
         <!-- 地震 -->
         <div class="disaster-item">
-        <h4>${localQuake ? localQuake.title : T.quakeTitle}</h4>
-        ${
+          <h4>${localQuake ? localQuake.title : T.quakeTitle}</h4>
+          ${
             localQuake
-            ? `<p>${localQuake.originTime}　震源：${localQuake.region}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
-            : `<p>${T.noQuake(fullName)}</p>`
-        }
+              ? `<p>${localQuake.originTime}  震源：${localQuake.region}  M${localQuake.magnitude} 最大震度：${localQuake.maxInt}</p>`
+              : `<p>${T.noQuake(fullName)}</p>`
+          }
         </div>
+      </div>
+    `;
 
-    </div>
-    </div>
+    output_header.innerHTML = html_header;
+    output_body.innerHTML = html_body;
 
-      `;
-      output.innerHTML = html;
     } catch (err) {
       console.error("エラー:", err);
-      output.textContent = "災害情報の取得に失敗しました。";
+      output_body.textContent = "災害情報の取得に失敗しました。";
     }
   },
   (err) => {
     console.error("位置情報取得エラー:", err);
-    output.textContent = "位置情報の取得に失敗しました。";
+    output_header.textContent = "位置情報の取得に失敗しました。";
   });
 };
 

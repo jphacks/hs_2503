@@ -9,19 +9,34 @@
 </head>
 <body>
   <div id="header">
-    <img src="img/logo1.png" alt="hinavi_logo" id="logo">
+    <img src="img/logo1.png" alt="hinavi" id="logo">
 
-    <div id="disaster-info" data-i18n="loading">読み込み中...</div>
+    <div id="disaster-header" data-i18n="loading"></div>
+    <div id="disaster-body"></div>
 
-    <div id="header-right"></div>
+    <div id="header-right">
       <button id="loginBtn" class="login-btn">ログイン</button>
-      
-      <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
-    <select id="language-select">
-      <option value="ja">日本語</option>
-      <option value="zh">中文</option>
-    </select>
+      <button id="help-btn">
+        <img src="img/help.png" alt="Help">
+      </button>
+
+      <div id="language-wrapper">
+        <button id="language-btn">
+          <img src="img/language.png" alt="Language" />
+        </button>
+
+        <select id="language-select">
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+
+      <button id="menu-btn">
+        <img src="img/menu.png" alt="Menu">
+      </button>
+
+    </div>
   </div>
 
   <div id="container">
@@ -57,10 +72,15 @@
     <div id="shelter-list"></div>
 
     <div id="map"></div>
+
+    <button id="recenter-btn" onclick="recenterMap()">
+      <img src="img/recenter.png" />
+    </button>
+
   </div>
 
   <footer id="footer" data-i18n="footer">
-    <span id="footer-left">© hinavi 2025 all rights reserved.</span>
+    <span id="footer-left">© hinavi 2025</span>
     <div id="footer-right">
       情報提供：
       <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
@@ -70,7 +90,7 @@
 
   <script>
     // 💡 関数定義は避け、設定値のみをグローバルに定義
-    window.GOOGLE_MAPS_API_KEY = "hogehoge"; 
+    window.GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
     window.currentLang = localStorage.getItem("selectedLanguage") || "ja";
     
     // 最新位置管理（関数定義は残るが、データ管理用のため許容）

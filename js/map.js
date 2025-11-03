@@ -44,9 +44,18 @@ async function initMap() {
         center: defaultPos,
         zoom: 15,
         mapId: '58be1157ad609efe356c49f6', 
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: true,
+
+        // --- 標準UIの表示／非表示 ---
+        // zoomControl: false,              // ズームコントロール（+−）
+        // mapTypeControl: true,          // 地図タイプ切替（地図／航空写真）
+        // scaleControl: false,             // スケールバー
+        // streetViewControl: true,       // ストリートビュー
+        // rotateControl: false,           // 回転ボタン
+        // fullscreenControl: false,        // 全画面ボタン
+
+        // --- 全UIを一括で消すなら ---
+        disableDefaultUI: true,
+
         gestureHandling: "greedy"
     });
 
@@ -127,6 +136,7 @@ function drawUserLocation(pos, mapInstance) {
             strokeColor: "#4285F4",
             strokeOpacity: 0.5,
             strokeWeight: 1,
+            clickable: false,
         });
     } else {
         userCircle.setCenter(pos);
