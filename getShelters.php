@@ -4,6 +4,81 @@ header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // 過去の日付
 
+// 言語が変更されたときに指定するデータを変更する用に処理をしていますが、避難所データが表示されない問題が発生しているため、
+// 一旦コメントアウトしています
+// // ----------------------------------------------------
+// // 0. 言語パラメータ
+// // ----------------------------------------------------
+// $supported_langs = ['ja','en','zh'];
+// $lang = isset($_GET['lang']) ? strtolower($_GET['lang']) : 'ja';
+// if (!in_array($lang, $supported_langs, true)) $lang = 'ja';
+
+// // 言語ごとの CSV とヘッダー名（実際のCSVヘッダーに合わせて調整してください）
+// $config = [
+//   'ja' => [
+//     'file' => __DIR__ . '/../csv/shelter_japan.csv',
+//     'cols' => [
+//       'lat' => '緯度',
+//       'lng' => '経度',
+//       'name' => '施設・場所名',
+//       'address' => '住所',
+//     ],
+//     'disasters' => [
+//       '洪水',
+//       '崖崩れ、土石流及び地滑り',
+//       '高潮',
+//       '地震',
+//       '津波',
+//       '大規模な火事',
+//       '内水氾濫',
+//       '火山現象',
+//     ],
+//   ],
+//   'en' => [
+//     'file' => __DIR__ . '/../csv/shelter_english.csv',
+//     'cols' => [
+//       'lat' => 'Latitude',
+//       'lng' => 'Longitude',
+//       'name' => 'Facility/Place Name',
+//       'address' => 'Address',
+//     ],
+//     'disasters' => [
+//       'Flood',
+//       'Landslide / Debris flow / Slope failure',
+//       'Storm surge',
+//       'Earthquake',
+//       'Tsunami',
+//       'Large fire',
+//       'Inland flood',
+//       'Volcanic phenomena',
+//     ],
+//   ],
+//   'zh' => [
+//     'file' => __DIR__ . '/../csv/shelter_chinese.csv',
+//     'cols' => [
+//       'lat' => '纬度',
+//       'lng' => '经度',
+//       'name' => '设施・场所名',
+//       'address' => '地址',
+//     ],
+//     'disasters' => [
+//       '洪水',
+//       '崩塌、泥石流及滑坡',
+//       '风暴潮',
+//       '地震',
+//       '海啸',
+//       '大规模火灾',
+//       '内涝',
+//       '火山现象',
+//     ],
+//   ],
+// ];
+
+// $csv_file = $config[$lang]['file'];
+// $colmap   = $config[$lang]['cols'];
+// $disaster_headers = $config[$lang]['disasters'];
+
+
 // ----------------------------------------------------
 // 1. 現在地と検索半径を取得
 // ----------------------------------------------------
@@ -133,3 +208,4 @@ if (($handle = fopen($csv_file, "r")) !== FALSE) {
 
 echo json_encode($shelters_with_distance);
 ?>
+
