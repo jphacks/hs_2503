@@ -2,21 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>アカウント登録</title>
+  <title data-i18n="register_title">アカウント登録</title>
   <link rel="stylesheet" href="../css/register.css">
 </head>
 <body>
   <div class="register-container">
-    <h2>アカウント登録</h2>
+    <h2 data-i18n="register_heading">アカウント登録</h2>
     <form id="registerForm">
-      <input type="text" id="username" placeholder="ユーザー名" required><br>
-      <input type="email" id="email" placeholder="メールアドレス" required><br>
-      <input type="password" id="password" placeholder="パスワード（6文字以上）" minlength="6" required><br>
-      <button type="submit">登録</button>
+      <input type="text" id="username" data-i18n-placeholder="username" placeholder="ユーザー名" required><br>
+      <input type="email" id="email" data-i18n-placeholder="email" placeholder="メールアドレス" required><br>
+      <input type="password" id="password" data-i18n-placeholder="password" placeholder="パスワード（6文字以上）" minlength="6" required><br>
+      <button type="submit" data-i18n="register_btn">登録</button>
     </form>
-    <p>すでにアカウントをお持ちの方は <a href="login.html">ログイン</a></p>
+    <p data-i18n="have_account">
+      すでにアカウントをお持ちの方は
+      <a href="login.html" data-i18n="login_link">ログイン</a>
+    </p>
   </div>
 
+  <script src="../js/register-lang.js"></script>
   <script src="../js/register.js"></script>
 </body>
 </html>
