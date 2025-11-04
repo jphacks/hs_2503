@@ -3,6 +3,7 @@
 // グローバル変数とデバウンス管理
 // ============================
 let expandedCard = null;
+let currentElevation = null; // 現在地の標高を保存
 let currentMarkers = []; // 既存マーカーを管理する配列
 let apiTimeout;          // 💡 デバウンス用のタイマーID
 
@@ -27,12 +28,30 @@ function getElevation(lat, lng) {
           console.log("標高:", results[0].elevation.toFixed(1) + 'm');
           resolve(results[0].elevation);
         } else {
-          console.error("Elevation取得失敗:", status);
+          console.error("標高取得失敗:", status);
           reject(status);
         }
       }
     );
   });
+}
+
+// ============================
+// 標高差を計算して表現する関数
+// ============================
+function getElevationDifferenceText(shelterElevation, currentElevation) {
+    if (shelterElevation === undefined) return "取得中...";
+    if (currentElevation === null || currentElevation === undefined) return "（現在地の標高を取得中...）";
+
+    const diff = shelterElevation - currentElevation;
+
+    if (Math.abs(diff) < 0.1) {
+        return "（現在地とほぼ同じ高さ）";
+    } else if (diff > 0) {
+        return `（現在地より ${diff.toFixed(1)} m 高い）`;
+    } else {
+        return `（現在地より ${Math.abs(diff).toFixed(1)} m 低い）`;
+    }
 }
 
 
@@ -95,8 +114,20 @@ function getShelterCardHTML(shelter, expanded = false, labels = getLabels()) {
     let extraInfo = "";
 
     if (expanded) {
+        let elevationText = "取得中...";
+        let diffText = "";
+        let hazardText = shelter.disasterType || "不明";
+
+        if (shelter.elevation !== undefined) {
+            elevationText = `${shelter.elevation.toFixed(1)} m`;
+            diffText = getElevationDifferenceText(shelter.elevation, currentElevation);
+        } else {
+            diffText = "（現在地の標高を取得中...）";
+        }
+
         extraInfo = `
-            ${labels.elevation}: ${shelter.elevation !== undefined ? `${shelter.elevation} m` : "取得中..."}<br>
+            ${labels.elevation}: ${elevationText}<br>
+            ${diffText}<br><br>
             ${labels.hazard}: ${shelter.disasterType || "不明"}<br>
         `;
     }
@@ -235,11 +266,11 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 
 // ============================
-// 🎯 メイン処理 (現在地中心のデータ取得に対応)
+// メイン処理 (現在地中心のデータ取得に対応)
 // ============================
 async function initShelterCards(map, onClickCallback) {
     
-    // 💡 修正: 現在地が未設定の場合は、地図の中心をフォールバックとして使用
+    // 現在地が未設定の場合は、地図の中心をフォールバックとして使用
     let latToUse = currentLat;
     let lngToUse = currentLng;
 
@@ -247,13 +278,13 @@ async function initShelterCards(map, onClickCallback) {
         const center = map.getCenter();
         latToUse = center.lat();
         lngToUse = center.lng();
-        console.warn("⚠️ 現在地がまだ取得できていないため、地図の中心を現在地として距離と検索を行います。");
+        console.warn("現在地がまだ取得できていないため、地図の中心を現在地として距離と検索を行います。");
     }
 
     try {
         // 1. APIから現在地中心の避難所データを取得
         console.log(`📡 APIから避難所データを取得中... (Lat:${latToUse.toFixed(4)}, Lng:${lngToUse.toFixed(4)})`);
-        // 💡 修正: 現在地と固定半径を渡す
+        // 現在地と固定半径を渡す
         const shelters = await loadSheltersFromAPI(latToUse, lngToUse, SEARCH_RADIUS_KM);
         
         if (shelters.length === 0) {
@@ -279,15 +310,24 @@ async function initShelterCards(map, onClickCallback) {
 
 
 // ============================
-// 🌟 最終的な地図イベントリスナーの設定
+// 最終的な地図イベントリスナーの設定
 // ============================
-// 💡 map.jsのコールバックで、現在の位置情報を更新するためにグローバルな関数を定義
+// map.jsのコールバックで、現在の位置情報を更新するためにグローバルな関数を定義
 // map.jsは updateSheltersPosition(pos) を通じてこれを呼び出す
 if (typeof window.setSheltersPosition === "undefined") {
     window.setSheltersPosition = (pos) => {
         currentLat = pos.lat;
         currentLng = pos.lng;
-        // 💡 NEW: 現在地が更新されたら、避難所データを再ロードする（デバウンス適用）
+
+        // 現在地の標高を更新
+        getElevation(pos.lat, pos.lng)
+            .then(elev => {
+            currentElevation = elev;
+            console.log(`現在地標高: ${elev.toFixed(1)}m`);
+            })
+            .catch(err => console.warn("現在地の標高取得失敗:", err));
+
+        // 現在地が更新されたら、避難所データを再ロードする（デバウンス適用）
         clearTimeout(apiTimeout);
         apiTimeout = setTimeout(() => {
             console.log("📍 位置情報更新: 避難所データ再ロード (デバウンス後)");
@@ -303,13 +343,13 @@ function setupMapListeners(map, initialLat, initialLng, onClickCallback) {
     currentLat = initialLat;
     currentLng = initialLng;
     
-    // 💡 NEW: mapオブジェクトをグローバルに保持（map.jsが実行しない場合のため）
+    // mapオブジェクトをグローバルに保持（map.jsが実行しない場合のため）
     window.map = map;
     window.showRouteToShelter = onClickCallback; // map.jsの関数を保存
 
     // 最初に一度だけデータをロードする処理 (map.getBounds()に依存しないため、初回idleで実行)
     let firstLoadListener = map.addListener('idle', function firstLoad() {
-        console.log("🗺️ 初回 idle: 避難所データロード開始");
+        console.log("初回 idle: 避難所データロード開始");
         
         // 初回ロードを実行
         initShelterCards(map, onClickCallback);
@@ -317,7 +357,7 @@ function setupMapListeners(map, initialLat, initialLng, onClickCallback) {
         // 初回ロードが終わったら、このリスナーは削除し、継続的なロードを設定
         google.maps.event.removeListener(firstLoadListener); 
         
-        // 💡 修正: 地図の移動・ズームによる継続的なロードは、**現在地中心**の検索では**不要**または**地図の中心が変わった時のみ**に限定すべきです。
+        // 地図の移動・ズームによる継続的なロードは、現在地中心の検索では不要または地図の中心が変わった時のみに限定すべきです。
         // 現在地追跡中に地図を動かしても現在地は変わらないため、APIコールは不要です。
         // 地図の移動によるデータ再取得は廃止します。位置情報更新時（上記 window.setSheltersPosition 内）のみ再取得します。
         
