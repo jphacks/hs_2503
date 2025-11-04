@@ -28,17 +28,20 @@ window.stopTracking = stopTracking;
 window.recenterMap = recenterMap; 
 window.loadReports = loadReports; // report.jsから再ロードするために公開
 
-
 // ============================
 // 🗺️ 初期化
 // ============================
 async function initMap() {
     console.log("🗺️ initMap() 実行");
 
+    // 💡 NEW: タイムアウト対応として、高精度ではない getCurrentPosition を一度試みる
+    let initialPos = await getInitialPosition(); // 非同期で初期位置を待機
+    
     // ✅ 最新の位置情報があれば利用 (initial.jsが管理)
     const latest = window.getLatestPosition ? window.getLatestPosition() : null;
-    // 💡 修正: 初期値の緯度経度を設定（例: 東広島）
-    const defaultPos = latest || { lat: 34.3948, lng: 132.7483 }; 
+    
+    // 💡 取得した初期位置を最優先で使用。次にキャッシュ、最後にデフォルト位置。
+    const defaultPos = initialPos || latest || { lat: 34.3948, lng: 132.7483 }; 
 
     // 新しい地図を生成
     map = new google.maps.Map(document.getElementById("map"), {
@@ -60,17 +63,17 @@ async function initMap() {
         isManuallyPanning = true;
     });
     
-    // 💬 言語切替直後にも現在地と仮の円を描画
-    if (latest) {
-        console.log("🟦 最新位置から仮マーカーと円を描画");
-        userPosition = latest;
-        drawUserLocation(latest, map); // 描画処理を関数化
+    // 💬 初期位置から現在地と円を描画し、避難所データ更新を行う
+    if (defaultPos !== { lat: 34.3948, lng: 132.7483 }) {
+        console.log("🟦 初期位置から仮マーカーと円を描画");
+        userPosition = defaultPos; // 取得した位置を userPosition に設定
+        drawUserLocation(defaultPos, map); // 描画処理を関数化
 
         // 💡 修正: shelters.js にも最新位置情報を通知 (初期距離計算のため)
-        updateSheltersPosition(latest);
+        updateSheltersPosition(defaultPos);
     }
 
-    // ✅ 現在地追跡を開始
+    // ✅ 現在地追跡を開始 (watchPositionによる継続的な追跡)
     startTracking();
 
     // ✅ DBに保存された報告データをロードして地図にマーカー表示
@@ -96,6 +99,42 @@ async function initMap() {
     if (recenterBtn) {
         map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(recenterBtn);
     }
+}
+
+/**
+ * 💡 NEW: 現在地を一度だけ取得し、成功またはタイムアウトするまで待機する関数
+ * @returns {Promise<object | null>} { lat, lng, accuracy } または null
+ */
+function getInitialPosition() {
+    return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+            resolve(null);
+            return;
+        }
+
+        const options = {
+            enableHighAccuracy: false, // 高精度不要
+            timeout: 10000, // 10秒でタイムアウト
+            maximumAge: 0,
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                console.log("📍 初期位置を getCurrentPosition で取得成功");
+                resolve({ 
+                    lat: pos.coords.latitude, 
+                    lng: pos.coords.longitude, 
+                    accuracy: pos.coords.accuracy 
+                });
+            },
+            (err) => {
+                // タイムアウトや権限エラーでも、地図の初期化をブロックしない
+                console.warn(`⚠️ 初期位置取得失敗 (Code: ${err.code}): ${err.message}`);
+                resolve(null);
+            },
+            options
+        );
+    });
 }
 
 /**
@@ -162,7 +201,9 @@ function startTracking() {
         watchId = null;
     }
 
+    // 💡 修正: ここから watchPosition の呼び出しを開始
     watchId = navigator.geolocation.watchPosition(
+        // 成功時の処理 (pos)
         (pos) => {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
@@ -191,16 +232,34 @@ function startTracking() {
                 }
             }
         },
+        // エラー時の処理 (err)
         (err) => {
             console.error("位置情報エラー:", err);
-            // エラーを通知（カスタムUIを推奨）
+            
+            let errorMessage = "現在地の取得に失敗しました: " + err.message;
+            
+            // 💡 エラーコード2と3の場合、より具体的なメッセージを提示
+            if (err.code === 2) { 
+                // Position update is unavailable
+                errorMessage = "位置情報サービスが利用できません。スマートフォンの設定で、このサイト（またはブラウザアプリ）への位置情報アクセスが許可されているか確認してください。";
+            } else if (err.code === 3) {
+                // Timeout expired
+                errorMessage = "位置情報取得がタイムアウトしました。屋外で再試行するか、設定を確認してください。";
+            }
+            
+            // エラーを通知
             const messageBox = document.getElementById('message-box');
-            if (messageBox) messageBox.textContent = "現在地の取得に失敗しました: " + err.message;
-            else console.error("現在地の取得に失敗しました: " + err.message);
+            if (messageBox) messageBox.textContent = errorMessage;
+            else console.error(errorMessage);
         },
+        // オプション
         {
-            enableHighAccuracy: true,
-            timeout: 10000,
+            // ✅ 修正点1: 高精度要求をfalseに設定し、低精度でも成功しやすくする
+            enableHighAccuracy: false, 
+            
+            // ✅ 修正点2: タイムアウトを延長し、取得の猶予時間を増やす
+            timeout: 30000, // 30秒に延長
+
             maximumAge: 0,
         }
     );
@@ -353,35 +412,38 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
     
     reportMarkers.push(marker);
 
+// ... (前略) ...
+
     // 💡 投稿者名の表示を準備
     const postUserName = userName || "匿名ユーザー";
 
-    // 💡 【修正点】：情報ウィンドウの内容に投稿者名を追加
+    // 💡 【修正】：情報ウィンドウの内容からユーザーアイコン画像を削除
     const infoContent = `
-        <div data-report-id="${id}" class="report-info-window">
-            <b>${status}</b><br>
-            ${comment || ""}<br>
-            <small>${created_at}</small><br>
-            <hr style="margin: 5px 0;">
+        <div data-report-id="${id}" class="sns-info-card">
             
-            <p style="font-size: 0.9em; margin-bottom: 5px;">
-                <strong>投稿者:</strong> ${postUserName}
-            </p>
-
-            <div class="evaluation-container" style="display:flex; gap:10px; margin-top: 8px;">
-
-                <div class="like-group">
-                    <button class="good-btn" onclick="window.sendEvaluation(${id}, 'good')">
-                        👍 役立った
-                    </button>
-                    <span class="count-badge" id="likes-count-${id}">${likesCount || 0}</span>
+            <div class="card-header">
+                <div class="user-profile">
+                    
+                    <span class="user-name">${postUserName}</span>
                 </div>
-                
-                <div class="dislike-group">
-                    <button class="bad-btn" onclick="window.sendEvaluation(${id}, 'bad')">
-                        👎 役に立たない
+                <span class="post-time">${created_at}</span>
+            </div>
+            
+            <div class="card-body">
+                <div class="status-indicator status-${status === '通れる' ? 'pass' : status === '通れない' ? 'fail' : status === '段差' ? 'step' : 'comment'}">
+                    <span class="status-text">${status}</span>
+                </div>
+                <p class="comment-content">${comment || "コメントはありません"}</p>
+            </div>
+            
+            <div class="card-footer">
+                <div class="evaluation-actions">
+                    <button class="action-btn good-action" onclick="window.sendEvaluation(${id}, 'good')">
+                        👍 役立った <span id="likes-count-${id}">${likesCount || 0}</span>
                     </button>
-                    <span class="count-badge" id="dislikes-count-${id}">${dislikesCount || 0}</span>
+                    <button class="action-btn bad-action" onclick="window.sendEvaluation(${id}, 'bad')">
+                        👎 役に立たない <span id="dislikes-count-${id}">${dislikesCount || 0}</span>
+                    </button>
                 </div>
             </div>
             
@@ -390,11 +452,11 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
 
     const info = new google.maps.InfoWindow({
         content: infoContent,
+        pixelOffset: new google.maps.Size(0, -30) // マーカーの少し上に調整
     });
 
     marker.addListener("click", () => info.open(map, marker));
 }
-
 // ============================
 // 🌐 言語変更に対応（Google Maps再読み込み）
 // ============================
