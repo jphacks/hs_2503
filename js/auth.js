@@ -11,7 +11,7 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
   if (foundUser) {
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("currentUser", foundUser.username);
-    window.location.href = "../html/dashboard.html";
+    window.location.href = "../dashboard.html";
   } else {
     alert("ユーザー名またはパスワードが間違っています。");
   }

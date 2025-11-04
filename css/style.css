@@ -23,3 +23,35 @@ header {
 main {
   padding: 20px;
 }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+  text-align: center;
+  padding: 40px;
+}
+form {
+  background: #fff;
+  display: inline-block;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+input {
+  display: block;
+  margin: 10px auto;
+  padding: 8px;
+  width: 200px;
+}
+button {
+  padding: 8px 16px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}
+

@@ -108,8 +108,9 @@ body {
 }
 
 
-/* ログインボタン,現在地に戻るボタン */
+/* ログインボタン,ログアウトボタン,現在地に戻るボタン */
 #loginBtn,
+#logoutBtn,
 #recenter-btn {
   background: white;
   color: #07ae6e;
@@ -426,10 +427,11 @@ body {
   }
 
   #loginBtn,
+  #logoutBtn,
   #recenter-btn,
   #language-select {
     font-size: 12px;
-    padding: 4px 4px 8px;
+    padding: 4px 4px 4px 8px;
   }
 
   /* フッター */
