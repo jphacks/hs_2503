@@ -10,8 +10,8 @@ let userCircle = null;
 let userPosition = null;
 let watchId = null;
 let routeRenderers = [];
-let isManuallyPanning = false; // 💡 NEW: ユーザーが手動で地図を動かしたか
-let reportMarkers = []; // レポートマーカーを保持する配列を追加 (言語切替のため)
+let isManuallyPanning = false; // 💡 ユーザーが手動で地図を動かしたか
+let reportMarkers = []; // レポートマーカーを保持する配列
 
 // 💡 NEW: 避難所連携用の位置情報更新関数をグローバルに公開
 // shelters.jsが定義する global.setSheltersPosition を呼び出す
@@ -25,7 +25,8 @@ function updateSheltersPosition(pos) {
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
 window.stopTracking = stopTracking;
-window.recenterMap = recenterMap; // HTML側から呼び出せるように公開
+window.recenterMap = recenterMap; 
+window.loadReports = loadReports; // report.jsから再ロードするために公開
 
 
 // ============================
@@ -44,14 +45,6 @@ async function initMap() {
         center: defaultPos,
         zoom: 15,
         mapId: '58be1157ad609efe356c49f6', 
-
-        // --- 標準UIの表示／非表示 ---
-        // zoomControl: false,              // ズームコントロール（+−）
-        // mapTypeControl: true,          // 地図タイプ切替（地図／航空写真）
-        // scaleControl: false,             // スケールバー
-        // streetViewControl: true,       // ストリートビュー
-        // rotateControl: false,           // 回転ボタン
-        // fullscreenControl: false,        // 全画面ボタン
 
         // --- 全UIを一括で消すなら ---
         disableDefaultUI: true,
@@ -85,7 +78,7 @@ async function initMap() {
 
     // ✅ 地図クリックで報告ダイアログを開く
     map.addListener("click", (e) => {
-        // openReportDialog が他ファイルで定義されていると仮定
+        // openReportDialog が他ファイルで定義されていると仮定 (report.js)
         if (typeof openReportDialog === "function") {
             openReportDialog(e.latLng);
         }
@@ -94,7 +87,6 @@ async function initMap() {
     // 🌟 修正: 地図イベントリスナーの設定 (shelters.jsが提供する setupMapListeners を呼び出す)
     if (typeof setupMapListeners === "function") {
         console.log("🌟 setupMapListeners() 呼び出し");
-        // defaultPosにはaccuracy情報がない場合があるため、初期値としてはlat/lngのみでOK
         setupMapListeners(map, defaultPos.lat, defaultPos.lng, showRouteToShelter);
     } else {
         console.error("🚨 エラー: setupMapListeners関数が定義されていません。shelters.jsが正しく読み込まれているか確認してください。");
@@ -158,7 +150,6 @@ function startTracking() {
     console.log("📍 startTracking() 実行");
 
     if (!navigator.geolocation) {
-        // カスタムUIでのメッセージボックスの使用を推奨
         const messageBox = document.getElementById('message-box');
         if (messageBox) messageBox.textContent = "このブラウザは位置情報を取得できません。";
         else console.error("このブラウザは位置情報を取得できません。");
@@ -177,7 +168,7 @@ function startTracking() {
             const lng = pos.coords.longitude;
             const accuracy = pos.coords.accuracy;
             
-            // 💡 修正: userPosition に accuracy も保持
+            // 💡 userPosition に accuracy も保持
             const newPosition = { lat, lng, accuracy };
             userPosition = newPosition;
 
@@ -186,7 +177,7 @@ function startTracking() {
                 window.setLatestPosition(newPosition);
             }
             
-            // 💡 NEW: shelters.js に最新位置情報を通知 (距離計算と再ロードのため)
+            // 💡 shelters.js に最新位置情報を通知
             updateSheltersPosition(newPosition);
 
             // マーカーと円の描画/更新
@@ -231,14 +222,13 @@ function stopTracking() {
 // ============================
 function showRouteToShelter(shelter) {
     if (!userPosition) {
-        // 現在地取得失敗時の代替メッセージ
         const messageBox = document.getElementById('message-box');
         if (messageBox) messageBox.textContent = "現在地がまだ取得されていません。";
         else console.warn("現在地がまだ取得されていません。");
         return;
     }
     
-    // 💡 修正点: 既存のレンダラー（Polyline）を消す
+    // 💡 既存のレンダラー（Polyline）を消す
     routeRenderers.forEach(r => r.setMap(null));
     routeRenderers = [];
 
@@ -255,7 +245,6 @@ function showRouteToShelter(shelter) {
             const colors = ["#1976D2", "#43A047", "#E53935"];
 
             result.routes.slice(0, 3).forEach((route, index) => {
-                // ルートの座標だけ取り出す
                 const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
                 const polyline = new google.maps.Polyline({
                     path: path,
@@ -267,7 +256,6 @@ function showRouteToShelter(shelter) {
                 routeRenderers.push(polyline);
             });
         } else {
-            // エラーを通知（カスタムUIを推奨）
             const messageBox = document.getElementById('message-box');
             const errorMessage = "経路を取得できませんでした: " + status;
             if (messageBox) messageBox.textContent = errorMessage;
@@ -287,7 +275,6 @@ function recenterMap() {
         // 💡 NEW: 現在地に戻ったら、自動追尾を再開する
         isManuallyPanning = false; 
     } else {
-        // エラーを通知（カスタムUIを推奨）
         const messageBox = document.getElementById('message-box');
         const errorMessage = "現在地がまだ取得されていません。";
         if (messageBox) messageBox.textContent = errorMessage;
@@ -301,7 +288,7 @@ function recenterMap() {
 function loadReports() {
     console.log("🟦 loadReports() 開始");
     
-    // 💡 修正点: 言語切り替えや再ロードに備えて、既存のマーカーを削除
+    // 既存のマーカーを削除
     reportMarkers.forEach(marker => {
         marker.setMap(null);
         google.maps.event.clearInstanceListeners(marker);
@@ -317,6 +304,7 @@ function loadReports() {
                     const likesCount = parseInt(rep.likes_count) || 0;
                     const dislikesCount = parseInt(rep.dislikes_count) || 0;
                     
+                    // 💡 【修正点】：addReportMarker 関数に rep.user_name を渡す
                     addReportMarker(
                         parseInt(rep.id),
                         parseFloat(rep.lat),
@@ -325,7 +313,8 @@ function loadReports() {
                         rep.comment,
                         rep.created_at,
                         likesCount,    
-                        dislikesCount  
+                        dislikesCount,
+                        rep.user_name  // ✅ 投稿者名を追加
                     );
                 });
             }
@@ -337,7 +326,8 @@ function loadReports() {
 // ============================
 // ✅ 共通マーカー生成（4タイプアイコン対応 + いいね表示）
 // ============================
-function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, dislikesCount) {
+// 💡 【修正点】：引数に userName を追加
+function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, dislikesCount, userName) { 
     let iconUrl;
     switch(status) {
         case "通れる": iconUrl = "img/ok.svg"; break;
@@ -347,7 +337,7 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
         default: iconUrl = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; break;
     }
 
-    // 1. カスタムアイコン用のDOM要素を作成 (<img> タグ)
+    // 1. カスタムアイコン用のDOM要素を作成
     const iconElement = document.createElement('img');
     iconElement.src = iconUrl;
     iconElement.style.width = '32px';
@@ -361,27 +351,34 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
         title: status
     });
     
-    // 💡 修正点: マーカーを配列に追加
     reportMarkers.push(marker);
 
-    // 💡 情報ウィンドウの内容に Good/Bad ボタンとカウントを追加
+    // 💡 投稿者名の表示を準備
+    const postUserName = userName || "匿名ユーザー";
+
+    // 💡 【修正点】：情報ウィンドウの内容に投稿者名を追加
     const infoContent = `
         <div data-report-id="${id}" class="report-info-window">
             <b>${status}</b><br>
             ${comment || ""}<br>
             <small>${created_at}</small><br>
+            <hr style="margin: 5px 0;">
             
+            <p style="font-size: 0.9em; margin-bottom: 5px;">
+                <strong>投稿者:</strong> ${postUserName}
+            </p>
+
             <div class="evaluation-container" style="display:flex; gap:10px; margin-top: 8px;">
 
                 <div class="like-group">
-                    <button class="good-btn" onclick="sendEvaluation(${id}, 'good')">
+                    <button class="good-btn" onclick="window.sendEvaluation(${id}, 'good')">
                         👍 役立った
                     </button>
                     <span class="count-badge" id="likes-count-${id}">${likesCount || 0}</span>
                 </div>
                 
                 <div class="dislike-group">
-                    <button class="bad-btn" onclick="sendEvaluation(${id}, 'bad')">
+                    <button class="bad-btn" onclick="window.sendEvaluation(${id}, 'bad')">
                         👎 役に立たない
                     </button>
                     <span class="count-badge" id="dislikes-count-${id}">${dislikesCount || 0}</span>
@@ -397,6 +394,7 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
 
     marker.addListener("click", () => info.open(map, marker));
 }
+
 // ============================
 // 🌐 言語変更に対応（Google Maps再読み込み）
 // ============================
@@ -417,7 +415,7 @@ window.changeLanguage = function (lang) {
     // 現在の追跡を停止
     if (typeof window.stopTracking === "function") stopTracking();
     
-    // 💡 修正点: 既存の全AdvancedMarkerElementとCircleをクリア
+    // 既存の全AdvancedMarkerElementとCircleをクリア
     if (userMarker) userMarker.setMap(null);
     if (userCircle) userCircle.setMap(null);
     
@@ -442,7 +440,7 @@ window.changeLanguage = function (lang) {
     // 新しい言語でGoogle Mapsを再ロード
     const script = document.createElement("script");
     
-    // 💡 修正点: '&libraries=marker' を追加
+    // 💡 '&libraries=marker' を追加
     script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&libraries=marker&callback=initMap`;
     
     script.async = true;
