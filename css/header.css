@@ -1,0 +1,172 @@
+/* ----------------------------------------------------- */
+/* header.css の内容 (ホームボタンを右側アイコン群に統合) */
+/* ----------------------------------------------------- */
+
+/* 共通設定 */
+.hidden {
+    display: none !important;
+}
+
+/* ----------------------------------------------------- */
+/* ヘッダーのスタイル (固定ナビゲーション) */
+/* ----------------------------------------------------- */
+#header {
+    background: #07ae6e;
+    color: white;
+    padding: 0 15px;
+    height: 60px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#logo {
+    height: 40px; 
+    width: auto;
+    display: block;
+}
+
+/* ★★★ 修正点: ホームボタンの配置スタイルを簡素化 ★★★ */
+.back-to-home-header {
+    /* Flexboxに任せるため、margin-left/rightの自動調整は削除 */
+    line-height: 1; 
+}
+
+.home-btn-link {
+    /* ログインボタンのデザインを流用 */
+    background-color: white;
+    color: #07ae6e;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    line-height: 1; 
+    transition: background-color 0.3s;
+}
+
+.home-btn-link:hover {
+    background-color: #e0e0e0;
+}
+/* ★★★ 修正点 終わり ★★★ */
+
+
+#header-right {
+    display: flex;
+    align-items: center; 
+    gap: 10px; /* アイコン間の間隔 */
+}
+
+/* 共通ボタン（ヘルプ、言語、メニューなど）のスタイル */
+.header-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.header-icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header-icon-btn img {
+    height: 24px;
+    width: 24px;
+    display: block;
+}
+
+
+/* --- 言語選択の配置と透過処理 --- */
+
+#language-wrapper {
+    position: relative; 
+    display: flex; 
+    align-items: center;
+}
+
+#language-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1; 
+    
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- メニューリストの配置 --- */
+#menu-container {
+    position: relative; 
+}
+
+#menu-list {
+    position: absolute;
+    top: 50px; 
+    right: 0;
+    list-style: none;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    min-width: 150px;
+    z-index: 10;
+}
+
+#menu-list li a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #2c2c2c;
+}
+
+#menu-list li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* ----------------------------------------------------- */
+/* モバイル対応 (ヘッダー部分のみ) */
+/* ----------------------------------------------------- */
+@media (max-width: 600px) {
+    #header {
+        height: 50px;
+        padding: 0 10px;
+    }
+    #logo {
+        height: 35px;
+    }
+    .header-icon-btn img {
+        height: 20px;
+        width: 20px;
+    }
+    .home-btn-link {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
