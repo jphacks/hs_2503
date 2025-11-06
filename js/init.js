@@ -1,44 +1,37 @@
-// js/init.js
-// 💡 index.html から移動したロジックを格納
-
+// js/init.js (修正案)
 let currentScript = null;
 
-/**
- * Google Maps APIを動的にロードし、地図を初期化する
- * @param {string} lang - ロードする言語コード
- */
 function loadGoogleMaps(lang = "ja") {
-    console.log(`🌐 言語切り替え → ${lang}`);
+    console.log(`🌐 初回APIロード言語 → ${lang}`);
     window.currentLang = lang;
     
-    // map.jsで定義された追跡停止関数を呼ぶ
-    if (window.stopTracking) window.stopTracking(); 
-    
-    // 既存のスクリプトを削除し、マップコンテナをクリア
-    if (currentScript) { currentScript.remove(); currentScript = null; }
-    const mapContainer = document.getElementById("map");
-    if (mapContainer) mapContainer.innerHTML = "";
+    // 初回ロード時のみ、スクリプトを追加
+    if (!currentScript) {
+        const mapContainer = document.getElementById("map");
+        if (mapContainer) mapContainer.innerHTML = "";
 
-    const script = document.createElement("script");
-    // 💡 修正: &libraries=marker&loading=async を追加
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&libraries=marker&loading=async&callback=initMap`;
-    script.defer = true;
-    script.async = true;
-    document.head.appendChild(script);
-    currentScript = script;
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&libraries=marker&loading=async&callback=initMap`;
+        script.defer = true;
+        script.async = true;
+        document.head.appendChild(script);
+        currentScript = script;
+    }
 }
 
-// 🌐 言語切り替えイベントリスナーを設定
 document.getElementById("language-select").addEventListener("change", (e) => {
     const newLang = e.target.value;
-    loadGoogleMaps(newLang);
-    // 他のUIファイルの関数を呼ぶ
-    if (window.loadDisasterInfo) window.loadDisasterInfo();
-    if (window.changeLanguage) changeLanguage(newLang); 
+    console.log(`🌐 言語切り替え → ${newLang}`);
+    
+    // ★★★ 修正ポイント ★★★
+    // init.jsがスクリプトのロード/削除を行わず、map.jsの専用関数を呼び出す
+    if (window.changeMapLanguage) {
+        window.changeMapLanguage(newLang);
+    }
+
+    if (window.loadDisasterInfo) window.loadDisasterInfo(newLang);
 });
 
-// 🏁 初回ロード処理
 document.addEventListener("DOMContentLoaded", () => {
-    // index.htmlで設定された currentLang を使用
-    loadGoogleMaps(window.currentLang);
+    loadGoogleMaps(window.currentLang || "ja");
 });
