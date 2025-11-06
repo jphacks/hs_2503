@@ -18,17 +18,29 @@
   </div>
 
   <script type="module">
-    import { getLoggedInUser } from '../js/auth.js';
+    // 💡 修正点 1: インポートする関数名を getAuthStatus に変更
+    import { getAuthStatus } from '../js/auth.js';
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const username = getLoggedInUser();
-      if (username) {
-        document.getElementById("username").textContent = username;
-      } else {
-        alert("ログインしていません");
+    document.addEventListener("DOMContentLoaded", async () => { // 💡 修正点 2: DOMContentLoaded リスナーを async に変更
+      try {
+        // 💡 修正点 3: getAuthStatus を await で呼び出す
+        const authInfo = await getAuthStatus(); 
+        
+        // 💡 修正点 4: 戻り値のオブジェクトからユーザー名を取得
+        if (authInfo && authInfo.isLoggedIn) {
+          document.getElementById("username").textContent = authInfo.username;
+        } else {
+          // ログインしていない、またはセッションが無効な場合
+          alert("ログインしていません");
+          window.location.href = "/index.html";
+        }
+      } catch (error) {
+        console.error("認証状態の確認中にエラーが発生しました:", error);
+        alert("認証処理中にエラーが発生しました。");
         window.location.href = "/index.html";
       }
     });
   </script>
 </body>
 </html>
+

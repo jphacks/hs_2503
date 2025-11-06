@@ -3,9 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title data-i18n="register_title">アカウント登録</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="../css/register.css">
-</head>
+  <link rel="stylesheet" href="../css/header.css"> </head>
 <body>
+  
+  <header id="header">
+    <div class="header-content">
+        <img src="../img/logo2.png" alt="hinavi" id="logo">
+
+        <div id="header-right">
+            
+            <div class="back-to-home-header">
+                <a href="../index.html" class="home-btn-link">← ホームへ</a>
+            </div>
+            
+            <button class="header-icon-btn">
+                <img src="../img/help.png" alt="Help">
+            </button>
+
+            <div id="language-wrapper">
+                <button id="language-btn" class="header-icon-btn">
+                    <img src="../img/language.png" alt="Language" />
+                </button>
+                <select id="language-select"> 
+                  <option value="ja">日本語</option>
+                  <option value="zh">中文</option>
+                </select>
+            </div>
+
+            <div id="menu-container">
+              <button id="menu-btn" class="header-icon-btn">
+                <img src="../img/menu.png" alt="Menu">
+              </button>
+              <ul id="menu-list" class="hidden">
+                <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
+                <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
+                <li id="menu-settings"><a href="settings.html">設定</a></li>
+              </ul>
+            </div>
+        </div>
+    </div>
+  </header>
   <div class="register-container">
     <h2 data-i18n="register_heading">アカウント登録</h2>
     <form id="registerForm">
@@ -20,7 +59,50 @@
     </p>
   </div>
 
-  <script src="../js/register-lang.js"></script>
+  <script>
+    // --- ヘッダーの JavaScript ロジック (login.htmlから流用) ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuBtn = document.getElementById('menu-btn');
+        const menuList = document.getElementById('menu-list');
+        const langBtn = document.getElementById('language-btn');
+        const langSelect = document.getElementById('language-select');
+        const menuContainer = document.getElementById('menu-container'); 
+        
+        // --- 1. メニューボタン機能 ---
+        if (menuBtn && menuList) {
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                menuList.classList.toggle('hidden');
+            });
+            
+            document.addEventListener('click', (event) => {
+                if (menuContainer && !menuContainer.contains(event.target) && !menuList.classList.contains('hidden')) {
+                    menuList.classList.add('hidden');
+                }
+            });
+        }
+        
+        // --- 2. 言語ボタン（アイコン）機能 ---
+        if (langBtn && langSelect) {
+            
+            const storedLang = localStorage.getItem("selectedLanguage") || "ja";
+            langSelect.value = storedLang;
+
+            langBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                langSelect.focus(); 
+                menuList.classList.add('hidden');
+            });
+            
+            langSelect.addEventListener('change', (event) => {
+                const newLang = event.target.value;
+                localStorage.setItem("selectedLanguage", newLang);
+                alert("言語を " + (newLang === 'ja' ? '日本語' : '中文') + " に切り替えました。");
+            });
+        }
+    });
+  </script>
+  
   <script src="../js/register.js"></script>
 </body>
 </html>
