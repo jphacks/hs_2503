@@ -45,6 +45,9 @@ body {
   display: flex;
   align-items: center;
   padding: 0 5px;
+  font-size: 14px;
+  max-width: 200px;
+  min-width: 90px;
 }
 
 #city-name {
@@ -62,6 +65,7 @@ body {
   flex-direction: column;
   justify-content: center;  /* 高さ中央に揃える */
   align-items: flex-start;
+  font-size: 14px;
   margin: 0 15px;
 }
 
@@ -121,6 +125,11 @@ body {
   display: inline-block;
 }
 
+#menu-container {
+  position: relative;
+  display: inline-block;
+}
+
 #language-btn,
 #help-btn,
 #menu-btn {
@@ -153,6 +162,57 @@ body {
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+
+/* メニューリスト */
+#menu-list {
+  position: absolute;
+  right: 0; /* ボタン右端に表示 */
+  top: 40px; /* ボタン下に表示 */
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 140px;
+  z-index: 1000;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none; /* 非表示時にクリック不可 */
+}
+
+/* メニュー表示 */
+#menu-list.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* メニュー項目 */
+#menu-list li {
+  border-bottom: 1px solid #eee;
+}
+
+#menu-list li:last-child {
+  border-bottom: none;
+}
+
+#menu-list li a {
+  display: block;
+  padding: 10px 15px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#menu-list li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 6px;
 }
 
 /* コンテナ */
@@ -448,9 +508,10 @@ body {
   }
 
   #logo {
-    height: 35px;
+    height: 33px;
     justify-content: flex-start;
     margin-left: 3px;
+    margin-right: 3px;
     padding: 2px;
     flex-shrink: 0; 
     flex-grow: 0; 
@@ -459,8 +520,14 @@ body {
 
   #disaster-header {
     height: 30px;
-    flex-wrap: wrap;
+    white-space: nowrap;     /* 折り返しを防ぐ（1行にする） */
+    overflow: hidden;        /* はみ出した部分を隠す */
+    text-overflow: ellipsis; /* 隠れた部分を「…」で表示 */
     display: flex;
+    padding: 0 2px;
+    font-size: 12px;
+    max-width: 110px;
+    min-width: 60px;
     order: 2;
   }
 
@@ -519,6 +586,7 @@ body {
 
   /* 地図と避難所リスト */
   #container {
+    display: flex;
     flex-direction: column;
     padding-top: 135px;
   }
@@ -531,13 +599,13 @@ body {
   #map {
     order: 1;
     width: 100%;
-    height: 70vh;
+    flex: 7;
   }
   
   #shelter-wrapper {
     order: 2;
     width: 100%;
-    height: 30vh;
+    flex: 3;
     border-right: none;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -550,7 +618,7 @@ body {
   }
 
   .shelter-card {
-    font-size: 13px;
+    font-size: 12px;
     padding: 8px;
   }
 
@@ -570,79 +638,5 @@ body {
 
 }
 
-/* menu-container */
-#menu-container {
-  position: relative;
-  display: inline-block;
-}
 
-/* メニューボタン */
-#menu-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  outline: none;
-}
-
-#menu-btn img {
-  width: 32px;
-  height: 32px;
-  transition: transform 0.2s ease;
-}
-
-#menu-btn:hover img {
-  transform: rotate(90deg);
-}
-
-/* メニューリスト */
-#menu-list {
-  position: absolute;
-  right: 0; /* ボタン右端に表示 */
-  top: 40px; /* ボタン下に表示 */
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  min-width: 140px;
-  z-index: 1000;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none; /* 非表示時にクリック不可 */
-}
-
-/* メニュー表示 */
-#menu-list.show {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* メニュー項目 */
-#menu-list li {
-  border-bottom: 1px solid #eee;
-}
-
-#menu-list li:last-child {
-  border-bottom: none;
-}
-
-#menu-list li a {
-  display: block;
-  padding: 10px 15px;
-  color: #333;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-#menu-list li a:hover {
-  background-color: #007bff;
-  color: #fff;
-  border-radius: 6px;
-}
 

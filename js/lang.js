@@ -12,7 +12,7 @@ const translations = {
     "comment_label": "💬 コメント",
     "comment": "コメントを入力",
     "send": "送信",
-    "footer": "© hinavi 2025 all rights reserved.",
+    "footer": "© hinavi 2025",
     // "recenter": "現在地に戻る",
     "login": "ログイン",
     "logout": "ログアウト",
@@ -25,7 +25,7 @@ const translations = {
     "elevation": "標高",
     "hazard": "対象となる災害種別",
     "no_results": "指定範囲内に避難所は見つかりませんでした。",
-    "fetch_error": "❌ 避難所データの取得中にエラーが発生しました。"
+    "fetch_error": "避難所データの取得中にエラーが発生しました。"
   },
   zh: {
     "loading": "加载中...",
@@ -36,7 +36,7 @@ const translations = {
     "comment_label": "💬 评论",
     "comment": "输入评论",
     "send": "发送",
-    "footer": "© hinavi 2025 版权所有。",
+    "footer": "© hinavi 2025",
     // "recenter": "返回当前位置",
     "login": "登录",
     "logout": "登出",
@@ -49,7 +49,7 @@ const translations = {
     "elevation": "海拔",
     "hazard": "适用灾害类型",
     "no_results": "指定范围内未找到避难所。",
-    "fetch_error": "❌ 获取避难所数据时发生错误。"
+    "fetch_error": "获取避难所数据时发生错误。"
   },
   en: {
     "loading": "Loading...",
@@ -60,12 +60,12 @@ const translations = {
     "comment_label": "💬 Comment",
     "comment": "Enter your comment",
     "send": "Send",
-    "footer": "© hinavi 2025 All rights reserved.",
+    "footer": "© hinavi 2025",
     // "recenter": "Recenter",
     "login": "Login",
     "logout": "Logout",
-    "Information provided by": "Information provided by:",
-    "Japan Meteorological Agency": "Japan Meteorological Agency",
+    "Information provided by": "Source:",
+    "Japan Meteorological Agency": "JMA",
     "Disaster Information Portal": "Disaster Information Portal",
 
     // 追加キー
@@ -73,7 +73,7 @@ const translations = {
     "elevation": "Elevation",
     "hazard": "Applicable hazards",
     "no_results": "No shelters found within the specified range.",
-    "fetch_error": "❌ An error occurred while fetching shelter data."
+    "fetch_error": "An error occurred while fetching shelter data."
   }
 };
 
