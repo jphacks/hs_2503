@@ -5,9 +5,9 @@
   <title>ログインページ</title>
   <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>  
+<body>
   <div class="login-container">
-    <h2>ログイン</h2>
+    <h2 data-i18n="login_heading">ログイン</h2>
     <form id="loginForm">
       <input type="text" id="username" placeholder="ユーザー名" required><br>
       <input type="password" id="password" placeholder="パスワード" required><br>
@@ -17,7 +17,8 @@
     <p><a href="request-reset.html">パスワードを忘れた方はこちら</a></p>
     <p><a href="forgot-username.html">ユーザー名を忘れた方はこちら</a></p>
   </div>
-  
+
+  <script src="../js/login-lang.js"></script>
   <script src="../js/auth.js"></script>
 </body>
 </html>

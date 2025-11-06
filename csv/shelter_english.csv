@@ -1,0 +1,33 @@
+﻿NO,共通ID,都道府県名及び市町村名,施設・場所名,住所,洪水,崖崩れ、土石流及び地滑り,高潮,地震,津波,大規模な火事,内水氾濫,火山現象,指定避難所との住所同一,緯度,経度,備考
+89679,E3421200271201,"Higashi-Hiroshima City, Hiroshima",Kagamiyama Park,"2 Kagamiyama, Higashihiroshima City, Hiroshima Prefecture",1,,,1,,1,,,,34.406591,132.727557,
+89680,E3421200268201,"Higashi-Hiroshima City, Hiroshima",Goma Neighborhood Park,"3-1 Takaya Takamigaoka, Higashihiroshima City, Hiroshima Prefecture",1,1,,1,,1,,,,34.45739,132.79184,
+89681,E3421200269201,"Higashi-Hiroshima City, Hiroshima",Korekuni Neighborhood Park,"1-116-23 Takayadai, Higashi-Hiroshima City, Hiroshima Prefecture",1,1,,1,,1,,,,34.469999,132.834449,
+89682,E3421200270201,"Higashi-Hiroshima City, Hiroshima",Ryuouzan General Park,"116 Maruyama, Kurose-cho, Higashihiroshima City, Hiroshima Prefecture",1,1,,1,,1,,,,34.329811,132.679015,
+89683,E3421200267201,"Higashi-Hiroshima City, Hiroshima",Shiwa Ryutsu Danchi No.1 Park,"1-37, Shiwaryutsu, Higashihiroshima City, Hiroshima Prefecture",1,1,,1,,1,,,,34.46455,132.651383,
+89684,E3421200272201,"Higashi-Hiroshima City, Hiroshima",Saijo Central Park,"1214-45 Saijo Sakae-cho, Higashihiroshima City, Hiroshima Prefecture",,1,,1,,1,,,,34.427726,132.742326,
+89685,E3421200266201,"Higashi-Hiroshima City, Hiroshima",Mitsujo Park,"7-24-1 Saijo Chuo, Higashihiroshima City, Hiroshima Prefecture",1,1,,1,,1,,,,34.41608,132.733689,
+89686,E3421200190201,"Higashi-Hiroshima City, Hiroshima",Higashi-Hiroshima Sports Park,"67-1 Taguchi, Saijo Town, Higashihiroshima City, Hiroshima Prefecture",1,1,,1,,1,,,1,34.381373,132.730288,
+33143,E1310500003201,"Bunkyo-ku, Tokyo",Korakuen area,"1-6-6 Koraku, Bunkyo-ku, Tokyo",,,,1,,1,,,,35.70489457,139.7484712,
+33144,E1310500035201,"Bunkyo-ku, Tokyo",Gokokuji area,"5-40-1 Otsuka, Bunkyo-ku, Tokyo",,,,1,,1,,,,35.7208123,139.7266708,
+33145,E1310500030201,"Bunkyo-ku, Tokyo",Ochanomizu University area and Kyoiku-no-mori Park area,"3-29 Otsuka, Bunkyo-ku, Tokyo 2-1-1 Bunkyo-ku, Tokyo",,,,1,,1,,,,35.71859764,139.7324048,
+33146,E1310500041201,"Bunkyo-ku, Tokyo",Koishikawa Botanical Garden,"3-7-1 Hakusan, Bunkyo-ku, Tokyo",,,,1,,1,,,,35.7198756,139.7441602,
+33147,E1310500047201,"Bunkyo-ku, Tokyo",The University of Tokyo,"7-3-1 Hongo, Bunkyo-ku, Tokyo",,,,1,,1,,,,35.71201647,139.7627191,
+33148,E1310500051201,"Bunkyo-ku, Tokyo",Rikugien,"6-16-3, Honkomagome, Bunkyo-ku, Tokyo",,,,1,,1,,,,35.73282093,139.7461753,
+33149,E1310500052201,"Bunkyo-ku, Tokyo",Area around Mejirodai Athletic Park,"1-19 Mejirodai, Bunkyo-ku, Tokyo",,,,1,,1,,,,35.71518049,139.7212219,
+33150,E1310600006201,"Taito Ward, Tokyo",Kashiwaba Junior High School,"3-1-29 Shimotani, Taito-ku, Tokyo",1,,1,,,,1,,1,35.723414,139.78595,Do not open if there is a risk of the Arakawa River flooding
+33151,E1310600009201,"Taito Ward, Tokyo",Asakusa Elementary School,"1-14-15 Hanakawado, Taito-ku, Tokyo",1,,1,,,,1,,1,35.713522,139.799231,Do not open if there is a risk of the Arakawa River flooding
+33152,E1310600012201,"Taito Ward, Tokyo",Higashiizumi Elementary School,"1-23-9 Minowa, Taito-ku, Tokyo",1,,1,,,,1,,1,35.728465,139.792101,Do not open if there is a risk of the Arakawa River flooding
+33153,E1310600004201,"Taito Ward, Tokyo",Matsuba Elementary School,"1-13-16 Matsugaya, Taito-ku, Tokyo",1,,1,,,,1,,1,35.71223,139.786782,Do not open if there is a risk of the Arakawa River flooding
+33154,E1310600015201,"Taito Ward, Tokyo",Ueno Junior High School,"1-14-55 Uenosakuragi, Taito-ku, Tokyo",1,,1,,,,1,,1,35.721218,139.774904,
+33155,E1310600011201,"Taito Ward, Tokyo",Ishihama Elementary School,"1-14-21 Kiyokawa, Taito-ku, Tokyo",1,,1,,,,1,,1,35.724912,139.803592,Do not open if there is a risk of the Arakawa River flooding
+33156,E1310600010201,"Taito Ward, Tokyo",Senzoku Elementary School,"4-24-11 Asakusa, Taito-ku, Tokyo",1,,1,,,,1,,1,35.719345,139.793992,Do not open if there is a risk of the Arakawa River flooding
+33157,E1310600003201,"Taito Ward, Tokyo",Former Yanagikita Elementary School,"5-1-8 Asakusabashi, Taito-ku, Tokyo",1,,1,,,,1,,1,35.699323,139.782184,Do not open if there is a risk of the Arakawa River flooding
+33158,E1310600013201,"Taito Ward, Tokyo",Asakusa Junior High School,"1-3-4 Kuramae, Taito-ku, Tokyo",1,,1,,,,1,,1,35.699848,139.789926,Do not open if there is a risk of the Arakawa River flooding
+33159,E1310600016201,"Taito Ward, Tokyo",Kuramae Elementary School,"4-19-11 Kuramae, Taito-ku, Tokyo",1,,1,,,,1,,1,35.704487,139.789297,Do not open if there is a risk of the Arakawa River flooding
+33160,E1310600014201,"Taito Ward, Tokyo",Okachimachi Taito Junior High School,"4-13-16 Taito, Taito-ku, Tokyo",1,,1,,,,1,,1,35.706931,139.777511,Do not open if there is a risk of the Arakawa River flooding
+33161,E1310600029201,"Taito Ward, Tokyo",Yanaka Elementary School,"2-9-16 Yanaka, Taito-ku, Tokyo",1,1,1,,,,1,,1,35.72393,139.765347,
+33162,E1310600023201,"Taito Ward, Tokyo",Oshioka Elementary School,"2-1-22 Ikenohata, Taito-ku, Tokyo",1,1,1,,,,1,,1,35.713938,139.766735,
+33163,E1310600007201,"Taito Ward, Tokyo",Ueno Elementary School,"6-16-8 Higashi-Ueno, Taito-ku, Tokyo",1,,1,,,,1,,1,35.713874,139.78366,Do not open if there is a risk of the Arakawa River flooding
+33164,E1310600005201,"Taito Ward, Tokyo",Higashi Asakusa Elementary School,"2-27-19, Higashi-Asakusa, Taito-ku, Tokyo",1,,1,,,,1,,1,35.724371,139.798267,Do not open if there is a risk of the Arakawa River flooding
+33165,E1310600017201,"Taito Ward, Tokyo",Komagata Junior High School,"2-15-1 Kita-Ueno, Taito-ku, Tokyo",1,,1,,,,1,,1,35.717291,139.784295,Do not open if there is a risk of the Arakawa River flooding
+33166,E1310600008201,"Taito Ward, Tokyo",Tahara Elementary School,"1-5-14 Kaminarimon, Taito-ku, Tokyo",1,,1,,,,1,,1,35.710174,139.792873,Do not open if there is a risk of the Arakawa River flooding

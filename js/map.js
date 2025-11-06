@@ -34,6 +34,10 @@ window.recenterMap = recenterMap; // HTML側から呼び出せるように公開
 async function initMap() {
     console.log("🗺️ initMap() 実行");
 
+      // 言語切替直後の安全策：旧インスタンスを確実に無効化
+    userMarker = null;
+    userCircle = null;
+
     // ✅ 最新の位置情報があれば利用 (initial.jsが管理)
     const latest = window.getLatestPosition ? window.getLatestPosition() : null;
     // 💡 修正: 初期値の緯度経度を設定（例: 東広島）
@@ -44,9 +48,18 @@ async function initMap() {
         center: defaultPos,
         zoom: 15,
         mapId: '58be1157ad609efe356c49f6', 
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: true,
+
+        // --- 標準UIの表示／非表示 ---
+        // zoomControl: false,              // ズームコントロール（+−）
+        // mapTypeControl: true,          // 地図タイプ切替（地図／航空写真）
+        // scaleControl: false,             // スケールバー
+        // streetViewControl: true,       // ストリートビュー
+        // rotateControl: false,           // 回転ボタン
+        // fullscreenControl: false,        // 全画面ボタン
+
+        // --- 全UIを一括で消すなら ---
+        disableDefaultUI: true,
+
         gestureHandling: "greedy"
     });
 
@@ -59,12 +72,21 @@ async function initMap() {
     });
     
     // 💬 言語切替直後にも現在地と仮の円を描画
+    // ここの部分を追加しました
     if (latest) {
         console.log("🟦 最新位置から仮マーカーと円を描画");
         userPosition = latest;
         drawUserLocation(latest, map); // 描画処理を関数化
 
         // 💡 修正: shelters.js にも最新位置情報を通知 (初期距離計算のため)
+        updateSheltersPosition(latest);
+    }
+    // 言語切替直後にも現在地と仮の円を描画
+    if (latest) {
+        console.log("🟦 最新位置から仮マーカーと円を描画");
+        userPosition = latest;
+        drawUserLocation(latest, map);
+        // shelters.js にも最新位置情報を通知 (初期距離計算のため)
         updateSheltersPosition(latest);
     }
 
@@ -107,7 +129,7 @@ function drawUserLocation(pos, mapInstance) {
             content: new google.maps.marker.PinElement({
                 background: "#4285F4",
                 borderColor: "white",
-                glyph: "●",
+                glyphText: "●",
                 glyphColor: "#4285F4",
             }).element,
         });
@@ -127,6 +149,7 @@ function drawUserLocation(pos, mapInstance) {
             strokeColor: "#4285F4",
             strokeOpacity: 0.5,
             strokeWeight: 1,
+            clickable: false,
         });
     } else {
         userCircle.setCenter(pos);
@@ -294,7 +317,7 @@ function loadReports() {
     reportMarkers = []; // 配列をリセット
 
     // NOTE: レポート取得APIは変更なしと仮定
-    fetch("https://hinavi.sakura.ne.jp/getReport.php")
+    fetch("https://hinavi.sakura.ne.jp/php/getReport.php")
         .then(res => res.json())
         .then(data => {
             if (data.success) {

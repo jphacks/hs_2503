@@ -1,78 +1,133 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>hinavi 災害情報マップ</title>
-  <link rel="icon" href="img/icon2.png" type="image/png">
-  <link rel="stylesheet" href="css/index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hinavi 災害情報マップ</title>
+<link rel="icon" href="img/icon2.png" type="image/png">
+<link rel="stylesheet" href="css/index.css">
 </head>
 <body>
   <div id="header">
-    <img src="img/logo1.png" alt="hinavi_logo" id="logo">
+    <img src="img/logo1.png" alt="hinavi" id="logo">
 
-    <div id="disaster-info" data-i18n="loading">読み込み中...</div>
+    <div id="disaster-header" data-i18n="loading"></div>
+    <div id="disaster-body"></div>
 
-    <div id="header-right"></div>
+    <div id="header-right">
       <button id="loginBtn" class="login-btn">ログイン</button>
-      
-      <button id="recenter-btn" onclick="recenterMap()">現在地に戻る</button>
 
-    <select id="language-select">
-      <option value="ja">日本語</option>
-      <option value="zh">中文</option>
-    </select>
+      <button id="help-btn">
+        <img src="img/help.png" alt="Help">
+      </button>
+
+      <div id="language-wrapper">
+        <button id="language-btn">
+          <img src="img/language.png" alt="Language" />
+        </button>
+
+        <select id="language-select">
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <button id="menu-btn">
+        <img src="img/menu.png" alt="Menu">
+      </button>
+
+    </div>
   </div>
 
   <div id="container">
-    <div id="reportDialog" class="report-dialog">
-      <div class="report-header">
-        <p data-i18n="question">この地点は？</p>
-        <button id="close-report">×</button>
-      </div>
-
+<div id="reportDialog" class="report-dialog">
+<div class="report-header">
+<p data-i18n="question">この地点は？</p>
+<button id="close-report">×</button>
+</div>
+ 
       <div class="status-options">
-        <label class="status-btn pass">
-          <input type="radio" name="status" value="pass">
-          <span data-i18n="pass">✅ 通れる</span>
-        </label>
-        <label class="status-btn fail">
-          <input type="radio" name="status" value="fail">
-          <span data-i18n="blocked">🚫 通れない</span>
-        </label>
-        <label class="status-btn step">
-          <input type="radio" name="status" value="step">
-          <span data-i18n="step">⚠️ 段差</span>
-        </label>
-        <label class="status-btn comment">
-          <input type="radio" name="status" value="comment">
-          <span data-i18n="comment_label">💬 コメント</span>
-        </label>
-      </div>
-
+<label class="status-btn pass">
+<input type="radio" name="status" value="pass">
+<span data-i18n="pass">✅ 通れる</span>
+</label>
+<label class="status-btn fail">
+<input type="radio" name="status" value="fail">
+<span data-i18n="blocked">🚫 通れない</span>
+</label>
+<label class="status-btn step">
+<input type="radio" name="status" value="step">
+<span data-i18n="step">⚠️ 段差</span>
+</label>
+<label class="status-btn comment">
+<input type="radio" name="status" value="comment">
+<span data-i18n="comment_label">💬 コメント</span>
+</label>
+</div>
+ 
       <textarea id="comment" data-i18n-placeholder="comment" placeholder="コメントを入力"></textarea>
-      <button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
-    </div>
-
+<button id="send-btn" data-i18n="send" onclick="submitReport()">送信</button>
+</div>
+ 
     <div id="shelter-list"></div>
-
+ 
     <div id="map"></div>
+
+    <button id="recenter-btn" onclick="recenterMap()">
+      <img src="img/recenter.png" />
+    </button>
+
   </div>
 
   <footer id="footer" data-i18n="footer">
-    <span id="footer-left">© hinavi 2025 all rights reserved.</span>
+    <span id="footer-left">© hinavi 2025</span>
     <div id="footer-right">
-      情報提供：
-      <a href="https://www.jma.go.jp/" target="_blank">気象庁</a> |
-      <a href="https://www.jma.go.jp/bosai/" target="_blank">防災情報ポータル</a>
-    </div>
-  </footer>
+      <span data-i18n="Information provided by">情報提供：</span>
+      <a href="https://www.jma.go.jp/" target="_blank" data-i18n="Japan Meteorological Agency">気象庁</a> |
+      <a href="https://www.jma.go.jp/bosai/" target="_blank" data-i18n="Disaster Information Portal">防災情報ポータル</a>
+</div>
+</footer>
 
+<script>
+  // jmaについては「英語」・「中国語」に対応したリンクに変更する
+document.addEventListener("DOMContentLoaded", function () {
+  const languageSelect = document.getElementById("language-select");
+  const jmaLink = document.querySelector('a[data-i18n="Japan Meteorological Agency"]');
+  const bosaiLink = document.querySelector('a[data-i18n="Disaster Information Portal"]');
+
+  // 言語ごとのURL定義
+  const urls = {
+    ja: {
+      jma: "https://www.jma.go.jp/",
+      bosai: "https://www.jma.go.jp/bosai/"
+    },
+    en: {
+      jma: "https://www.jma.go.jp/jma/indexe.html",
+      bosai: "https://www.jma.go.jp/bosai/"
+    },
+    zh: {
+      jma: "https://www.data.jma.go.jp/multi/index.html?lang=cn_zs",
+      bosai: "https://www.jma.go.jp/bosai/"
+    }
+  };
+
+  // 言語変更時にリンク更新
+  languageSelect.addEventListener("change", function () {
+    const lang = this.value;
+    if (urls[lang]) {
+      jmaLink.href = urls[lang].jma;
+      bosaiLink.href = urls[lang].bosai;
+    }
+  });
+});
+</script>
+
+ 
   <script>
     // 💡 関数定義は避け、設定値のみをグローバルに定義
     window.GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
     window.currentLang = localStorage.getItem("selectedLanguage") || "ja";
-    
     // 最新位置管理（関数定義は残るが、データ管理用のため許容）
     let latestPosition = null;
     window.setLatestPosition = (pos) => {
@@ -82,15 +137,14 @@
       if (window.map && window.reloadShelters) reloadShelters();
     };
     window.getLatestPosition = () => latestPosition;
-  </script>
-
-  <script src="js/init.js" defer></script>
-  <script src="js/shelters.js" defer></script>
-  <script src="js/map.js" defer></script>
-  <script src="js/navigation.js" defer></script>
-  <script src="js/disaster-info.js" defer></script>
-  <script src="js/main.js"></script>
-  <script src="js/report.js" defer></script>
-  <script src="js/lang.js" defer></script>
+</script>
+<script src="js/init.js" defer></script>
+<script src="js/shelters.js" defer></script>
+<script src="js/map.js" defer></script>
+<script src="js/navigation.js" defer></script>
+<script src="js/disaster-info.js" defer></script>
+<script src="js/report.js" defer></script>
+<script src="js/lang.js" defer></script>
+<script src="js/main.js" defer></script>
 </body>
 </html>

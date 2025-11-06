@@ -1,12 +1,13 @@
-document.getElementById("loginForm").addEventListener("submit", (e) => {
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
 
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
-  const foundUser = users.find(
-    (u) => (u.username === username || u.email === username) && u.password === password
-  );
+  if (!username || !password) {
+    alert("ユーザー名とパスワードを入力してください。");
+    return;
+  }
 
   if (foundUser) {
     localStorage.setItem("isLoggedIn", "true");

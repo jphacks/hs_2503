@@ -71,7 +71,7 @@ function submitReport() {
     const payload = { lat, lng, status: readableStatus, comment };
     console.log("送信データ:", payload);
 
-    fetch("https://hinavi.sakura.ne.jp/sendReport.php", {
+    fetch("https://hinavi.sakura.ne.jp/php/sendReport.php", {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify(payload),
@@ -151,7 +151,7 @@ window.sendEvaluation = function (reportId, evaluationType) { // 💡 タイプ�
         evaluation_type: evaluationType // 💡 評価タイプ (good or bad) を送信
     };
 
-    fetch("https://hinavi.sakura.ne.jp/evaluateReport.php", { // 💡 APIファイル名を変更推奨
+    fetch("https://hinavi.sakura.ne.jp/php/evaluateReport.php", { // 💡 APIファイル名を変更推奨
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify(payload)
