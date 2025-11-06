@@ -7,7 +7,10 @@
 </head>
 <body>
   <div class="login-container">
-    <h2 data-i18n="login_heading">ログイン</h2>
+    <p class="back-to-home">
+      <a href="../index.html">ホームに戻る</a>
+    </p>
+    <h2>ログイン</h2>
     <form id="loginForm">
       <input type="text" id="username" placeholder="ユーザー名" required><br>
       <input type="password" id="password" placeholder="パスワード" required><br>
@@ -17,8 +20,12 @@
     <p><a href="request-reset.html">パスワードを忘れた方はこちら</a></p>
     <p><a href="forgot-username.html">ユーザー名を忘れた方はこちら</a></p>
   </div>
-
-  <script src="../js/login-lang.js"></script>
-  <script src="../js/auth.js"></script>
+  
+  <script type="module">
+    import { initLoginForm } from '../js/auth.js';
+    document.addEventListener("DOMContentLoaded", () => {
+      initLoginForm();
+    });
+  </script>
 </body>
 </html>
