@@ -7,6 +7,9 @@
 </head>
 <body>  
   <div class="login-container">
+    <p class="back-to-home">
+      <a href="../index.html">ホームに戻る</a>
+    </p>
     <h2>ログイン</h2>
     <form id="loginForm">
       <input type="text" id="username" placeholder="ユーザー名" required><br>
@@ -16,7 +19,6 @@
     </form>
   </div>
   
-  <!-- モジュールとして読み込む -->
   <script type="module">
     import { initLoginForm } from '../js/auth.js';
     document.addEventListener("DOMContentLoaded", () => {
