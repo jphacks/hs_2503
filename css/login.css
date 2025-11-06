@@ -1,188 +1,96 @@
-/* ---------------------------------- */
-/* 1. 全体の設定と背景 (Body & HTML) */
-/* ---------------------------------- */
+/* ----------------------------------------------------- */
+/* login.css の内容 */
+/* ----------------------------------------------------- */
 body {
-    /* ページの背景を落ち着いた色に設定 */
-    background-color: #f0f2f5; 
-    /* フォントを設定 */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* ページ全体で要素を中央に配置 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* ビューポートの高さ全体を使用 */
-    min-height: 100vh; 
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    padding: 0;
+    background-color: #f8f9fb;
+    color: #333;
+    display: flex; 
+    flex-direction: column;
+    min-height: 100vh;
+    
+    /* ★重要: 固定ヘッダー（60px）の下にコンテンツを配置するためのパディング */
+    padding-top: 60px;
+}
+
+a {
+    color: #07ae6e;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ----------------------------------------------------- */
+/* ログインコンテナのスタイル */
+/* ----------------------------------------------------- */
+.login-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    
+    /* ヘッダーの下で画面中央に配置 */
+    margin: 60px auto; 
+    text-align: center;
+}
+
+h2 {
+    color: #07ae6e;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+/* ----------------------------------------------------- */
+/* フォーム要素のスタイル */
+/* ----------------------------------------------------- */
+#loginForm input[type="text"],
+#loginForm input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     box-sizing: border-box;
 }
 
-/* ---------------------------------- */
-/* 2. ログインコンテナ (Card Design) */
-/* ---------------------------------- */
-.login-container {
-    /* 白いカードのような背景 */
-    background-color: #ffffff;
-    /* 角を丸くする */
-    border-radius: 12px;
-    /* 影をつけて浮き上がらせる */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-    /* 内側の余白 */
-    padding: 40px;
-    /* 最大幅を設定 */
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    /* 中央配置のための調整 */
-    margin: 20px; 
-}
-
-/* ---------------------------------- */
-/* 3. 見出し (H2) */
-/* ---------------------------------- */
-.login-container h2 {
-    color: #333;
-    margin-bottom: 30px;
-    font-weight: 600;
-    font-size: 28px;
-}
-
-/* ---------------------------------- */
-/* 4. 入力フィールド (Inputs) */
-/* ---------------------------------- */
-#loginForm input[type="text"],
-#loginForm input[type="password"] {
-    width: 100%;
-    /* ボックスのサイズ計算方法を変更 */
-    box-sizing: border-box; 
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px; /* PCでも読みやすいサイズ */
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-/* 入力フィールドがフォーカスされたとき */
-#loginForm input:focus {
-    border-color: #007bff; /* 青色に変化 */
-    outline: none; 
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-/* ---------------------------------- */
-/* 5. ログインボタン (Button) */
-/* ---------------------------------- */
 #loginForm button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff; /* メインカラー */
+    background-color: #07ae6e;
     color: white;
     border: none;
-    border-radius: 6px;
+    padding: 12px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 18px; /* ボタンは少し大きく */
+    font-size: 1rem;
     font-weight: bold;
-    margin-top: 10px;
+    width: 100%;
     transition: background-color 0.3s;
+    margin-top: 10px;
 }
 
-/* ボタンにマウスオーバーしたとき */
 #loginForm button[type="submit"]:hover {
-    background-color: #0056b3; 
+    background-color: #058f5b;
 }
 
-/* ---------------------------------- */
-/* 6. リンクとテキスト (Links & Text) */
-/* ---------------------------------- */
-.login-container p {
-    color: #666;
-    margin-top: 20px;
-    font-size: 14px;
-}
-
-.login-container a {
-    color: #007bff;
-    text-decoration: none; 
-    transition: color 0.3s;
-}
-
-.login-container a:hover {
-    color: #0056b3;
-    text-decoration: underline; 
-}
-
-/* ---------------------------------- */
-/* 7. ホームに戻るリンク (PC向け初期設定) */
-/* ---------------------------------- */
-.back-to-home {
-    /* PCでは、コンテナ内の上部に配置（CSSで装飾する前提） */
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.back-to-home a {
-    font-size: 14px;
-    color: #6c757d; 
-}
-
-
-/* ################################## */
-/* 8. モバイル対応 (Media Query) */
-/* ################################## */
-
-/* 画面幅が600px以下の場合に適用されるスタイル */
+/* ----------------------------------------------------- */
+/* モバイル対応 */
+/* ----------------------------------------------------- */
 @media (max-width: 600px) {
-    
-    /* 1. Bodyの調整 */
     body {
-        /* モバイルでは背景色を白にして、フルスクリーンの「アプリ感」を出す */
-        background-color: #ffffff;
-        /* モバイルでは中央配置を解除し、上端に寄せる */
-        align-items: flex-start;
+        padding-top: 50px; 
     }
-
-    /* 2. ログインコンテナの調整 */
     .login-container {
-        /* モバイルでは画面の幅いっぱいに広げる */
-        width: 100%;
-        max-width: 100%;
-        /* 角丸と影を削除し、画面にフィットさせる */
-        border-radius: 0;
-        box-shadow: none;
-        /* 上下の余白を調整 */
+        margin: 30px auto;
         padding: 20px;
-        margin: 0;
-        /* ビューポートの高さ全体を使用 */
-        min-height: 100vh; 
     }
-    
-    /* 3. 見出しの調整 */
-    .login-container h2 {
-        font-size: 26px; /* 少しだけ小さく */
-        margin-top: 10px;
-        margin-bottom: 25px;
+    h2 {
+        font-size: 1.5rem;
     }
-
-    /* 4. 入力フィールドとボタンのサイズ調整（モバイル向け改善） */
-    #loginForm input[type="text"],
-    #loginForm input[type="password"] {
-        /* ⬇️ 高さ（タッチ領域）を確保 ⬇️ */
-        padding: 15px; 
-        font-size: 16px; 
-    }
-    
     #loginForm button[type="submit"] {
-        /* ⬇️ 高さ（タッチ領域）を確保 ⬇️ */
-        padding: 15px; 
-        font-size: 18px;
-    }
-
-    /* 5. ホームに戻るリンクの配置調整 */
-    .back-to-home {
-        /* モバイルでは左上に固定されないよう調整 */
-        position: static;
-        text-align: left;
-        margin-bottom: 15px;
+        padding: 10px 15px;
     }
 }
