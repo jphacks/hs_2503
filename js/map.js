@@ -10,8 +10,8 @@ let userCircle = null;
 let userPosition = null;
 let watchId = null;
 let routeRenderers = [];
-let isManuallyPanning = false; // 💡 ユーザーが手動で地図を動かしたか
-let reportMarkers = []; // レポートマーカーを保持する配列
+let isManuallyPanning = false; // 💡 NEW: ユーザーが手動で地図を動かしたか
+let reportMarkers = []; // レポートマーカーを保持する配列を追加 (言語切替のため)
 
 // 💡 NEW: 避難所連携用の位置情報更新関数をグローバルに公開
 // shelters.jsが定義する global.setSheltersPosition を呼び出す
@@ -25,8 +25,8 @@ function updateSheltersPosition(pos) {
 // ✅ 外部（HTML側）から呼べるように公開
 window.initMap = initMap;
 window.stopTracking = stopTracking;
-window.recenterMap = recenterMap; 
-window.loadReports = loadReports; // report.jsから再ロードするために公開
+window.recenterMap = recenterMap; // HTML側から呼び出せるように公開
+
 
 // ============================
 // 🗺️ 初期化
@@ -34,20 +34,28 @@ window.loadReports = loadReports; // report.jsから再ロードするために�
 async function initMap() {
     console.log("🗺️ initMap() 実行");
 
-    // 💡 NEW: タイムアウト対応として、高精度ではない getCurrentPosition を一度試みる
-    let initialPos = await getInitialPosition(); // 非同期で初期位置を待機
-    
+      // 言語切替直後の安全策：旧インスタンスを確実に無効化
+    userMarker = null;
+    userCircle = null;
+
     // ✅ 最新の位置情報があれば利用 (initial.jsが管理)
     const latest = window.getLatestPosition ? window.getLatestPosition() : null;
-    
-    // 💡 取得した初期位置を最優先で使用。次にキャッシュ、最後にデフォルト位置。
-    const defaultPos = initialPos || latest || { lat: 34.3948, lng: 132.7483 }; 
+    // 💡 修正: 初期値の緯度経度を設定（例: 東広島）
+    const defaultPos = latest || { lat: 34.3948, lng: 132.7483 }; 
 
     // 新しい地図を生成
     map = new google.maps.Map(document.getElementById("map"), {
         center: defaultPos,
         zoom: 15,
         mapId: '58be1157ad609efe356c49f6', 
+
+        // --- 標準UIの表示／非表示 ---
+        // zoomControl: false,              // ズームコントロール（+−）
+        // mapTypeControl: true,          // 地図タイプ切替（地図／航空写真）
+        // scaleControl: false,             // スケールバー
+        // streetViewControl: true,       // ストリートビュー
+        // rotateControl: false,           // 回転ボタン
+        // fullscreenControl: false,        // 全画面ボタン
 
         // --- 全UIを一括で消すなら ---
         disableDefaultUI: true,
@@ -63,17 +71,26 @@ async function initMap() {
         isManuallyPanning = true;
     });
     
-    // 💬 初期位置から現在地と円を描画し、避難所データ更新を行う
-    if (defaultPos !== { lat: 34.3948, lng: 132.7483 }) {
-        console.log("🟦 初期位置から仮マーカーと円を描画");
-        userPosition = defaultPos; // 取得した位置を userPosition に設定
-        drawUserLocation(defaultPos, map); // 描画処理を関数化
+    // 💬 言語切替直後にも現在地と仮の円を描画
+    // ここの部分を追加しました
+    if (latest) {
+        console.log("🟦 最新位置から仮マーカーと円を描画");
+        userPosition = latest;
+        drawUserLocation(latest, map); // 描画処理を関数化
 
         // 💡 修正: shelters.js にも最新位置情報を通知 (初期距離計算のため)
-        updateSheltersPosition(defaultPos);
+        updateSheltersPosition(latest);
+    }
+    // 言語切替直後にも現在地と仮の円を描画
+    if (latest) {
+        console.log("🟦 最新位置から仮マーカーと円を描画");
+        userPosition = latest;
+        drawUserLocation(latest, map);
+        // shelters.js にも最新位置情報を通知 (初期距離計算のため)
+        updateSheltersPosition(latest);
     }
 
-    // ✅ 現在地追跡を開始 (watchPositionによる継続的な追跡)
+    // ✅ 現在地追跡を開始
     startTracking();
 
     // ✅ DBに保存された報告データをロードして地図にマーカー表示
@@ -81,7 +98,7 @@ async function initMap() {
 
     // ✅ 地図クリックで報告ダイアログを開く
     map.addListener("click", (e) => {
-        // openReportDialog が他ファイルで定義されていると仮定 (report.js)
+        // openReportDialog が他ファイルで定義されていると仮定
         if (typeof openReportDialog === "function") {
             openReportDialog(e.latLng);
         }
@@ -90,6 +107,7 @@ async function initMap() {
     // 🌟 修正: 地図イベントリスナーの設定 (shelters.jsが提供する setupMapListeners を呼び出す)
     if (typeof setupMapListeners === "function") {
         console.log("🌟 setupMapListeners() 呼び出し");
+        // defaultPosにはaccuracy情報がない場合があるため、初期値としてはlat/lngのみでOK
         setupMapListeners(map, defaultPos.lat, defaultPos.lng, showRouteToShelter);
     } else {
         console.error("🚨 エラー: setupMapListeners関数が定義されていません。shelters.jsが正しく読み込まれているか確認してください。");
@@ -99,42 +117,6 @@ async function initMap() {
     if (recenterBtn) {
         map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(recenterBtn);
     }
-}
-
-/**
- * 💡 NEW: 現在地を一度だけ取得し、成功またはタイムアウトするまで待機する関数
- * @returns {Promise<object | null>} { lat, lng, accuracy } または null
- */
-function getInitialPosition() {
-    return new Promise((resolve) => {
-        if (!navigator.geolocation) {
-            resolve(null);
-            return;
-        }
-
-        const options = {
-            enableHighAccuracy: false, // 高精度不要
-            timeout: 10000, // 10秒でタイムアウト
-            maximumAge: 0,
-        };
-
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                console.log("📍 初期位置を getCurrentPosition で取得成功");
-                resolve({ 
-                    lat: pos.coords.latitude, 
-                    lng: pos.coords.longitude, 
-                    accuracy: pos.coords.accuracy 
-                });
-            },
-            (err) => {
-                // タイムアウトや権限エラーでも、地図の初期化をブロックしない
-                console.warn(`⚠️ 初期位置取得失敗 (Code: ${err.code}): ${err.message}`);
-                resolve(null);
-            },
-            options
-        );
-    });
 }
 
 /**
@@ -189,6 +171,7 @@ function startTracking() {
     console.log("📍 startTracking() 実行");
 
     if (!navigator.geolocation) {
+        // カスタムUIでのメッセージボックスの使用を推奨
         const messageBox = document.getElementById('message-box');
         if (messageBox) messageBox.textContent = "このブラウザは位置情報を取得できません。";
         else console.error("このブラウザは位置情報を取得できません。");
@@ -201,15 +184,13 @@ function startTracking() {
         watchId = null;
     }
 
-    // 💡 修正: ここから watchPosition の呼び出しを開始
     watchId = navigator.geolocation.watchPosition(
-        // 成功時の処理 (pos)
         (pos) => {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
             const accuracy = pos.coords.accuracy;
             
-            // 💡 userPosition に accuracy も保持
+            // 💡 修正: userPosition に accuracy も保持
             const newPosition = { lat, lng, accuracy };
             userPosition = newPosition;
 
@@ -218,7 +199,7 @@ function startTracking() {
                 window.setLatestPosition(newPosition);
             }
             
-            // 💡 shelters.js に最新位置情報を通知
+            // 💡 NEW: shelters.js に最新位置情報を通知 (距離計算と再ロードのため)
             updateSheltersPosition(newPosition);
 
             // マーカーと円の描画/更新
@@ -232,34 +213,16 @@ function startTracking() {
                 }
             }
         },
-        // エラー時の処理 (err)
         (err) => {
             console.error("位置情報エラー:", err);
-            
-            let errorMessage = "現在地の取得に失敗しました: " + err.message;
-            
-            // 💡 エラーコード2と3の場合、より具体的なメッセージを提示
-            if (err.code === 2) { 
-                // Position update is unavailable
-                errorMessage = "位置情報サービスが利用できません。スマートフォンの設定で、このサイト（またはブラウザアプリ）への位置情報アクセスが許可されているか確認してください。";
-            } else if (err.code === 3) {
-                // Timeout expired
-                errorMessage = "位置情報取得がタイムアウトしました。屋外で再試行するか、設定を確認してください。";
-            }
-            
-            // エラーを通知
+            // エラーを通知（カスタムUIを推奨）
             const messageBox = document.getElementById('message-box');
-            if (messageBox) messageBox.textContent = errorMessage;
-            else console.error(errorMessage);
+            if (messageBox) messageBox.textContent = "現在地の取得に失敗しました: " + err.message;
+            else console.error("現在地の取得に失敗しました: " + err.message);
         },
-        // オプション
         {
-            // ✅ 修正点1: 高精度要求をfalseに設定し、低精度でも成功しやすくする
-            enableHighAccuracy: false, 
-            
-            // ✅ 修正点2: タイムアウトを延長し、取得の猶予時間を増やす
-            timeout: 30000, // 30秒に延長
-
+            enableHighAccuracy: true,
+            timeout: 10000,
             maximumAge: 0,
         }
     );
@@ -281,13 +244,14 @@ function stopTracking() {
 // ============================
 function showRouteToShelter(shelter) {
     if (!userPosition) {
+        // 現在地取得失敗時の代替メッセージ
         const messageBox = document.getElementById('message-box');
         if (messageBox) messageBox.textContent = "現在地がまだ取得されていません。";
         else console.warn("現在地がまだ取得されていません。");
         return;
     }
     
-    // 💡 既存のレンダラー（Polyline）を消す
+    // 💡 修正点: 既存のレンダラー（Polyline）を消す
     routeRenderers.forEach(r => r.setMap(null));
     routeRenderers = [];
 
@@ -304,6 +268,7 @@ function showRouteToShelter(shelter) {
             const colors = ["#1976D2", "#43A047", "#E53935"];
 
             result.routes.slice(0, 3).forEach((route, index) => {
+                // ルートの座標だけ取り出す
                 const path = google.maps.geometry.encoding.decodePath(route.overview_polyline);
                 const polyline = new google.maps.Polyline({
                     path: path,
@@ -315,6 +280,7 @@ function showRouteToShelter(shelter) {
                 routeRenderers.push(polyline);
             });
         } else {
+            // エラーを通知（カスタムUIを推奨）
             const messageBox = document.getElementById('message-box');
             const errorMessage = "経路を取得できませんでした: " + status;
             if (messageBox) messageBox.textContent = errorMessage;
@@ -334,6 +300,7 @@ function recenterMap() {
         // 💡 NEW: 現在地に戻ったら、自動追尾を再開する
         isManuallyPanning = false; 
     } else {
+        // エラーを通知（カスタムUIを推奨）
         const messageBox = document.getElementById('message-box');
         const errorMessage = "現在地がまだ取得されていません。";
         if (messageBox) messageBox.textContent = errorMessage;
@@ -347,7 +314,7 @@ function recenterMap() {
 function loadReports() {
     console.log("🟦 loadReports() 開始");
     
-    // 既存のマーカーを削除
+    // 💡 修正点: 言語切り替えや再ロードに備えて、既存のマーカーを削除
     reportMarkers.forEach(marker => {
         marker.setMap(null);
         google.maps.event.clearInstanceListeners(marker);
@@ -363,7 +330,6 @@ function loadReports() {
                     const likesCount = parseInt(rep.likes_count) || 0;
                     const dislikesCount = parseInt(rep.dislikes_count) || 0;
                     
-                    // 💡 【修正点】：addReportMarker 関数に rep.user_name を渡す
                     addReportMarker(
                         parseInt(rep.id),
                         parseFloat(rep.lat),
@@ -372,8 +338,7 @@ function loadReports() {
                         rep.comment,
                         rep.created_at,
                         likesCount,    
-                        dislikesCount,
-                        rep.user_name  // ✅ 投稿者名を追加
+                        dislikesCount  
                     );
                 });
             }
@@ -385,8 +350,7 @@ function loadReports() {
 // ============================
 // ✅ 共通マーカー生成（4タイプアイコン対応 + いいね表示）
 // ============================
-// 💡 【修正点】：引数に userName を追加
-function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, dislikesCount, userName) { 
+function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, dislikesCount) {
     let iconUrl;
     switch(status) {
         case "通れる": iconUrl = "img/ok.svg"; break;
@@ -396,7 +360,7 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
         default: iconUrl = "https://maps.google.com/mapfiles/ms/icons/red-dot.png"; break;
     }
 
-    // 1. カスタムアイコン用のDOM要素を作成
+    // 1. カスタムアイコン用のDOM要素を作成 (<img> タグ)
     const iconElement = document.createElement('img');
     iconElement.src = iconUrl;
     iconElement.style.width = '32px';
@@ -410,40 +374,30 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
         title: status
     });
     
+    // 💡 修正点: マーカーを配列に追加
     reportMarkers.push(marker);
 
-// ... (前略) ...
-
-    // 💡 投稿者名の表示を準備
-    const postUserName = userName || "匿名ユーザー";
-
-    // 💡 【修正】：情報ウィンドウの内容からユーザーアイコン画像を削除
+    // 💡 情報ウィンドウの内容に Good/Bad ボタンとカウントを追加
     const infoContent = `
-        <div data-report-id="${id}" class="sns-info-card">
+        <div data-report-id="${id}" class="report-info-window">
+            <b>${status}</b><br>
+            ${comment || ""}<br>
+            <small>${created_at}</small><br>
             
-            <div class="card-header">
-                <div class="user-profile">
-                    
-                    <span class="user-name">${postUserName}</span>
-                </div>
-                <span class="post-time">${created_at}</span>
-            </div>
-            
-            <div class="card-body">
-                <div class="status-indicator status-${status === '通れる' ? 'pass' : status === '通れない' ? 'fail' : status === '段差' ? 'step' : 'comment'}">
-                    <span class="status-text">${status}</span>
-                </div>
-                <p class="comment-content">${comment || "コメントはありません"}</p>
-            </div>
-            
-            <div class="card-footer">
-                <div class="evaluation-actions">
-                    <button class="action-btn good-action" onclick="window.sendEvaluation(${id}, 'good')">
-                        👍 役立った <span id="likes-count-${id}">${likesCount || 0}</span>
+            <div class="evaluation-container" style="display:flex; gap:10px; margin-top: 8px;">
+
+                <div class="like-group">
+                    <button class="good-btn" onclick="sendEvaluation(${id}, 'good')">
+                        👍 役立った
                     </button>
-                    <button class="action-btn bad-action" onclick="window.sendEvaluation(${id}, 'bad')">
-                        👎 役に立たない <span id="dislikes-count-${id}">${dislikesCount || 0}</span>
+                    <span class="count-badge" id="likes-count-${id}">${likesCount || 0}</span>
+                </div>
+                
+                <div class="dislike-group">
+                    <button class="bad-btn" onclick="sendEvaluation(${id}, 'bad')">
+                        👎 役に立たない
                     </button>
+                    <span class="count-badge" id="dislikes-count-${id}">${dislikesCount || 0}</span>
                 </div>
             </div>
             
@@ -452,7 +406,6 @@ function addReportMarker(id, lat, lng, status, comment, created_at, likesCount, 
 
     const info = new google.maps.InfoWindow({
         content: infoContent,
-        pixelOffset: new google.maps.Size(0, -30) // マーカーの少し上に調整
     });
 
     marker.addListener("click", () => info.open(map, marker));
@@ -477,7 +430,7 @@ window.changeLanguage = function (lang) {
     // 現在の追跡を停止
     if (typeof window.stopTracking === "function") stopTracking();
     
-    // 既存の全AdvancedMarkerElementとCircleをクリア
+    // 💡 修正点: 既存の全AdvancedMarkerElementとCircleをクリア
     if (userMarker) userMarker.setMap(null);
     if (userCircle) userCircle.setMap(null);
     
@@ -502,7 +455,7 @@ window.changeLanguage = function (lang) {
     // 新しい言語でGoogle Mapsを再ロード
     const script = document.createElement("script");
     
-    // 💡 '&libraries=marker' を追加
+    // 💡 修正点: '&libraries=marker' を追加
     script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&language=${lang}&libraries=marker&callback=initMap`;
     
     script.async = true;
