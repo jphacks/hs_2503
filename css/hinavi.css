@@ -1,0 +1,344 @@
+/* ----------------------------------------------------- */
+/* 共通設定 */
+/* ----------------------------------------------------- */
+body {
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fb;
+    color: #2c2c2c;
+    line-height: 1.7;
+    padding-top: 60px; 
+}
+
+/* ----------------------------------------------------- */
+/* ヘッダーのスタイル (固定ナビゲーション) */
+/* ----------------------------------------------------- */
+#header {
+    background: #07ae6e;
+    color: white;
+    padding: 0 15px;
+    height: 60px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#logo {
+    height: 40px;
+}
+
+#header-right {
+    display: flex;
+    align-items: center; /* ★重要: 縦方向の中央揃え */
+    gap: 10px;
+}
+
+/* 共通ボタン（ヘルプ、言語、メニューなど）のスタイル */
+.header-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.header-icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header-icon-btn img {
+    height: 24px;
+    width: 24px;
+    display: block;
+}
+
+/* ログインボタン（ホームに戻るリンク）のスタイル */
+.login-btn {
+    background-color: white;
+    color: #07ae6e;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    line-height: 1; 
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* --- 言語とメニューのドロップダウン配置 --- */
+
+/* 言語コンテナのスタイル */
+#language-wrapper {
+    position: relative; 
+    display: flex; /* selectをアイコンの隣に配置するため */
+    align-items: center;
+}
+
+/* ★標準selectのスタイル */
+#language-select {
+    /* 重要: select要素はアイコンの隣に存在させるが、
+       標準の見た目を消して透過にし、アイコンの下に隠す。
+       アイコンをクリックすると、JSでフォーカスが当たり、ブラウザのUIが開く。
+    */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* 見た目を完全に透明にしてアイコンの下に隠す */
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1; /* アイコンよりは上に配置 */
+    
+    /* 標準のフォーム要素の余白やボーダーをリセット */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* メニューリストのスタイル */
+#menu-container {
+    position: relative; 
+}
+
+#menu-list {
+    position: absolute;
+    top: 50px; 
+    right: 0;
+    list-style: none;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    min-width: 150px;
+    z-index: 10;
+}
+
+#menu-list li a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #2c2c2c;
+}
+
+#menu-list li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* 非表示クラス */
+.hidden {
+    display: none !important;
+}
+
+/* ページタイトル（h1はCSSで非表示に） */
+h1 {
+    display: none; 
+}
+
+/* ----------------------------------------------------- */
+/* コンテンツエリアのスタイル (変更なし) */
+/* ----------------------------------------------------- */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h2 {
+    font-size: 1.6rem;
+    border-left: 6px solid #07ae6e;
+    padding-left: 10px;
+    margin-top: 50px;
+    font-weight: 600;
+}
+
+section {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    margin-top: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.main-message {
+    text-align: center;
+    padding: 40px 25px;
+}
+
+.main-message h2.no-border {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    border-left: none;
+    padding-left: 0;
+}
+
+.lead-text {
+    font-size: 1.15rem;
+    color: #444;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.feature-item {
+    background: #e6f6f1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.feature-item h3 {
+    color: #058f5b;
+    font-size: 1.3rem;
+    margin-top: 0;
+}
+
+.feature-item img {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    object-fit: contain;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: block;
+}
+
+.value-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.value-list li {
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 1.05rem;
+}
+
+.value-list li:last-child {
+    border-bottom: none;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+}
+
+.faq-item strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+}
+
+footer {
+    text-align: center;
+    padding: 40px 0;
+    color: #777;
+    margin-top: 60px;
+}
+
+/* ----------------------------------------------------- */
+/* トップに戻るボタンのスタイル */
+/* ----------------------------------------------------- */
+#scrollToTopBtn {
+    display: none; 
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    background-color: #07ae6e;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+#scrollToTopBtn:hover {
+    background-color: #058f5b;
+}
+
+/* ----------------------------------------------------- */
+/* モバイル対応 (Media Query) */
+/* ----------------------------------------------------- */
+@media (max-width: 600px) {
+    body {
+        padding-top: 50px;
+    }
+    #header {
+        height: 50px;
+        padding: 0 10px;
+    }
+    #logo {
+        height: 35px;
+    }
+    .header-icon-btn img {
+        height: 20px;
+        width: 20px;
+    }
+    .login-btn {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+
+    .main-message h2.no-border {
+        font-size: 1.5rem;
+    }
+    .lead-text {
+        font-size: 1rem;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    #scrollToTopBtn {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px;
+        font-size: 16px;
+    }
+}

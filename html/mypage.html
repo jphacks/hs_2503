@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>マイページ</title>
+<link rel="stylesheet" href="../css/mypage.css">
+</head>
+<body>
+  <div class="container">
+    <h1>マイページ</h1>
+
+    <div class="user-info">
+      <p>ユーザ名: <span id="username"></span></p>
+      <p>トロフィー: <span id="trophies">🏆🏆🏆</span></p>
+    </div>
+
+    <button onclick="window.history.back()">戻る</button>
+  </div>
+
+  <script type="module">
+    // 💡 修正点 1: インポートする関数名を getAuthStatus に変更
+    import { getAuthStatus } from '../js/auth.js';
+
+    document.addEventListener("DOMContentLoaded", async () => { // 💡 修正点 2: DOMContentLoaded リスナーを async に変更
+      try {
+        // 💡 修正点 3: getAuthStatus を await で呼び出す
+        const authInfo = await getAuthStatus(); 
+        
+        // 💡 修正点 4: 戻り値のオブジェクトからユーザー名を取得
+        if (authInfo && authInfo.isLoggedIn) {
+          document.getElementById("username").textContent = authInfo.username;
+        } else {
+          // ログインしていない、またはセッションが無効な場合
+          alert("ログインしていません");
+          window.location.href = "/index.html";
+        }
+      } catch (error) {
+        console.error("認証状態の確認中にエラーが発生しました:", error);
+        alert("認証処理中にエラーが発生しました。");
+        window.location.href = "/index.html";
+      }
+    });
+  </script>
+</body>
+</html>
+

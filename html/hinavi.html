@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hinaviとは？</title>
+  <link rel="stylesheet" href="../css/hinavi.css">
+</head>
+<body>
+  <header id="header">
+    <div class="header-content">
+        <img src="../img/logo2.png" alt="hinavi" id="logo">
+
+        <div id="header-right">
+            <div class="back-to-home">
+                <a href="../index.html" class="login-btn">← ホームへ</a>
+            </div>
+
+            <button class="header-icon-btn">
+                <img src="../img/help.png" alt="Help">
+            </button>
+
+            <div id="language-wrapper">
+                <button id="language-btn" class="header-icon-btn">
+                    <img src="../img/language.png" alt="Language" />
+                </button>
+                <select id="language-select"> 
+                  <option value="ja">日本語</option>
+                  <option value="zh">中文</option>
+                </select>
+            </div>
+
+            <div id="menu-container">
+              <button id="menu-btn" class="header-icon-btn">
+                <img src="../img/menu.png" alt="Menu">
+              </button>
+              <ul id="menu-list" class="hidden">
+                <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
+                <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
+                <li id="menu-settings"><a href="settings.html">設定</a></li>
+              </ul>
+            </div>
+        </div>
+    </div>
+    <h1>hinaviとは？</h1>
+  </header>
+
+<div class="container">
+    
+    <section class="main-message">
+        <h2 class="no-border">もう，迷わせない<br>あなたの避難を．</h2>
+        <p class="lead-text">hinavi（ヒナビ）は「避難をナビする」ための防災コミュニティサービスです。あなたの現在地と災害状況に基づき、安全な避難ルートとリアルタイム情報を迅速に提供します。</p>
+    </section>
+
+    <hr>
+
+    <section>
+        <h2>主な機能</h2>
+        <p>hinaviが提供する、命を守るための主要な機能をご紹介します。</p>
+        
+        <div class="feature-grid">
+            <div class="feature-item">
+                <h3>1. マップとルート案内</h3>
+                <p>現在地から、危険箇所を避けた避難所までの最短・最安全ルートを自動でナビゲーション。初めての場所でも迷いません。</p>
+                
+            </div>
+            
+            <div class="feature-item">
+                <h3>2. リアルタイム投稿</h3>
+                <p>ユーザーや自治体からの**「道が通れる/通れない」「給水所開設」**などの情報を地図上に即時反映。信頼性の高い情報で、状況を把握できます。</p>
+            </div>
+            
+            
+            <div class="feature-item">
+                <h3>4. 多言語サポート</h3>
+                <p>日本語、中国語など多言語に対応。国籍や言語に関わらず、すべての人が等しく安全に避難できるようサポートします。</p>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2>ミッション</h2>
+      <ul class="value-list">
+        <li>✅ **迷わせない避難を実現する**分かりやすい情報提供</li>
+        <li>🤝 **地域の助け合いを促す**コミュニティ形成</li>
+        <li>🌏 **多言語・オフライン**対応による誰一人取り残さない避難支援</li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2>よくある質問</h2>
+      <div class="faq-item">
+        <strong>Q. ログインは必須ですか？</strong>
+        A. いいえ．緊急時に初めて使用する方もいるので，**誰でもすぐに使用できます**。ログインすることで、コメントの信頼性が高まります。
+      </div>
+      <div class="faq-item">
+        <strong>Q. 誤情報が投稿されたら？</strong>
+        A. **信頼度システム**と運営の確認で対処できます。多くのユーザーの報告や自治体の公式情報に基づき、情報の信頼性を制御しています。
+      </div>
+      <div class="faq-item">
+        <strong>Q. 個人情報は安全ですか？</strong>
+        A. 位置情報などは**暗号化して扱い**、避難誘導など必要最小限の機能にのみ利用します。
+      </div>
+    </section>
+
+    <hr>
+    
+    <section>
+      <h2>自治体・団体向け連携</h2>
+      <p>自治体や企業向けには、以下のカスタムソリューションを提供しています。防災データの一括登録、公式通知システム、API連携など、貴団体の防災計画に合わせた導入が可能です。詳細はお問い合わせください。</p>
+    </section>
+
+    <footer id="footer">
+      © hinavi2025
+    </footer>
+  </div>
+
+  <button onclick="scrollToTop()" id="scrollToTopBtn" title="トップに戻る">↑</button>
+
+  <script>
+    // --- トップに戻るボタンの JavaScript ロジック ---
+    window.onscroll = function() { scrollFunction() };
+    function scrollFunction() {
+      const btn = document.getElementById("scrollToTopBtn");
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        btn.style.display = "block";
+      } else {
+        btn.style.display = "none";
+      }
+    }
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth' 
+      });
+    }
+    // ------------------------------------
+
+
+    // --- メニューと言語ボタンの機能 (標準select版) ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuBtn = document.getElementById('menu-btn');
+        const menuList = document.getElementById('menu-list');
+        const langBtn = document.getElementById('language-btn');
+        const langSelect = document.getElementById('language-select'); // select要素
+        const menuContainer = document.getElementById('menu-container'); 
+        const langWrapper = document.getElementById('language-wrapper'); 
+
+        // --- 1. メニューボタン機能 ---
+        if (menuBtn && menuList) {
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                menuList.classList.toggle('hidden');
+            });
+            
+            // 外側をクリックしたら閉じる
+            document.addEventListener('click', (event) => {
+                if (menuContainer && !menuContainer.contains(event.target) && !menuList.classList.contains('hidden')) {
+                    menuList.classList.add('hidden');
+                }
+            });
+        }
+        
+        // --- 2. 言語ボタン（アイコン）機能 ---
+        if (langBtn && langSelect) {
+            
+            // ページロード時の初期言語設定（localStorageから）
+            const storedLang = localStorage.getItem("selectedLanguage") || "ja";
+            langSelect.value = storedLang;
+
+            // ★修正点: アイコンをクリックしたらselect要素にフォーカスを当てて開かせる
+            langBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                langSelect.focus(); 
+                
+                // メニューが開いている場合は閉じる
+                menuList.classList.add('hidden');
+            });
+            
+            // 言語選択が変更されたときの処理
+            langSelect.addEventListener('change', (event) => {
+                const newLang = event.target.value;
+                localStorage.setItem("selectedLanguage", newLang);
+                
+                alert("言語を " + (newLang === 'ja' ? '日本語' : '中文') + " に切り替えました。");
+                // 実際はここで多言語化処理を行い、ページ内容を更新
+                // window.location.reload(); 
+            });
+        }
+
+    });
+  </script>
+</body>
+</html>

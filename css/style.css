@@ -23,3 +23,155 @@ header {
 main {
   padding: 20px;
 }
+
+/* ================================================= */
+/* 💡 SNS風コメント表示ポップアップ (Infowindow) スタイル */
+/* ================================================= */
+
+/* 1. 全体コンテナ */
+.sns-info-card {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0;
+    margin: -10px; /* Google Infowindowのデフォルトpaddingを打ち消す */
+    width: 280px; /* ポップアップの幅を少し広げる */
+    background-color: #fff;
+    border-radius: 12px; /* 全体を角丸にする */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 影を強める */
+    overflow: hidden; /* 角丸からはみ出さないように */
+    color: #333;
+}
+
+/* 2. ヘッダー（ユーザー情報と投稿時間） */
+.sns-info-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f0f2f5; /* SNSの背景色に近いグレー */
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sns-info-card .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sns-info-card .user-name {
+    font-weight: 700;
+    color: #333;
+    font-size: 1.05em;
+}
+
+.sns-info-card .post-time {
+    font-size: 0.75em;
+    color: #777;
+}
+
+/* 3. 本文（ステータスとコメント内容） */
+.sns-info-card .card-body {
+    padding: 15px;
+}
+
+.sns-info-card .status-indicator {
+    display: inline-flex; /* 💡 flexを維持してテキストが中央に来るように */
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 18px; /* 角丸を強調 */
+    font-weight: 600;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    color: white;
+}
+
+
+
+/* ステータスごとの背景色 */
+.status-pass { background-color: #28a745; } /* 通れる: 緑 */
+.status-fail { background-color: #dc3545; } /* 通れない: 赤 */
+.status-step { background-color: #ffc107; color: #333; } /* 段差: オレンジ (テキストは黒に) */
+.status-comment { background-color: #007bff; } /* コメント: 青 */
+
+.sns-info-card .comment-content {
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #444;
+    max-height: 100px; /* コメントが多い場合にスクロール */
+    overflow-y: auto;
+    white-space: pre-wrap; /* 改行を尊重 */
+    word-break: break-word; /* 長い単語で折り返す */
+}
+
+/* 4. フッター（評価アクション） */
+.sns-info-card .card-footer {
+    padding: 10px 15px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f0f2f5; /* ヘッダーと同じ背景色 */
+}
+
+.sns-info-card .evaluation-actions {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.sns-info-card .action-btn {
+    flex: 1; /* ボタンが均等な幅になるように */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px; /* SNSのアクションボタン風に大きく角丸 */
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.9em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.good-action { background-color: #e6f7ff; color: #007bff; } /* 薄い青 */
+.good-action:hover { background-color: #cceeff; }
+
+.bad-action { background-color: #fbe6e6; color: #dc3545; } /* 薄い赤 */
+.bad-action:hover { background-color: #f8caca; }
+
+/* 評価数の表示 (ボタン内に統合) */
+.sns-info-card .action-btn span {
+    font-weight: 700;
+}
+
+
+/* 5. Google Maps Infowindowのデフォルトスタイル調整 */
+/* 注: Google Mapsのクラス名は非推奨・変更される可能性があるため注意 */
+/* .gm-style-iw-d は情報ウィンドウのコンテンツ部分を囲むdiv */
+.gm-style-iw-d {
+    overflow: hidden !important; /* コンテンツがはみ出さないように */
+    border-radius: 12px !important; /* Infowindow自体の角丸を合わせる */
+    box-shadow: none !important; /* 親要素の影を消し、sns-info-cardの影を使う */
+}
+
+/* Infowindowの白い背景を透明にする（sns-info-cardの背景を活かすため） */
+.gm-style .gm-style-iw-c {
+    background-color: transparent !important;
+}
+
+/* Infowindowの閉じるボタンのスタイルを調整 */
+.gm-ui-hover-effect {
+    top: 8px !important;
+    right: 8px !important;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.gm-ui-hover-effect:hover {
+    opacity: 1;
+}
+
+/* Infowindowの「閉じる」アイコン (Xボタン) の色を調整 */
+.gm-ui-hover-effect span { /* これはSVGアイコンを囲むspan */
+    background-color: #666 !important; /* Xの色を濃いグレーに */
+    border-radius: 50% !important; /* Xを丸いボタンにする */
+    padding: 4px !important; /* パディングを追加 */
+}
