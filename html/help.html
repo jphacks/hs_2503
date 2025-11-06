@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>チュートリアル</title>
+  <link rel="stylesheet" href="../css/help.css">
+  <link rel="stylesheet" href="../css/header.css">
+</head>
+<body>
+  <header id="header">
+    <img src="../img/logo2.png" alt="hinavi" id="logo">
+
+    <div id="header-right">
+      <button id="back-to-home-btn" onclick="location.href='../index.html'">ホームに戻る</button>
+
+      <button id="loginBtn" onclick="location.href='login.html'">ログイン</button>
+
+      <button id="help-btn" onclick="location.href='help.html'">
+        <img src="../img/help.png" alt="Help">
+      </button>
+
+      <div id="language-wrapper">
+        <button id="language-btn">
+          <img src="../img/language.png" alt="Language" />
+        </button>
+        <select id="language-select">
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div id="menu-container">
+        <button id="menu-btn" class="header-icon-btn">
+          <img src="../img/menu.png" alt="Menu">
+        </button>
+        <ul id="menu-list" class="hidden">
+          <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
+          <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <div class="help-container">
+    <!-- 各スライド -->
+    <div class="slide active">
+      <div class="slide-content">
+        <img src="../img/help1.png" alt="hinaviの説明">
+        <div class="text">
+          <h2>「もう迷わせない、<br>あなたの避難を」</h2>
+          <p>hinaviは、災害時に必要な情報をわかりやすく提供する避難支援アプリです。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-content">
+        <img src="../img/help2.png" alt="災害・避難所情報">
+        <div class="text">
+          <h2>最新の災害・避難所情報を<br>すぐに確認</h2>
+          <p>現在地周辺の災害状況や避難所情報をすぐに確認できます。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-content">
+        <img src="../img/help3.png" alt="避難経路案内">
+        <div class="text">
+          <h2>近くの避難所までの<br>最短ルートを案内</h2>
+          <p>GPSを活用し、現在地から避難所までのルートを表示・案内します。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-content">
+        <img src="../img/help4.png" alt="コメント投稿">
+        <div class="text">
+          <h2>被災状況を共有し<br>助け合いをサポート</h2>
+          <p>地図上で「通れない道」「段差」などの情報を投稿・確認できます。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-content">
+        <img src="../img/help5.png" alt="多言語対応">
+        <div class="text">
+          <h2>多言語対応で誰でも安心</h2>
+          <p>現在は、日本語・英語・中国語に対応しています。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ページ下のボタン -->
+    <div class="controls">
+      <button id="prevBtn">戻る</button>
+      <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <button id="nextBtn">次へ</button>
+    </div>
+  </div>
+
+  <script src="../js/help.js"></script>
+  <script src="../js/lang.js" defer></script>
+  <script src="../js/menu.js" defer></script>
+</body>
+</html>

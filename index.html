@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-<title>hinavi 災害情報マップ</title>
-<link rel="icon" href="img/icon2.png" type="image/png">
-<link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>hinavi 災害情報マップ</title>
+  <link rel="icon" href="img/icon2.png" type="image/png">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
   <div id="header">
@@ -17,7 +17,7 @@
     <div id="header-right">
     <button id="loginBtn" class="login-btn">ログイン</button>
 
-    <button id="help-btn">
+    <button id="help-btn" onclick="location.href='html/help.html'">
       <img src="img/help.png" alt="Help">
     </button>
 
@@ -25,7 +25,6 @@
       <button id="language-btn">
         <img src="img/language.png" alt="Language" />
       </button>
-
       <select id="language-select">
         <option value="ja">日本語</option>
         <option value="zh">中文</option>
@@ -41,7 +40,6 @@
       <ul id="menu-list" class="hidden">
         <li id="menu-mypage"><a href="html/mypage.html">マイページ</a></li>
         <li id="menu-mypage"><a href="html/hinavi.html">hinaviとは</a></li>
-        <li id="menu-settings"><a href="html/settings.html">設定</a></li>
       </ul>
     </div>
 </div>

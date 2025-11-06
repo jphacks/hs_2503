@@ -2,49 +2,47 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title data-i18n="register_title">アカウント登録</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title data-i18n="register_title">アカウント登録</title>
   <link rel="stylesheet" href="../css/register.css">
-  <link rel="stylesheet" href="../css/header.css"> </head>
+  <link rel="stylesheet" href="../css/header.css"> 
+</head>
 <body>
-  
   <header id="header">
-    <div class="header-content">
-        <img src="../img/logo2.png" alt="hinavi" id="logo">
+    <img src="../img/logo2.png" alt="hinavi" id="logo">
 
-        <div id="header-right">
-            
-            <div class="back-to-home-header">
-                <a href="../index.html" class="home-btn-link">← ホームへ</a>
-            </div>
-            
-            <button class="header-icon-btn">
-                <img src="../img/help.png" alt="Help">
-            </button>
+    <div id="header-right">
+      <button id="back-to-home-btn" onclick="location.href='../index.html'">ホームに戻る</button>
 
-            <div id="language-wrapper">
-                <button id="language-btn" class="header-icon-btn">
-                    <img src="../img/language.png" alt="Language" />
-                </button>
-                <select id="language-select"> 
-                  <option value="ja">日本語</option>
-                  <option value="zh">中文</option>
-                </select>
-            </div>
+      <button id="loginBtn" onclick="location.href='login.html'">ログイン</button>
 
-            <div id="menu-container">
-              <button id="menu-btn" class="header-icon-btn">
-                <img src="../img/menu.png" alt="Menu">
-              </button>
-              <ul id="menu-list" class="hidden">
-                <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
-                <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
-                <li id="menu-settings"><a href="settings.html">設定</a></li>
-              </ul>
-            </div>
-        </div>
+      <button id="help-btn" onclick="location.href='help.html'">
+        <img src="../img/help.png" alt="Help">
+      </button>
+
+      <div id="language-wrapper">
+        <button id="language-btn">
+          <img src="../img/language.png" alt="Language" />
+        </button>
+        <select id="language-select">
+          <option value="ja">日本語</option>
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div id="menu-container">
+        <button id="menu-btn" class="header-icon-btn">
+          <img src="../img/menu.png" alt="Menu">
+        </button>
+        <ul id="menu-list" class="hidden">
+          <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
+          <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
+        </ul>
+      </div>
     </div>
   </header>
+
   <div class="register-container">
     <h2 data-i18n="register_heading">アカウント登録</h2>
     <form id="registerForm">
@@ -54,7 +52,7 @@
       <button type="submit" data-i18n="register_btn">登録</button>
     </form>
     <p data-i18n="have_account">
-      すでにアカウントをお持ちの方は
+      すでにアカウントをお持ちの方は <br>
       <a href="login.html" data-i18n="login_link">ログイン</a>
     </p>
   </div>
@@ -104,5 +102,7 @@
   </script>
   
   <script src="../js/register.js"></script>
+  <script src="../js/lang.js" defer></script>
+  <script src="../js/menu.js" defer></script>
 </body>
 </html>
