@@ -10,36 +10,118 @@
     <h1>マイページ</h1>
 
     <div class="user-info">
-      <p>ユーザ名: <span id="username"></span></p>
-      <p>トロフィー: <span id="trophies">🏆🏆🏆</span></p>
+      <p>ユーザー名: <span id="username"></span></p>
+      <p>ランク: <span class="rank" id="rank"></span></p>
+      <p>ポイント: <span id="points"></span></p>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
     </div>
+
+    <ul class="achievement-list" id="achievements"></ul>
 
     <button onclick="window.history.back()">戻る</button>
   </div>
 
   <script type="module">
-    // 💡 修正点 1: インポートする関数名を getAuthStatus に変更
     import { getAuthStatus } from '../js/auth.js';
 
-    document.addEventListener("DOMContentLoaded", async () => { // 💡 修正点 2: DOMContentLoaded リスナーを async に変更
+    document.addEventListener("DOMContentLoaded", async () => {
       try {
-        // 💡 修正点 3: getAuthStatus を await で呼び出す
-        const authInfo = await getAuthStatus(); 
-        
-        // 💡 修正点 4: 戻り値のオブジェクトからユーザー名を取得
-        if (authInfo && authInfo.isLoggedIn) {
-          document.getElementById("username").textContent = authInfo.username;
-        } else {
-          // ログインしていない、またはセッションが無効な場合
+        const authInfo = await getAuthStatus();
+        if (!authInfo || !authInfo.isLoggedIn) {
+          alert("未ログイン：ゲストモードで表示します");
+          document.getElementById("username").textContent = "ゲスト";
+          document.getElementById("rank").textContent = "ビギナー";
+          // 仮ポイント（例: 0）で表示
+          updateDisplay(0);
+          /*
           alert("ログインしていません");
           window.location.href = "/index.html";
+          */
+          return;
         }
-      } catch (error) {
-        console.error("認証状態の確認中にエラーが発生しました:", error);
-        alert("認証処理中にエラーが発生しました。");
-        window.location.href = "/index.html";
+
+        document.getElementById("username").textContent = authInfo.username;
+
+        // --- 💬 サーバからポイントを取得（ここはコメントで示す） ---
+        // const points = await fetch("https://yourserver.example.com/api/points");
+        let points = 110; // 仮の初期ポイント
+        updateDisplay(points);
+
+        // 💡 テスト用に3秒後にポイント加算（実際はサーバからイベントで更新）
+        setTimeout(() => {
+          points += 50;
+          console.log("ポイント更新:", points);
+          updateDisplay(points);
+        }, 3000);
+
+      } catch (err) {
+        console.error("エラー:", err);
+        alert("エラーが発生しました");
       }
     });
+
+    // --- 💡 実績定義 ---
+    const achievements = [
+      { id: 1, title: "はじめの一歩", desc: "初めてログインする", icon: "../img/badge/new_leaf.png", unlocked: true, condition: { points: 0 } },
+      { id: 2, title: "いいねしてみた！", desc: "初めて「いいね」する", icon: "../img/badge/heart.png", unlocked: true, condition: { points: 0 } },
+      { id: 3, title: "コメントしてみた！", desc: "初めてコメント投稿", icon: "../img/badge/rocket.png", unlocked: true, condition: { points: 0 } },
+      { id: 4, title: "アクティブデビュー", desc: "ポイント150で解除", icon: "../img/badge/trophy.png", unlocked: false, condition: { points: 150 } },
+      { id: 5, title: "フレンドリーさん", desc: "ポイント200で解除", icon: "../img/badge/hold_hands.png", unlocked: false, condition: { points: 200 } },
+      { id: 6, title: "人気のたね", desc: "ポイント300で解除", icon: "../img/badge/celebrate.png", unlocked: false, condition: { points: 300 } },
+    ];
+
+    // --- 💡 ポイントに応じてUI更新 ---
+    function updateDisplay(points) {
+      document.getElementById("points").textContent = points;
+
+      // ランク更新
+      const rankInfo = getRank(points);
+      document.getElementById("rank").textContent = rankInfo.rank;
+      document.getElementById("progress").style.width = rankInfo.progress + "%";
+
+      // 実績更新
+      const list = document.getElementById("achievements");
+      list.innerHTML = "";
+
+      achievements.forEach(a => {
+        // 条件達成なら解除
+        if (!a.unlocked && points >= (a.condition.points || 0)) {
+          a.unlocked = true;
+          triggerUnlockAnimation(a.id);
+        }
+
+        const li = document.createElement("li");
+        li.className = "achievement-item" + (a.unlocked ? "" : " locked");
+        li.dataset.id = a.id;
+        li.innerHTML = `
+          <img src="${a.icon}" alt="" class="icon">
+          <div>
+            <p><strong>${a.title}</strong></p>
+            <p>${a.desc}</p>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    // --- 💡 実績解除アニメーション ---
+    function triggerUnlockAnimation(id) {
+      const item = document.querySelector(`[data-id="${id}"]`);
+      if (item) {
+        item.classList.add("unlocked-now");
+        setTimeout(() => item.classList.remove("unlocked-now"), 1000);
+      }
+    }
+
+    // --- 💡 ランク判定関数 ---
+    function getRank(points) {
+      if (points < 100) return { rank: "ビギナー", progress: points };
+      if (points < 300) return { rank: "チャレンジャー", progress: ((points - 100) / 2) };
+      if (points < 600) return { rank: "アクティブ", progress: ((points - 300) / 3) };
+      return { rank: "マスター", progress: 100 };
+    }
   </script>
 </body>
 </html>
