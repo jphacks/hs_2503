@@ -72,14 +72,6 @@ async function initMap() {
         // 💡 修正: shelters.js にも最新位置情報を通知 (初期距離計算のため)
         updateSheltersPosition(defaultPos);
     }
-    // 言語切替直後にも現在地と仮の円を描画
-    if (latest) {
-        console.log("🟦 最新位置から仮マーカーと円を描画");
-        userPosition = latest;
-        drawUserLocation(latest, map);
-        // shelters.js にも最新位置情報を通知 (初期距離計算のため)
-        updateSheltersPosition(latest);
-    }
 
     // ✅ 現在地追跡を開始 (watchPositionによる継続的な追跡)
     startTracking();
