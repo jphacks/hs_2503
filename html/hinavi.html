@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>hinaviとは？</title>
+  <title data-i18n="hinavi-title">hinaviとは？</title>
   <link rel="stylesheet" href="../css/hinavi.css">
   <link rel="stylesheet" href="../css/header.css">
 </head>
@@ -30,48 +30,55 @@
           <option value="en">English</option>
         </select>
       </div>
+      <style>
+      /* 改行文字（\n）を実際の改行として表示する */
+      [data-i18n] {
+        white-space: pre-line;
+      }
+      </style>
 
       <div id="menu-container">
         <button id="menu-btn" class="header-icon-btn">
           <img src="../img/menu.png" alt="Menu">
         </button>
         <ul id="menu-list" class="hidden">
-          <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
-          <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
+          <li id="menu-mypage"><a href="mypage.html" data-i18n="mypage">マイページ</a></li>
+          <li id="menu-hinavi"><a href="hinavi.html" data-i18n="hinavi-icon">hinaviとは</a></li>
         </ul>
       </div>
     </div>
   </header>
 
 <div class="container">
-    <h1>hinaviとは？</h1>
-    <section class="main-message">
-        <h2 class="no-border">もう迷わせない<br>あなたの避難を．</h2>
-        <p class="lead-text">hinavi（ヒナビ）は「避難をナビする」ための防災コミュニティサービスです。あなたの現在地と災害状況に基づき、安全な避難ルートとリアルタイム情報を迅速に提供します。</p>
+    <h1 data-i18n="hinavi-title">hinaviとは？</h1>
+    <section class="main-message" >
+        <h2 class="no-border" data-i18n="hinavi-subtitle">もう迷わせない
+                                                          あなたの避難を．</h2>
+        <p class="lead-text" data-i18n="hinavi-description">hinavi（ヒナビ）は「避難をナビする」ための防災コミュニティサービスです。あなたの現在地と災害状況に基づき、安全な避難ルートとリアルタイム情報を迅速に提供します。</p>
     </section>
 
     <hr>
 
     <section>
-        <h2>主な機能</h2>
-        <p>hinaviが提供する、命を守るための主要な機能をご紹介します。</p>
-        
+        <h2 data-i18n="hinavi-features">主な機能</h2>
+        <p data-i18n="hinavi-features-description">hinaviが提供する、命を守るための主要な機能をご紹介します。</p>
+
         <div class="feature-grid">
             <div class="feature-item">
-                <h3>1. マップとルート案内</h3>
-                <p>現在地から、危険箇所を避けた避難所までの最短・最安全ルートを自動でナビゲーション。初めての場所でも迷いません。</p>
-                
+                <h3 data-i18n="hinavi-feature-1-title">1. マップとルート案内</h3>
+                <p data-i18n="hinavi-feature-1-description">現在地から、危険箇所を避けた避難所までの最短・最安全ルートを自動でナビゲーション。初めての場所でも迷いません。</p>
+
             </div>
             
             <div class="feature-item">
-                <h3>2. リアルタイム投稿</h3>
-                <p>ユーザーや自治体からの「道が通れる/通れない」「段差」などの情報を地図上に即時反映。信頼性の高い情報で、状況を把握できます。</p>
+                <h3 data-i18n="hinavi-feature-2-title">2. リアルタイム投稿</h3>
+                <p data-i18n="hinavi-feature-2-description">ユーザーや自治体からの「道が通れる/通れない」「段差」などの情報を地図上に即時反映。信頼性の高い情報で、状況を把握できます。</p>
             </div>
             
             
             <div class="feature-item">
-                <h3>4. 言語切替</h3>
-                <p>日本語、中国語など多言語に対応。国籍や言語に関わらず、すべての人が等しく安全に避難できるようサポートします。</p>
+                <h3 data-i18n="hinavi-feature-3-title">3. 言語切替</h3>
+                <p data-i18n="hinavi-feature-3-description">日本語、中国語など多言語に対応。国籍や言語に関わらず、すべての人が等しく安全に避難できるようサポートします。</p>
             </div>
         </div>
     </section>
@@ -79,28 +86,28 @@
     <hr>
 
     <section>
-      <h2>ミッション</h2>
+      <h2 data-i18n="mission-title">ミッション</h2>
       <ul class="value-list">
-        <li>✅ 迷わせない避難を実現する分かりやすい情報提供</li>
-        <li>🤝 地域の助け合いを促すコミュニティ形成</li>
-        <li>🌏 多言語対応による誰一人取り残さない避難支援</li>
+        <li data-i18n="mission-1">✅ 迷わせない避難を実現する分かりやすい情報提供</li>
+        <li data-i18n="mission-2">🤝 地域の助け合いを促すコミュニティ形成</li>
+        <li data-i18n="mission-3">🌏 多言語対応による誰一人取り残さない避難支援</li>
       </ul>
     </section>
 
     <hr>
 
     <section>
-      <h2>よくある質問</h2>
-      <div class="faq-item">
-        <strong>Q. ログインは必須ですか？</strong>
+      <h2 data-i18n="faq-title">よくある質問</h2>
+      <div class="faq-item" data-i18n="faq-1">
+        <strong data-i18n="faq-1-question">Q. ログインは必須ですか？</strong>
         A. いいえ．緊急時に初めて使用する方もいるので，誰でもすぐに使用できます。ログインすることで、コメントの信頼性が高まります。
       </div>
-      <div class="faq-item">
-        <strong>Q. 誤情報が投稿されたら？</strong>
+      <div class="faq-item" data-i18n="faq-2">
+        <strong data-i18n="faq-2-question">Q. 誤情報が投稿されたら？</strong>
         A. 信頼度システムと運営の確認で対処できます。多くのユーザーの報告や自治体の公式情報に基づき、情報の信頼性を制御しています。
       </div>
-      <div class="faq-item">
-        <strong>Q. 個人情報は安全ですか？</strong>
+      <div class="faq-item" data-i18n="faq-3">
+        <strong data-i18n="faq-3-question">Q. 個人情報は安全ですか？</strong>
         A. 位置情報などは暗号化して扱い、避難誘導など必要最小限の機能にのみ利用します。
       </div>
     </section>
@@ -108,8 +115,8 @@
     <hr>
     
     <section>
-      <h2>自治体・団体向け連携</h2>
-      <p>自治体や企業向けには、以下のカスタムソリューションを提供しています。防災データの一括登録、公式通知システム、API連携など、貴団体の防災計画に合わせた導入が可能です。詳細はお問い合わせください。</p>
+      <h2 data-i18n="collaboration-title">自治体・団体向け連携</h2>
+      <p data-i18n="collaboration-description">自治体や企業向けには、以下のカスタムソリューションを提供しています。防災データの一括登録、公式通知システム、API連携など、貴団体の防災計画に合わせた導入が可能です。詳細はお問い合わせください。</p>
     </section>
 
     <footer id="footer">
