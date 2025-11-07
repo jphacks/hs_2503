@@ -5,10 +5,10 @@
 
 // データベース情報を設定（★あなたの環境に合わせて変更）
 // DB接続設定
-$db_host = "mysql3111.db.sakura.ne.jp";
-$db_name = "hinavi_report";
-$db_user = "hinavi_report";
-$db_pass = "hinavireport1";
+$db_host = "hogehoge";
+$db_name = "hogehoge";
+$db_user = "hogehoge";
+$db_pass = "hogehoge";
 
 // DSN文字列（PDO用）
 $dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";
