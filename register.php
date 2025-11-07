@@ -73,10 +73,10 @@ try {
         $mail->Debugoutput = 'error_log';
 
         $mail->isSMTP();
-        $mail->Host       = 'hinavi.sakura.ne.jp';
+        $mail->Host       = 'hogehoge';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'noreply@hinavi.sakura.ne.jp';
-        $mail->Password   = 'aqoe12mdsaqwel'; // SMTP用パスワード
+        $mail->Username   = 'hogehoge';
+        $mail->Password   = 'hogehoge'; // SMTP用パスワード
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->Timeout    = 10;
