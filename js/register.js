@@ -36,7 +36,7 @@ if (registerForm) {
 
             if (result.success) {
                 // 登録成功時の処理
-                alert("アカウント登録が完了しました！");
+                alert("メール認証の後，登録が完了します．");
                 // 登録後、ログイン画面へ遷移
                 window.location.href = "login.html"; 
             } else {
