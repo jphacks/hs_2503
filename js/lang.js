@@ -13,7 +13,7 @@ const translations = {
     "comment": "コメントを入力",
     "send": "送信",
     "footer": "© hinavi 2025",
-    // "recenter": "現在地に戻る",
+    "home": "ホームに戻る",
     "login": "ログイン",
     "logout": "ログアウト",
     "Information provided by": "情報提供：",
@@ -37,7 +37,7 @@ const translations = {
     "comment": "输入评论",
     "send": "发送",
     "footer": "© hinavi 2025",
-    // "recenter": "返回当前位置",
+    "home": "返回首页",
     "login": "登录",
     "logout": "登出",
     "Information provided by": "信息提供：",
@@ -61,7 +61,7 @@ const translations = {
     "comment": "Enter your comment",
     "send": "Send",
     "footer": "© hinavi 2025",
-    // "recenter": "Recenter",
+    "home": "Back to Home",
     "login": "Login",
     "logout": "Logout",
     "Information provided by": "Source:",
@@ -133,8 +133,8 @@ function applyTranslations(lang) {
   });
 
   // 個別ボタン（必要に応じて）
-  // const recenterBtn = document.getElementById("recenter-btn");
-  // if (recenterBtn) setOwnText(recenterBtn, t("recenter", lang));
+  const homebtn = document.getElementById("back-to-home-btn");
+  if (homebtn) setOwnText(homebtn, t("home", lang));
   const loginBtn = document.getElementById("loginBtn");
   if (loginBtn) setOwnText(loginBtn, t("login", lang));
   const logoutBtn = document.getElementById("logoutBtn");

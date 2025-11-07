@@ -10,10 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // --- DB設定 --- (本番環境に合わせて修正してください)
-$host = "mysql3111.db.sakura.ne.jp"; 
-$dbname = "hinavi_report";
-$user = "hinavi_report";
-$pass = "hinavireport1";
+$host = "mhogejp"; 
+$dbname = "hhoget";
+$user = "hhoget";
+$pass = "hhoge1";
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);

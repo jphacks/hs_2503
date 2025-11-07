@@ -4,10 +4,10 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *"); 
 
 // DB接続設定 (本番環境に合わせて修正してください)
-$host = "mysql3111.db.sakura.ne.jp";
-$dbname = "hinavi_report";
-$user = "hinavi_report";
-$pass = "hinavireport1";
+$host = "hoge";
+$dbname = "hoge";
+$user = "hoge";
+$pass = "hoge";
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);

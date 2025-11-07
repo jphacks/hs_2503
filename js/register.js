@@ -26,7 +26,7 @@ if (registerForm) {
 
         try {
             // サーバーサイドのPHPスクリプトへ非同期でPOSTリクエストを送信
-            const response = await fetch("../php/register.php", {
+            const response = await fetch("../register.php", {
                 method: "POST",
                 body: formData
             });
