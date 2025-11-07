@@ -1,8 +1,8 @@
-/* 全体背景 */
+/* 全体背景 #c3e8f8#07ae6e*/
 body {
   font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
-  background: linear-gradient(135deg, #c3e8f8, #f9f9f9);
-  margin: 0;
+  background: linear-gradient(135deg, #10f09a, #0efca0);
+  margin: 30px;
   padding: 0;
   display: flex;
   justify-content: center;
@@ -29,7 +29,7 @@ body {
 /* タイトル */
 h1 {
   font-size: 2rem;
-  color: #0077cc;
+  color: #07ae6e;
   margin-bottom: 25px;
 }
 
@@ -49,7 +49,7 @@ h1 {
 
 .user-info span {
   font-weight: bold;
-  color: #0077cc;
+  color: #07ae6e;
 }
 /*ここから*/
 .rank {
@@ -65,7 +65,7 @@ h1 {
 }
 
 .progress {
-  background-color: #2563eb;
+  background-color: #07ae6e;
   height: 10px;
   border-radius: 10px;
   width: 0%;
@@ -99,13 +99,25 @@ h1 {
 }
 
 .achievement-item.locked::after {
-  content: url("../img/lock.png");
+  /* 画像の挿入方法をコンテンツから背景に変更 */
+  content: ""; /* コンテンツを空にするか、削除 */
+  
+  /* 画像のURLを指定 */
+  background-image: url("../img/badge/lock.png"); 
+  
+  /* 画像のサイズを制御する (幅と高さを自由に設定可能) */
+  width: 30px;
+  height: 30px; /* ここでサイズを大きくします。元の10pxから20pxに変更 */
+
+  /* 背景画像のサイズを要素に合わせる */
+  background-size: contain; /* または cover, 100% 100% など */
+  background-repeat: no-repeat;
+  
+  /* その他の配置設定はそのまま利用 */
   position: absolute;
-  right: 15px;
+  right: 20px;
   top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  transform: translateY(-100%);
 }
 
 /* 🔥解除アニメーション */
@@ -129,7 +141,7 @@ h1 {
 /*ここまで*/
 /* 戻るボタン */
 button {
-  background-color: #0077cc;
+  background-color: #07ae6e;
   color: #fff;
   border: none;
   padding: 12px 25px;
@@ -140,7 +152,7 @@ button {
 }
 
 button:hover {
-  background-color: #005fa3;
+  background-color: #07ae6e;
   transform: translateY(-2px);
 }
 

@@ -34,7 +34,7 @@
           document.getElementById("username").textContent = "ゲスト";
           document.getElementById("rank").textContent = "ビギナー";
           // 仮ポイント（例: 0）で表示
-          updateDisplay(0);
+          updateDisplay(1000);
           /*
           alert("ログインしていません");
           window.location.href = "/index.html";
@@ -46,7 +46,7 @@
 
         // --- 💬 サーバからポイントを取得（ここはコメントで示す） ---
         // const points = await fetch("https://yourserver.example.com/api/points");
-        let points = 110; // 仮の初期ポイント
+        let points = 2000; // 仮の初期ポイント
         updateDisplay(points);
 
         // 💡 テスト用に3秒後にポイント加算（実際はサーバからイベントで更新）
@@ -61,21 +61,20 @@
         alert("エラーが発生しました");
       }
     });
-
+    
     // --- 💡 実績定義 ---
     const achievements = [
-      { id: 1, title: "はじめの一歩", desc: "初めてログインする", icon: "../img/badge/new_leaf.png", unlocked: true, condition: { points: 0 } },
-      { id: 2, title: "いいねしてみた！", desc: "初めて「いいね」する", icon: "../img/badge/heart.png", unlocked: true, condition: { points: 0 } },
-      { id: 3, title: "コメントしてみた！", desc: "初めてコメント投稿", icon: "../img/badge/rocket.png", unlocked: true, condition: { points: 0 } },
+      { id: 1, title: "はじめの一歩", desc: "初めてログインする", icon: "../img/badge/new_leaf.png", unlocked: false, condition: { points: 0 } },
+      { id: 2, title: "いいねしてみた！", desc: "初めて「いいね」する", icon: "../img/badge/heart.png", unlocked: false, condition: { points: 0 } },
+      { id: 3, title: "コメントしてみた！", desc: "初めてコメント投稿", icon: "../img/badge/rocket.png", unlocked: false, condition: { points: 0 } },
       { id: 4, title: "アクティブデビュー", desc: "ポイント150で解除", icon: "../img/badge/trophy.png", unlocked: false, condition: { points: 150 } },
       { id: 5, title: "フレンドリーさん", desc: "ポイント200で解除", icon: "../img/badge/hold_hands.png", unlocked: false, condition: { points: 200 } },
-      { id: 6, title: "人気のたね", desc: "ポイント300で解除", icon: "../img/badge/celebrate.png", unlocked: false, condition: { points: 300 } },
+      { id: 6, title: "人気者", desc: "ポイント300で解除", icon: "../img/badge/celebrate.png", unlocked: false, condition: { points: 300 } },
     ];
 
     // --- 💡 ポイントに応じてUI更新 ---
     function updateDisplay(points) {
       document.getElementById("points").textContent = points;
-
       // ランク更新
       const rankInfo = getRank(points);
       document.getElementById("rank").textContent = rankInfo.rank;
@@ -117,10 +116,12 @@
 
     // --- 💡 ランク判定関数 ---
     function getRank(points) {
-      if (points < 100) return { rank: "ビギナー", progress: points };
-      if (points < 300) return { rank: "チャレンジャー", progress: ((points - 100) / 2) };
-      if (points < 600) return { rank: "アクティブ", progress: ((points - 300) / 3) };
-      return { rank: "マスター", progress: 100 };
+      if (points < 100) return { rank: "ビギナー🌱", progress: points };
+      if (points < 500) return { rank: "アクティブユーザ🌿", progress: ((points - 100) / 4) };
+      if (points < 1000) return { rank: "コントリビュータ🌸", progress: ((points - 500) / 5) };
+      if (points < 2000) return { rank: "コミュニティリーダ🔥", progress: ((points - 1000) / 10) };
+      if (points < 4000) return { rank: "エキスパート💎", progress: ((points - 2000) / 20) };
+      return { rank: "レジェンド🏆", progress: 100 };
     }
   </script>
 </body>
