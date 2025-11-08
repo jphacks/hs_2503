@@ -1,6 +1,7 @@
 // js/lang.js
 
-// 翻訳データ
+// js/lang.js
+
 // ===== 翻訳データ =====
 const translations = {
   ja: {
@@ -30,14 +31,12 @@ const translations = {
     "username": "ユーザー名",
     "password": "パスワード",
     "login_btn": "ログイン",
-    "no_account": "アカウントをお持ちでない方は ", // ← 末尾スペース
+    "no_account": "アカウントをお持ちでない方は ",
     "register_link": "こちらから登録",
     "register_title": "アカウント登録",
     "register_heading": "アカウント登録",
-    "username": "ユーザー名",
     "email": "メールアドレス",
-    "password": "パスワード（6文字以上）",
-    "register_btn": "登録",
+    "password（6文字以上）": "パスワード（6文字以上）",
     "have_account": "すでにアカウントをお持ちの方は ",
     "login_link": "ログイン",
     "mypage": "マイページ",
@@ -117,10 +116,8 @@ const translations = {
     "register_link": "在这里注册",
     "register_title": "注册账户",
     "register_heading": "注册账户",
-    "username": "用户名",
     "email": "电子邮箱",
-    "password": "密码（6位以上）",
-    "register_btn": "注册",
+    "password（6位以上）": "密码（6位以上）",
     "have_account": "已经有账号？",
     "login_link": "登录",
     "mypage": "我的页面",
@@ -196,14 +193,12 @@ const translations = {
     "username": "Username",
     "password": "Password",
     "login_btn": "Login",
-    "no_account": "Don't have an account? ", // ← 末尾スペース
+    "no_account": "Don't have an account? ",
     "register_link": "Register here",
     "register_title": "Register Account",
     "register_heading": "Register Account",
-    "username": "Username",
     "email": "Email Address",
-    "password": "Password (6 characters or more)",
-    "register_btn": "Register",
+    "password (6 characters or more)": "Password (6 characters or more)",
     "have_account": "Already have an account?",
     "login_link": "Login",
     "mypage": "My Page",
@@ -247,8 +242,8 @@ const translations = {
     "comment-title": "Share disaster situations\nSupport mutual aid",
     "comment-description": "You can post and view information such as 'impassable roads' and 'steps' on the map.",
     "multilingual-support-title": "Multilingual support for everyone's peace of mind",
-    "multilingual-support-description": "Currently supports Japanese, English, and Chinese."
-    ,"pre-btn": "Back",
+    "multilingual-support-description": "Currently supports Japanese, English, and Chinese.",
+    "pre-btn": "Back",
     "next-btn": "Next",
     "help-html-title": "Tutorial"
   }
@@ -265,7 +260,6 @@ function saveLang(lang) {
 // ===== 翻訳ヘルパー =====
 function t(key, lang) {
   const dict = translations[lang] || translations.ja || {};
-  // 言語 → en → ja → キー の順でフォールバック
   return dict[key]
     ?? (translations.en && translations.en[key])
     ?? (translations.ja && translations.ja[key])
@@ -328,9 +322,7 @@ function changeLanguage(lang) {
   saveLang(lang);
   applyTranslations(lang);
   window.currentLang = lang; // init.js と同期させる
-  // 必要に応じて再描画を呼ぶ:
-  // if (window.loadDisasterInfo) window.loadDisasterInfo();
-  // if (window.loadGoogleMaps) window.loadGoogleMaps(lang);
+  // 必要に応じて再描画呼び出しは各側で行う
 }
 
 // 初期適用
@@ -338,7 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const lang = getSavedLang();
   applyTranslations(lang);
 
-  // もし言語セレクタがあれば初期値を反映＆変更を保存
   const sel = document.getElementById("language-select");
   if (sel) {
     sel.value = lang;
@@ -346,36 +337,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// グローバルに公開（他ファイルから呼べるように）
+// グローバル公開
 window.translations = translations;
 window.t = t;
 window.changeLanguage = changeLanguage;
 window.applyTranslations = applyTranslations;
 window.getCurrentLang = getCurrentLang;
-
-
-// // 言語変更処理
-// function changeLanguage(lang) {
-//   document.documentElement.lang = lang;
-//   const t = translations[lang] || translations["ja"];
-
-//   // 通常テキスト
-//   document.querySelectorAll("[data-i18n]").forEach(el => {
-//     const key = el.getAttribute("data-i18n");
-//     if (t[key]) el.textContent = t[key];
-//   });
-
-//   // プレースホルダー
-//   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-//     const key = el.getAttribute("data-i18n-placeholder");
-//     if (t[key]) el.placeholder = t[key];
-//   });
-
-//   // ボタン
-//   const recenterBtn = document.getElementById("recenter-btn");
-//   if (recenterBtn && t["recenter"]) recenterBtn.textContent = t["recenter"];
-
-//   // フッター左側のみ更新
-//   const footerLeft = document.getElementById("footer-left");
-//   if (footerLeft && t["footer"]) footerLeft.textContent = t["footer"];
-// }
