@@ -11,146 +11,6 @@ body {
     padding-top: 60px; 
 }
 
-/* ----------------------------------------------------- */
-/* ヘッダーのスタイル (固定ナビゲーション) */
-/* ----------------------------------------------------- */
-#header {
-    background: #07ae6e;
-    color: white;
-    padding: 0 15px;
-    height: 60px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-#logo {
-    height: 40px;
-}
-
-#header-right {
-    display: flex;
-    align-items: center; /* ★重要: 縦方向の中央揃え */
-    gap: 10px;
-}
-
-/* 共通ボタン（ヘルプ、言語、メニューなど）のスタイル */
-.header-icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background-color 0.3s;
-}
-
-.header-icon-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.header-icon-btn img {
-    height: 24px;
-    width: 24px;
-    display: block;
-}
-
-/* ログインボタン（ホームに戻るリンク）のスタイル */
-.login-btn {
-    background-color: white;
-    color: #07ae6e;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    line-height: 1; 
-    transition: background-color 0.3s;
-}
-
-.login-btn:hover {
-    background-color: #e0e0e0;
-}
-
-/* --- 言語とメニューのドロップダウン配置 --- */
-
-/* 言語コンテナのスタイル */
-#language-wrapper {
-    position: relative; 
-    display: flex; /* selectをアイコンの隣に配置するため */
-    align-items: center;
-}
-
-/* ★標準selectのスタイル */
-#language-select {
-    /* 重要: select要素はアイコンの隣に存在させるが、
-       標準の見た目を消して透過にし、アイコンの下に隠す。
-       アイコンをクリックすると、JSでフォーカスが当たり、ブラウザのUIが開く。
-    */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    /* 見た目を完全に透明にしてアイコンの下に隠す */
-    opacity: 0;
-    cursor: pointer;
-    z-index: 1; /* アイコンよりは上に配置 */
-    
-    /* 標準のフォーム要素の余白やボーダーをリセット */
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-}
-
-/* メニューリストのスタイル */
-#menu-container {
-    position: relative; 
-}
-
-#menu-list {
-    position: absolute;
-    top: 50px; 
-    right: 0;
-    list-style: none;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    padding: 10px 0;
-    min-width: 150px;
-    z-index: 10;
-}
-
-#menu-list li a {
-    display: block;
-    padding: 8px 15px;
-    text-decoration: none;
-    color: #2c2c2c;
-}
-
-#menu-list li a:hover {
-    background-color: #f0f0f0;
-}
-
 /* 非表示クラス */
 .hidden {
     display: none !important;
@@ -158,7 +18,9 @@ body {
 
 /* ページタイトル（h1はCSSで非表示に） */
 h1 {
-    display: none; 
+    text-align: center;
+    font-size: 3em;
+    color: #333; 
 }
 
 /* ----------------------------------------------------- */
@@ -215,7 +77,7 @@ section {
 
 .feature-item {
     background: #e6f6f1;
-    padding: 20px;
+    padding: 18px;
     border-radius: 8px;
     text-align: left;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);

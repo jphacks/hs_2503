@@ -16,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // --- DB設定 ---
-$host = "mysql3111.db.sakura.ne.jp";
-$dbname = "hinavi_report";
-$user = "hinavi_report";
-$pass = "hinavireport1";
+$host = "hoge";
+$dbname = "hoge";
+$user = "hoge";
+$pass = "hoge";
 
 // 💡 NEW: データベース接続処理の追加
 try {
