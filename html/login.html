@@ -87,12 +87,6 @@
                 langSelect.focus(); 
                 menuList.classList.add('hidden');
             });
-            
-            langSelect.addEventListener('change', (event) => {
-                const newLang = event.target.value;
-                localStorage.setItem("selectedLanguage", newLang);
-                alert("言語を " + (newLang === 'ja' ? '日本語' : '中文') + " に切り替えました。");
-            });
         }
     });
   </script>

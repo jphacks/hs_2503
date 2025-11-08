@@ -185,16 +185,6 @@
                 // メニューが開いている場合は閉じる
                 menuList.classList.add('hidden');
             });
-            
-            // 言語選択が変更されたときの処理
-            langSelect.addEventListener('change', (event) => {
-                const newLang = event.target.value;
-                localStorage.setItem("selectedLanguage", newLang);
-                
-                alert("言語を " + (newLang === 'ja' ? '日本語' : '中文') + " に切り替えました。");
-                // 実際はここで多言語化処理を行い、ページ内容を更新
-                // window.location.reload(); 
-            });
         }
 
     });
