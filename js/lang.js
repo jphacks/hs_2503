@@ -84,6 +84,7 @@ const translations = {
     "pre-btn": "戻る",
     "next-btn": "次へ",
     "help-html-title": "チュートリアル",
+    "register_btn": "登録",
   },
   zh: {
     "index-title": "hinavi 灾害信息地图",
@@ -165,6 +166,7 @@ const translations = {
     "pre-btn": "返回",
     "next-btn": "下一步",
     "help-html-title": "教程",
+    "register_btn": "注册"
   },
   en: {
     "index-title": "hinavi Disaster Information Map",
@@ -245,7 +247,8 @@ const translations = {
     "multilingual-support-description": "Currently supports Japanese, English, and Chinese.",
     "pre-btn": "Back",
     "next-btn": "Next",
-    "help-html-title": "Tutorial"
+    "help-html-title": "Tutorial",
+     "register_btn": "Register"
   }
 };
 
