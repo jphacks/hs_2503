@@ -18,7 +18,7 @@ body {
 }
 
 /* ---------------------------------- */
-/* 2. ログインコンテナ (Card Design) */
+/* 2. リセットリクエストコンテナ (Card Design) */
 /* ---------------------------------- */
 .request-reset-container{
     /* 白いカードのような背景 */
@@ -40,8 +40,8 @@ body {
 /* ---------------------------------- */
 /* 3. 見出し (H2) */
 /* ---------------------------------- */
-.forgotForm h2 {
-    color: #333;
+.request-reset-container h2 {
+    color: #07ae6e;
     margin-bottom: 30px;
     font-weight: 600;
     font-size: 28px;
@@ -65,7 +65,7 @@ body {
 
 /* 入力フィールドがフォーカスされたとき */
 #forgotForm input:focus {
-    border-color: #007bff; /* 青色に変化 */
+    border-color: #07ae6e; /* 青色に変化 */
     outline: none; 
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
@@ -76,7 +76,7 @@ body {
 #forgotForm button[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: #007bff; /* メインカラー */
+    background-color: #07ae6e; /* メインカラー */
     color: white;
     border: none;
     border-radius: 6px;
@@ -89,26 +89,26 @@ body {
 
 /* ボタンにマウスオーバーしたとき */
 #forgotForm button[type="submit"]:hover {
-    background-color: #0056b3; 
+    background-color: #058f5b; 
 }
 
 /* ---------------------------------- */
 /* 6. リンクとテキスト (Links & Text) */
 /* ---------------------------------- */
 .request-reset-container p {
-    color: #666;
+    color: #07ae6e;
     margin-top: 20px;
     font-size: 14px;
 }
 
 .request-reset-container a {
-    color: #007bff;
+    color: #07ae6e;
     text-decoration: none; 
     transition: color 0.3s;
 }
 
 .request-reset-container a:hover {
-    color: #0056b3;
+    color: #07ae6e;
     text-decoration: underline; 
 }
 
