@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <title>hinavi 災害情報マップ</title>
+  <title data-i18n="index-title">hinavi 災害情報マップ</title>
   <link rel="icon" href="img/icon2.png" type="image/png">
   <link rel="stylesheet" href="css/index.css">
 </head>
@@ -38,8 +38,8 @@
         <img src="img/menu.png" alt="Menu">
       </button>
       <ul id="menu-list" class="hidden">
-        <li id="menu-mypage"><a href="html/mypage.html">マイページ</a></li>
-        <li id="menu-mypage"><a href="html/hinavi.html">hinaviとは</a></li>
+        <li id="menu-mypage"><a href="html/mypage.html" data-i18n="mypage">マイページ</a></li>
+        <li id="menu-mypage"><a href="html/hinavi.html" data-i18n="hinavi-icon">hinaviとは</a></li>
       </ul>
     </div>
 </div>
@@ -76,7 +76,7 @@
     </div>
  
     <div id="shelter-wrapper">
-      <p id="shelter-text">近くの避難所はこちら</p>
+      <p id="shelter-text" data-i18n="shelter_text">近くの避難所はこちら</p>
       <div id="shelter-list"></div>
     </div>
  
@@ -131,7 +131,7 @@
 
   <script>
     // グローバル設定
-    window.GOOGLE_MAPS_API_KEY = "AIzaSyDXnEdO-AhnxDLo_w-mrUdO8_kJMMndgM0"; 
+    window.GOOGLE_MAPS_API_KEY = "hogehoge"; 
     window.currentLang = localStorage.getItem("selectedLanguage") || "ja";
 
     let latestPosition = null;

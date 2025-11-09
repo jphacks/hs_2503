@@ -35,22 +35,22 @@
           <img src="../img/menu.png" alt="Menu">
         </button>
         <ul id="menu-list" class="hidden">
-          <li id="menu-mypage"><a href="mypage.html">マイページ</a></li>
-          <li id="menu-hinavi"><a href="hinavi.html">hinaviとは</a></li>
+          <li id="menu-mypage"><a href="mypage.html" data-i18n="mypage">マイページ</a></li>
+          <li id="menu-hinavi"><a href="hinavi.html" data-i18n="hinavi-icon">hinaviとは</a></li>
         </ul>
       </div>
     </div>
   </header>
 
   <div class="container">
-    <h1>マイページ</h1>
+    <h1 data-i18n="mypages">マイページ</h1>
 
     <div class="user-info">
-      <p>ユーザ名: <span id="username"></span></p>
-      <p>トロフィー: <span id="trophies">🏆🏆🏆</span></p>
+      <p data-i18n="user">ユーザ名: <span id="username"></span></p>
+      <p data-i18n="trophies">トロフィー: <span id="trophies">🏆🏆🏆</span></p>
     </div>
 
-    <button onclick="window.history.back()">戻る</button>
+    <button onclick="window.history.back()" data-i18n="back">戻る</button>
   </div>
 
   <script type="module">

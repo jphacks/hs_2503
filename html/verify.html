@@ -14,7 +14,7 @@
 <body>
     <div id="status">
         <div class="spinner"></div>
-        <p class="message">認証処理中です。しばらくお待ちください...</p>
+        <p class="message" data-i18n="verifying">認証処理中です。しばらくお待ちください...</p>
     </div>
 
     <script>
@@ -39,7 +39,7 @@
                 // URLからトークンを削除（セキュリティ対策）
                 history.replaceState(null, '', window.location.pathname);
 
-                // 3秒後に index.html にリダイレクト
+                // 3秒後に login.html にリダイレクト
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 3000);
